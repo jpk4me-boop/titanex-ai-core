@@ -1,85 +1,68 @@
+﻿require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { createClient } = require('@supabase/supabase-js'); 
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 app.use(express.json());
 
-// --- CONFIGURATION ---
-const GEMINI_KEY = "AIzaSyDQbg5L9eZng3Q8d3UXDJsMj9fBsD3G9tQ"; 
-const EVO_URL = "http://148.230.114.82:8080"; 
-const EVO_APIKEY = "429683C4C977415CAAFCCE10F7D57E11";
-const INSTANCE_ID = "Titanex_User_aefe5bb7_1";
+const GEMINI_KEY   = process.env.GEMINI_KEY;
+const EVO_URL      = process.env.EVO_URL;
+const EVO_APIKEY   = process.env.EVO_APIKEY;
+const INSTANCE_ID  = process.env.INSTANCE_ID;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const PORT         = process.env.PORT || 3000;
 
-// --- CONFIGURATION SUPABASE ---
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZraGJreGFxbGVoZGxxbnlicXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NDM1MTUsImV4cCI6MjA4NjUxOTUxNX0.2w42p0OGIpdYqK_CY1zWObDQblww6FoZHondualRb8Q";
-const SUPABASE_URL = "https://fkhbkxaqlehdlqnybqxt.supabase.co"; 
+const requiredEnv = ['GEMINI_KEY','EVO_URL','EVO_APIKEY','INSTANCE_ID','SUPABASE_URL','SUPABASE_KEY'];
+const missingEnv = requiredEnv.filter(k => !process.env[k]);
+if (missingEnv.length > 0) {
+    console.error('Variables manquantes : ' + missingEnv.join(', '));
+    process.exit(1);
+}
 
-// Initialisation du client Supabase
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: "Tu es Sango, l'agent IA de Titanex. Ton auto-répondeur est en phase finale de déploiement technique."
+const model = genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction: "Tu es Sango, l'agent IA de Titanex. Tu reponds toujours en francais, de maniere claire et concise."
 });
 
-// --- ROUTE WEBHOOK ---
 app.post('/webhook', async (req, res) => {
-    console.log("📩 Signal reçu d'Evolution API !");
-    const data = req.body;
-    
-    // Répondre immédiatement à l'API pour éviter les timeouts
     res.sendStatus(200);
-
+    const data = req.body;
     const text = data.data?.message?.conversation || data.data?.message?.extendedTextMessage?.text;
     const remoteJid = data.data?.key?.remoteJid;
-
-    if (text && !data.data?.key?.fromMe) {
-        console.log(`📩 MESSAGE de ${remoteJid} : ${text}`);
-        
-        try {
-            // 1. Sauvegarder le message de l'utilisateur dans Supabase
-            await supabase.from('chat_history').insert([
-                { remote_jid: remoteJid, sender: 'user', message: text }
-            ]);
-            console.log("💾 Message utilisateur sauvegardé.");
-
-            // 2. Générer la réponse de Sango
-            console.log("🧠 Sango génère une réponse...");
-            const result = await model.generateContent(text);
-            const aiResponse = result.response.text();
-
-            // 3. Sauvegarder la réponse de l'IA dans Supabase
-            await supabase.from('chat_history').insert([
-                { remote_jid: remoteJid, sender: 'ai', message: aiResponse }
-            ]);
-            console.log("💾 Réponse IA sauvegardée.");
-
-            // 4. Envoyer le message via Evolution API
-            await axios.post(`${EVO_URL}/message/sendText/${INSTANCE_ID}`, {
-                number: remoteJid,
-                text: aiResponse
-            }, { headers: { "apikey": EVO_APIKEY, "Content-Type": "application/json" } });
-
-            console.log(`✅ RÉPONSE ENVOYÉE sur WhatsApp`);
-            
-        } catch (err) {
-            console.error("❌ ERREUR :", err.message);
-        }
+    if (!text || data.data?.key?.fromMe) return;
+    if (remoteJid?.endsWith('@g.us')) return;
+    console.log('MESSAGE de ' + remoteJid + ' : ' + text);
+    try {
+        await supabase.from('chat_history').insert([{ remote_jid: remoteJid, sender: 'user', message: text }]);
+        const { data: history } = await supabase.from('chat_history').select('sender, message').eq('remote_jid', remoteJid).order('created_at', { ascending: true }).limit(20);
+        const chatHistory = (history || []).slice(0, -1).map(row => ({
+            role: row.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: row.message }]
+        }));
+        const chat = model.startChat({ history: chatHistory });
+        const result = await chat.sendMessage(text);
+        const aiResponse = result.response.text();
+        await supabase.from('chat_history').insert([{ remote_jid: remoteJid, sender: 'ai', message: aiResponse }]);
+        await axios.post(EVO_URL + '/message/sendText/' + INSTANCE_ID,
+            { number: remoteJid, text: aiResponse },
+            { headers: { apikey: EVO_APIKEY, 'Content-Type': 'application/json' } }
+        );
+        console.log('REPONSE ENVOYEE a ' + remoteJid);
+    } catch (err) {
+        console.error('ERREUR : ' + err.message);
     }
 });
 
-// --- DÉMARRAGE ET MAINTIEN EN VIE ---
-const PORT = 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`\n🔥 SERVEUR SANGO ACTIF SUR LE PORT ${PORT}`);
-    console.log(`📡 EN ATTENTE DE MESSAGES... (Ne pas fermer ce terminal)\n`);
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', agent: 'Sango - Titanex', timestamp: new Date().toISOString() });
 });
 
-// --- FORCE LE PROCESSUS À RESTER OUVERT ---
-process.stdin.resume(); 
-setInterval(() => {
-    // Boucle de maintien en vie
-}, 1000 * 60 * 60);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log('SERVEUR SANGO ACTIF SUR LE PORT ' + PORT);
+    console.log('EN ATTENTE DE MESSAGES WHATSAPP...');
+});
