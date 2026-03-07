@@ -1,4 +1,4 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -25,7 +25,7 @@ if (missingEnv.length > 0) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const genAI = new GoogleGenerativeAI(GEMINI_KEY);
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.0-flash-lite",
     systemInstruction: "Tu es Sango, l'agent IA de Titanex. Tu reponds toujours en francais, de maniere claire et concise."
 });
 
