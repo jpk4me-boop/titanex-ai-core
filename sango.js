@@ -1,13 +1,13 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 app.use(express.json());
 
-const GEMINI_KEY   = process.env.GEMINI_KEY;
+const GROQ_KEY     = process.env.GROQ_KEY;
 const EVO_URL      = process.env.EVO_URL;
 const EVO_APIKEY   = process.env.EVO_APIKEY;
 const INSTANCE_ID  = process.env.INSTANCE_ID;
@@ -15,7 +15,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const PORT         = process.env.PORT || 3000;
 
-const requiredEnv = ['GEMINI_KEY','EVO_URL','EVO_APIKEY','INSTANCE_ID','SUPABASE_URL','SUPABASE_KEY'];
+const requiredEnv = ['GROQ_KEY','EVO_URL','EVO_APIKEY','INSTANCE_ID','SUPABASE_URL','SUPABASE_KEY'];
 const missingEnv = requiredEnv.filter(k => !process.env[k]);
 if (missingEnv.length > 0) {
     console.error('Variables manquantes : ' + missingEnv.join(', '));
@@ -23,11 +23,7 @@ if (missingEnv.length > 0) {
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-lite",
-    systemInstruction: "Tu es Sango, l'agent IA de Titanex. Tu reponds toujours en francais, de maniere claire et concise."
-});
+const groq = new OpenAI({ apiKey: GROQ_KEY, baseURL: 'https://api.groq.com/openai/v1' });
 
 app.post('/webhook', async (req, res) => {
     res.sendStatus(200);
@@ -40,13 +36,16 @@ app.post('/webhook', async (req, res) => {
     try {
         await supabase.from('chat_history').insert([{ remote_jid: remoteJid, sender: 'user', message: text }]);
         const { data: history } = await supabase.from('chat_history').select('sender, message').eq('remote_jid', remoteJid).order('created_at', { ascending: true }).limit(20);
-        const chatHistory = (history || []).slice(0, -1).map(row => ({
-            role: row.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: row.message }]
-        }));
-        const chat = model.startChat({ history: chatHistory });
-        const result = await chat.sendMessage(text);
-        const aiResponse = result.response.text();
+        const messages = [
+            { role: 'system', content: 'Tu es Sango, agent IA de Titanex. Tu reponds en francais, de maniere claire et concise.' },
+            ...(history || []).map(row => ({ role: row.sender === 'user' ? 'user' : 'assistant', content: row.message }))
+        ];
+        const completion = await groq.chat.completions.create({
+            messages,
+            model: 'llama-3.3-70b-versatile',
+            temperature: 0.7
+        });
+        const aiResponse = completion.choices[0].message.content;
         await supabase.from('chat_history').insert([{ remote_jid: remoteJid, sender: 'ai', message: aiResponse }]);
         await axios.post(EVO_URL + '/message/sendText/' + INSTANCE_ID,
             { number: remoteJid, text: aiResponse },
