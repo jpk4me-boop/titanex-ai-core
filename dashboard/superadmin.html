@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<script>
+(function(){
+  var token = localStorage.getItem('titanex_token') || sessionStorage.getItem('titanex_token');
+  if (!token) { location.href = '/dashboard/login.html'; return; }
+  fetch(window.location.protocol+'//'+window.location.hostname+'/auth/me', {
+    headers: {'Authorization': 'Bearer ' + token}
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.tenant) { localStorage.removeItem('titanex_token'); sessionStorage.removeItem('titanex_token'); location.href = '/dashboard/login.html'; }
+  }).catch(function(){});
+})();
+</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Titanex AI - Super Admin</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#080808;--s:#0f0f0f;--s2:#161616;--br:#262626;--g:#22c55e;--g2:#16a34a;--r:#ef4444;--a:#f59e0b;--b:#3b82f6;--p:#8b5cf6;--t:#f0f0f0;--t2:#777;--t3:#444}body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;min-height:100vh}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.topb{height:50px;background:var(--s);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 1.2rem;gap:10px;position:sticky;top:0;z-index:50}.logo{font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:7px}.logo em{color:var(--g);font-style:normal}.logo-badge{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:#a78bfa;border-radius:4px;font-size:.62rem;font-weight:700;padding:.1rem .4rem;text-transform:uppercase}.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}.live-dot{width:7px;height:7px;background:var(--g);border-radius:50%;animation:pulse 2s infinite}.live-txt{font-size:.72rem;color:var(--t2)}.tb-btn{background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:6px;padding:.28rem .7rem;cursor:pointer;font-size:.72rem;font-family:inherit}.tb-btn:hover{border-color:var(--r);color:var(--r)}.layout{display:flex;min-height:calc(100vh - 50px)}.sidebar{width:200px;background:var(--s);border-right:1px solid var(--br);padding:.6rem 0;flex-shrink:0;position:sticky;top:50px;height:calc(100vh - 50px);overflow-y:auto}.sb-item{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;color:var(--t2);font-size:.79rem;cursor:pointer;transition:all .15s;border-left:2px solid transparent}.sb-item:hover{background:var(--s2);color:var(--t)}.sb-item.on{background:rgba(34,197,94,.06);color:var(--g);border-left-color:var(--g);font-weight:600}.sb-sep{height:1px;background:var(--br);margin:.4rem .8rem}.sb-lbl{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:.5rem 1rem .2rem}.sb-nb{background:var(--r);color:#fff;border-radius:10px;font-size:.58rem;padding:.05rem .28rem;margin-left:auto;font-weight:700}.main{flex:1;padding:1.4rem;overflow-x:hidden}.pg{display:none;animation:fadeIn .25s ease}.pg.on{display:block}.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.4rem}.sc{background:var(--s);border:1px solid var(--br);border-radius:10px;padding:1rem;position:relative;overflow:hidden}.sc::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}.sc.g::before{background:linear-gradient(90deg,var(--g),#4ade80)}.sc.b::before{background:linear-gradient(90deg,var(--b),#60a5fa)}.sc.a::before{background:linear-gradient(90deg,var(--a),#fbbf24)}.sc.p::before{background:linear-gradient(90deg,var(--p),#a78bfa)}.sc.r::before{background:linear-gradient(90deg,var(--r),#f87171)}.sc-lb{font-size:.65rem;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem}.sc-v{font-size:1.8rem;font-weight:800;line-height:1;margin-bottom:.2rem}.sc.g .sc-v{color:var(--g)}.sc.b .sc-v{color:var(--b)}.sc.a .sc-v{color:var(--a)}.sc.p .sc-v{color:var(--p)}.sc.r .sc-v{color:var(--r)}.sc-s{font-size:.67rem;color:var(--t3)}.card{background:var(--s);border:1px solid var(--br);border-radius:10px;margin-bottom:1rem}.chead{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid var(--br)}.chead h3{font-size:.82rem;font-weight:600}.cbody{padding:1rem}.r2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}.tbl{width:100%;border-collapse:collapse;font-size:.78rem}.tbl th{text-align:left;padding:.5rem .75rem;font-size:.65rem;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--br);font-weight:600}.tbl td{padding:.58rem .75rem;border-bottom:1px solid rgba(38,38,38,.5);vertical-align:middle}.tbl tr:last-child td{border:none}.tbl tr:hover td{background:var(--s2)}.tbl-av{width:30px;height:30px;border-radius:7px;background:rgba(34,197,94,.1);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--g);flex-shrink:0}.sp{display:inline-flex;align-items:center;gap:3px;border-radius:20px;font-size:.65rem;font-weight:600;padding:.15rem .5rem}.sp.actif{background:rgba(34,197,94,.1);color:var(--g);border:1px solid rgba(34,197,94,.2)}.sp.essai{background:rgba(245,158,11,.1);color:var(--a);border:1px solid rgba(245,158,11,.2)}.sp.suspendu{background:rgba(239,68,68,.1);color:var(--r);border:1px solid rgba(239,68,68,.2)}.sp-d{width:4px;height:4px;border-radius:50%;background:currentColor}.ibtn{background:var(--g);color:#000;border:none;border-radius:6px;padding:.3rem .7rem;font-weight:700;cursor:pointer;font-family:inherit;font-size:.75rem;transition:all .15s;display:inline-flex;align-items:center;gap:4px}.ibtn:hover{background:var(--g2)}.ibtn.gh{background:transparent;border:1px solid var(--br);color:var(--t2)}.ibtn.gh:hover{border-color:var(--g);color:var(--g)}.ibtn.rb{background:transparent;border:1px solid var(--br);color:var(--t2)}.ibtn.rb:hover{border-color:var(--r);color:var(--r)}.ibtn.bb{background:transparent;border:1px solid var(--br);color:var(--t2)}.ibtn.bb:hover{border-color:var(--b);color:var(--b)}.search-row{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:.4rem .75rem;margin-bottom:1rem}.search-row input{flex:1;background:transparent;border:none;color:var(--t);font-family:inherit;font-size:.8rem;outline:none}.conv-row{display:flex;align-items:flex-start;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--br);cursor:pointer}.conv-row:hover{background:var(--s2)}.conv-av{width:32px;height:32px;border-radius:50%;background:rgba(34,197,94,.08);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--g);flex-shrink:0}.conv-body{flex:1;min-width:0}.conv-top{display:flex;justify-content:space-between;margin-bottom:.2rem}.conv-name{font-size:.78rem;font-weight:600}.conv-time{font-size:.65rem;color:var(--t3)}.conv-msg{font-size:.72rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.conv-tag{display:inline-block;background:rgba(59,130,246,.08);color:var(--b);border:1px solid rgba(59,130,246,.15);border-radius:4px;font-size:.58rem;padding:.05rem .3rem;margin-left:6px}.msg{max-width:70%;border-radius:10px;padding:.45rem .75rem;font-size:.76rem;line-height:1.5}.msg.bot{background:var(--s);border:1px solid var(--br);align-self:flex-start;border-radius:2px 10px 10px 10px}.msg.usr{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15);align-self:flex-end;border-radius:10px 10px 2px 10px}.msg-input{flex:1;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:.45rem .75rem;color:var(--t);font-family:inherit;font-size:.8rem;outline:none}.msg-input:focus{border-color:var(--g)}.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem}.ov.on{display:flex}.modal{background:var(--s);border:1px solid var(--br);border-radius:12px;padding:1.6rem;width:100%;max-width:440px}.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}.mh h3{font-size:.9rem;font-weight:700}.xb{background:transparent;border:1px solid var(--br);color:var(--t2);cursor:pointer;border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}.fld{margin-bottom:.8rem}.fld label{display:block;font-size:.7rem;color:var(--t2);margin-bottom:.28rem}.fld input,.fld select,.fld textarea{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:7px;padding:.55rem .8rem;color:var(--t);font-family:inherit;font-size:.8rem;outline:none}.fld input:focus,.fld select:focus{border-color:var(--g)}.toast{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:.6rem .9rem;font-size:.78rem;display:none;z-index:999}.empty{text-align:center;padding:2rem;color:var(--t3);font-size:.78rem}.loading{text-align:center;padding:1.5rem;color:var(--t3);font-size:.76rem}@media(max-width:768px){.sidebar{display:none}.r2{grid-template-columns:1fr}.sg{grid-template-columns:repeat(2,1fr)}}</style>
+</head><body>
+<div class="topb">
+  <div class="logo">Titanex <em>AI</em> <span class="logo-badge">Super Admin</span></div>
+  <div class="tb-right">
+    <div class="live-dot"></div><span class="live-txt" id="live-txt">Chargement...</span>
+    <button class="tb-btn" onclick="location.href='/'">Accueil</button>
+  </div>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="sb-lbl">Principal</div>
+    <div class="sb-item on" onclick="nav('home')" id="sb-home">&#128202; Vue ensemble</div>
+    <div class="sb-item" onclick="nav('clients')" id="sb-clients">&#128101; Clients <span class="sb-nb" id="nb-clients">0</span></div>
+    <div class="sb-item" onclick="nav('convs')" id="sb-convs">&#128172; Conversations</div>
+    <div class="sb-sep"></div>
+    <div class="sb-lbl">Finance</div>
+    <div class="sb-item" onclick="nav('revenus')" id="sb-revenus">&#128176; Revenus MRR</div>
+    <div class="sb-sep"></div>
+    <div class="sb-lbl">Outils</div>
+    <div class="sb-item" onclick="nav('broadcast')" id="sb-broadcast">&#128226; Broadcast</div>
+    <div class="sb-item" onclick="location.href='/dashboard/'" id="sb-tenant">&#127978; Vue Tenant</div>
+  </div>
+  <div class="main">
+    <div class="pg on" id="pg-home">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+        <div style="font-size:1rem;font-weight:700">Vue d ensemble - Titanex AI</div>
+        <button class="ibtn gh" onclick="loadAll()">Actualiser</button>
+      </div>
+      <div class="sg">
+        <div class="sc g"><div class="sc-lb">MRR</div><div class="sc-v" id="s-mrr">0</div><div class="sc-s">FCFA par mois</div></div>
+        <div class="sc b"><div class="sc-lb">Clients actifs</div><div class="sc-v" id="s-actif">0</div><div class="sc-s">Abonnements payants</div></div>
+        <div class="sc a"><div class="sc-lb">Essais</div><div class="sc-v" id="s-essai">0</div><div class="sc-s">Periode gratuite</div></div>
+        <div class="sc p"><div class="sc-lb">Conversations</div><div class="sc-v" id="s-conv">0</div><div class="sc-s">Ce mois-ci</div></div>
+        <div class="sc r"><div class="sc-lb">Suspendus</div><div class="sc-v" id="s-susp">0</div><div class="sc-s">Comptes inactifs</div></div>
+      </div>
+      <div class="r2">
+        <div class="card">
+          <div class="chead"><h3>Derniers inscrits</h3><button class="ibtn gh" onclick="nav('clients')">Voir tous</button></div>
+          <div class="cbody" id="h-derniers"><div class="loading">Chargement...</div></div>
+        </div>
+        <div class="card">
+          <div class="chead"><h3>Activite recente</h3></div>
+          <div class="cbody" id="h-activite"><div class="loading">Chargement...</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pg" id="pg-clients">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div style="font-size:1rem;font-weight:700">Gestion des clients</div>
+        <button class="ibtn" onclick="openNewClient()">+ Nouveau client</button>
+      </div>
+      <div class="sg" style="margin-bottom:1rem">
+        <div class="sc g"><div class="sc-lb">Actifs</div><div class="sc-v" id="cl-a">0</div></div>
+        <div class="sc a"><div class="sc-lb">Essais</div><div class="sc-v" id="cl-e">0</div></div>
+        <div class="sc r"><div class="sc-lb">Suspendus</div><div class="sc-v" id="cl-s">0</div></div>
+        <div class="sc b"><div class="sc-lb">Total</div><div class="sc-v" id="cl-t">0</div></div>
+      </div>
+      <div class="search-row"><input type="text" id="cl-search" placeholder="Rechercher un client..." oninput="filterClients()"></div>
+      <div class="card">
+        <div class="cbody" style="padding:0;overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Client</th><th>Instance</th><th>Plan</th><th>Statut</th><th>Inscrit</th><th>Expire</th><th>Actions</th></tr></thead>
+            <tbody id="cl-tbody"><tr><td colspan="7" class="loading">Chargement...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="pg" id="pg-convs">
+      <div style="font-size:1rem;font-weight:700;margin-bottom:1rem">Toutes les conversations</div>
+      <div class="r2">
+        <div class="card" style="height:500px;display:flex;flex-direction:column">
+          <div class="chead"><h3>Contacts <span id="conv-count" style="color:var(--t2);font-weight:400;font-size:.72rem"></span></h3></div>
+          <div class="search-row" style="margin:.6rem;margin-bottom:0"><input type="text" id="conv-search" placeholder="Rechercher..." oninput="filterConvs()"></div>
+          <div style="flex:1;overflow-y:auto;padding:.6rem" id="conv-list"><div class="loading">Chargement...</div></div>
+        </div>
+        <div class="card" style="height:500px;display:flex;flex-direction:column">
+          <div class="chead" id="conv-head"><h3 style="color:var(--t2)">Selectionnez une conversation</h3></div>
+          <div style="flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.5rem" id="conv-msgs"><div class="empty">Selectionnez un contact</div></div>
+          <div style="display:flex;gap:6px;padding:.6rem;border-top:1px solid var(--br);background:var(--s)">
+            <input class="msg-input" id="msg-input" placeholder="Message admin..." onkeydown="if(event.key==='Enter')sendAdminMsg()">
+            <button class="ibtn" onclick="sendAdminMsg()">Envoyer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pg" id="pg-revenus">
+      <div style="font-size:1rem;font-weight:700;margin-bottom:1.2rem">Revenus et MRR</div>
+      <div class="sg">
+        <div class="sc g"><div class="sc-lb">MRR</div><div class="sc-v" id="r-mrr">0</div><div class="sc-s">FCFA / mois</div></div>
+        <div class="sc b"><div class="sc-lb">ARR projete</div><div class="sc-v" id="r-arr">0</div><div class="sc-s">FCFA / an</div></div>
+        <div class="sc a"><div class="sc-lb">Clients payants</div><div class="sc-v" id="r-pay">0</div><div class="sc-s">Abonnements actifs</div></div>
+      </div>
+      <div class="r2">
+        <div class="card"><div class="chead"><h3>Repartition par plan</h3></div><div class="cbody" id="rev-plans"><div class="loading">Chargement...</div></div></div>
+        <div class="card"><div class="chead"><h3>Clients actifs detail</h3></div><div class="cbody" id="rev-actifs"><div class="loading">Chargement...</div></div></div>
+      </div>
+    </div>
+    <div class="pg" id="pg-broadcast">
+      <div style="font-size:1rem;font-weight:700;margin-bottom:1.2rem">Broadcast WhatsApp</div>
+      <div class="card" style="max-width:520px">
+        <div class="chead"><h3>Envoyer un message groupe</h3></div>
+        <div class="cbody">
+          <div class="fld"><label>Instance source</label><input id="bc-instance" value="boutique1"></div>
+          <div class="fld"><label>Destinataires</label>
+            <select id="bc-target" onchange="document.getElementById('bc-num-wrap').style.display=this.value==='custom'?'block':'none'">
+              <option value="all">Tous les clients actifs</option>
+              <option value="essai">Tous les comptes en essai</option>
+              <option value="custom">Numero specifique</option>
+            </select>
+          </div>
+          <div class="fld" id="bc-num-wrap" style="display:none"><label>Numero WhatsApp</label><input id="bc-num" placeholder="237672482763"></div>
+          <div class="fld"><label>Message</label><textarea id="bc-msg" rows="4" placeholder="Votre message..."></textarea></div>
+          <button class="ibtn" onclick="sendBroadcast()" style="width:100%;padding:.7rem">Envoyer le broadcast</button>
+          <div id="bc-status" style="margin-top:.8rem;font-size:.78rem"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ov" id="nc-ov">
+  <div class="modal">
+    <div class="mh"><h3>Nouveau client</h3><button class="xb" onclick="document.getElementById('nc-ov').classList.remove('on')">x</button></div>
+    <div class="fld"><label>Nom</label><input id="nc-n" placeholder="Boutique Mode Douala"></div>
+    <div class="fld"><label>Email</label><input id="nc-e" type="email" placeholder="client@email.com"></div>
+    <div class="fld"><label>Telephone WhatsApp</label><input id="nc-t" placeholder="237600000000"></div>
+    <div class="fld"><label>Instance WhatsApp</label><input id="nc-i" placeholder="boutique3"></div>
+    <div class="fld"><label>Plan</label>
+      <select id="nc-p"><option value="starter">Starter 9900 FCFA</option><option value="pro" selected>Pro 24900 FCFA</option><option value="business">Business 49900 FCFA</option></select>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:1rem">
+      <button onclick="document.getElementById('nc-ov').classList.remove('on')" class="ibtn gh" style="flex:1">Annuler</button>
+      <button onclick="createClient()" class="ibtn" style="flex:2">Creer</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="tk"></div>
+<script>
+var API=window.location.protocol+'//'+window.location.hostname;
+var KEY='titanex-admin-2026';
+var H={'x-admin-key':KEY};
+var STATS={};var ALL_CLIENTS=[];var ALL_CONVS=[];var CUR_CONV=null;var CONV_GROUPS={};
+var PLANS={starter:9900,pro:24900,business:49900};var CUR_PAGE='home';
+function toast(m,c){var t=document.getElementById('tk');t.textContent=m;t.style.color=c==='g'?'#22c55e':'#ef4444';t.style.display='block';setTimeout(function(){t.style.display='none';},3000);}
+function initials(n){return(n||'?').split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase()||'?';}
+function fmt(n){return parseInt(n||0).toLocaleString('fr-FR');}
+function fmtDate(d){if(!d)return'-';return new Date(d).toLocaleDateString('fr-FR');}
+function nav(p){document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('on');});document.querySelectorAll('.sb-item').forEach(function(x){x.classList.remove('on');});document.getElementById('pg-'+p).classList.add('on');var sb=document.getElementById('sb-'+p);if(sb)sb.classList.add('on');CUR_PAGE=p;if(p==='convs')loadConvs();if(p==='revenus')renderRevenus();}
+function loadAll(){loadStats();}
+function loadStats(){
+  document.getElementById('live-txt').textContent='Actualisation...';
+  fetch(API+'/admin/stats',{headers:H}).then(function(r){return r.json();}).then(function(d){
+    STATS=d;ALL_CLIENTS=d.tenants||[];
+    document.getElementById('nb-clients').textContent=ALL_CLIENTS.length;
+    document.getElementById('live-txt').textContent=ALL_CLIENTS.length+' clients';
+    document.getElementById('s-mrr').textContent=fmt(d.mrr);
+    document.getElementById('s-actif').textContent=d.actifs;
+    document.getElementById('s-essai').textContent=d.essais;
+    document.getElementById('s-susp').textContent=d.suspendus;
+    document.getElementById('s-conv').textContent=d.conversations_ce_mois;
+    document.getElementById('cl-a').textContent=d.actifs;
+    document.getElementById('cl-e').textContent=d.essais;
+    document.getElementById('cl-s').textContent=d.suspendus;
+    document.getElementById('cl-t').textContent=d.tenants_total;
+    document.getElementById('r-mrr').textContent=fmt(d.mrr);
+    document.getElementById('r-arr').textContent=fmt(d.arr);
+    document.getElementById('r-pay').textContent=d.actifs;
+    renderDerniers();renderActivite();renderClients(ALL_CLIENTS);
+    if(CUR_PAGE==='revenus')renderRevenus();
+  }).catch(function(){document.getElementById('live-txt').textContent='Erreur connexion';});
+}
+function renderDerniers(){
+  var sorted=ALL_CLIENTS.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);}).slice(0,5);
+  var el=document.getElementById('h-derniers');
+  if(!sorted.length){el.innerHTML='<div class="empty">Aucun client</div>';return;}
+  el.innerHTML=sorted.map(function(t){return '<div style="display:flex;align-items:center;gap:8px;padding:.5rem 0;border-bottom:1px solid var(--br)"><div class="tbl-av">'+initials(t.nom)+'</div><div style="flex:1"><div style="font-size:.78rem;font-weight:600">'+t.nom+'</div><div style="font-size:.68rem;color:var(--t2)">'+(t.instance_name||'-')+' - '+fmtDate(t.created_at)+'</div></div><span class="sp '+t.statut+'"><span class="sp-d"></span>'+t.statut+'</span></div>';}).join('');
+}
+function renderActivite(){
+  var el=document.getElementById('h-activite');
+  var acts=[{c:'g',t:'Titanex AI operationnel',tm:'Live'},{c:'b',t:ALL_CLIENTS.length+' clients enregistres',tm:'Total'},{c:'a',t:(STATS.actifs||0)+' abonnements actifs',tm:'MRR'},{c:'p',t:(STATS.conversations_ce_mois||0)+' conversations ce mois',tm:'Stats'},{c:'g',t:'MRR: '+fmt(STATS.mrr)+' FCFA',tm:'Finance'}];
+  el.innerHTML=acts.map(function(a){return '<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;border-bottom:1px solid var(--br)"><div style="width:7px;height:7px;border-radius:50%;background:var(--'+a.c+');flex-shrink:0"></div><div style="flex:1;font-size:.76rem">'+a.t+'</div><div style="font-size:.65rem;color:var(--t3)">'+a.tm+'</div></div>';}).join('');
+}
+function renderClients(data){
+  var sl={actif:'Actif',inactif:'Inactif',essai:'Essai',suspendu:'Suspendu'};
+  var tbody=document.getElementById('cl-tbody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="7" class="empty">Aucun client</td></tr>';return;}
+  tbody.innerHTML=data.map(function(t){
+    var actions='';
+    if(t.statut!=='actif')actions+='<button class="ibtn bb" onclick="chgSt(''+t.id+'','actif')" style="font-size:.65rem;padding:.2rem .5rem">Activer</button> ';
+    if(t.statut==='actif')actions+='<button class="ibtn rb" onclick="chgSt(''+t.id+'','suspendu')" style="font-size:.65rem;padding:.2rem .5rem">Suspendre</button> ';
+    actions+='<button class="ibtn gh" onclick="openPayLink(''+t.id+'')" style="font-size:.65rem;padding:.2rem .5rem">Paiement</button>';
+    return '<tr><td><div style="display:flex;align-items:center;gap:7px"><div class="tbl-av">'+initials(t.nom)+'</div><div><div style="font-weight:600">'+t.nom+'</div><div style="font-size:.66rem;color:var(--t2)">'+(t.email||'-')+'</div></div></div></td><td style="font-size:.73rem;color:var(--b)">'+(t.instance_name||'-')+'</td><td><span style="font-size:.72rem;font-weight:600;color:var(--a)">'+(t.plan||'-')+'</span></td><td><span class="sp '+t.statut+'"><span class="sp-d"></span>'+(sl[t.statut]||t.statut)+'</span></td><td style="font-size:.72rem;color:var(--t2)">'+fmtDate(t.created_at)+'</td><td style="font-size:.72rem;color:var(--t2)">'+fmtDate(t.date_fin)+'</td><td>'+actions+'</td></tr>';
+  }).join('');
+}
+function filterClients(){var q=document.getElementById('cl-search').value.toLowerCase();renderClients(ALL_CLIENTS.filter(function(t){return t.nom.toLowerCase().includes(q)||(t.email||'').toLowerCase().includes(q)||(t.instance_name||'').toLowerCase().includes(q);}));}
+function chgSt(id,s){fetch(API+'/admin/tenants/'+id+'/statut',{method:'PATCH',headers:Object.assign({'Content-Type':'application/json'},H),body:JSON.stringify({statut:s})}).then(function(){toast('Statut mis a jour','g');loadStats();}).catch(function(){toast('Erreur','r');});}
+function openPayLink(id){window.open(window.location.protocol+'//'+window.location.hostname+'/dashboard/paiement.html?tenant_id='+id,'_blank');}
+function openNewClient(){document.getElementById('nc-ov').classList.add('on');}
+function createClient(){
+  var n=document.getElementById('nc-n').value.trim(),e=document.getElementById('nc-e').value.trim(),t=document.getElementById('nc-t').value.trim(),i=document.getElementById('nc-i').value.trim(),p=document.getElementById('nc-p').value;
+  if(!n||!i){toast('Nom et instance requis','r');return;}
+  fetch(API+'/admin/tenants',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H),body:JSON.stringify({nom:n,email:e,telephone:t,instance_name:i,plan:p})}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'r');return;}document.getElementById('nc-ov').classList.remove('on');toast('Client cree','g');loadStats();}).catch(function(){toast('Erreur','r');});
+}
+function loadConvs(){
+  document.getElementById('conv-list').innerHTML='<div class="loading">Chargement...</div>';
+  fetch(API+'/admin/conversations',{headers:H}).then(function(r){return r.json();}).then(function(data){
+    ALL_CONVS=data||[];CONV_GROUPS=flattenConvs(ALL_CONVS);
+    document.getElementById('conv-count').textContent='('+Object.keys(CONV_GROUPS).length+' contacts, '+ALL_CONVS.length+' messages)';
+    renderConvList(Object.values(CONV_GROUPS));
+  }).catch(function(){document.getElementById('conv-list').innerHTML='<div class="empty">Erreur chargement</div>';});
+}
+function flattenConvs(data) {
+  var result = {};
+  data.forEach(function(r) {
+    var key, num, msgs = [];
+    if (r.messages && Array.isArray(r.messages)) {
+      num = r.phone || 'inconnu';
+      key = 'boutique1::' + num + '@s.whatsapp.net';
+      for (var i = 0; i < r.messages.length - 1; i += 2) {
+        var u = r.messages[i]; var a = r.messages[i+1];
+        msgs.push({user_message: u ? u.content : '', ai_reply: a ? a.content : '', created_at: r.updated_at});
+      }
+      if (!result[key]) result[key] = {instance:'boutique1', from: num+'@s.whatsapp.net', msgs:[], last: r.updated_at};
+      result[key].msgs = result[key].msgs.concat(msgs);
+    } else {
+      key = (r.instance||'boutique1') + '::' + (r.from||'');
+      if (!result[key]) result[key] = {instance: r.instance||'boutique1', from: r.from||'', msgs:[], last: r.created_at};
+      result[key].msgs.push(r);
+      if (r.created_at > result[key].last) result[key].last = r.created_at;
+    }
+  });
+  return result;
+}
+function renderConvList(groups){
+  var sorted=groups.slice().sort(function(a,b){return new Date(b.last)-new Date(a.last);});
+  if(!sorted.length){document.getElementById('conv-list').innerHTML='<div class="empty">Aucune conversation</div>';return;}
+  document.getElementById('conv-list').innerHTML=sorted.map(function(g){var last=g.msgs[g.msgs.length-1];var num=g.from.replace('@s.whatsapp.net','');return '<div class="conv-row" onclick="openConv(''+g.instance+'',''+g.from+'')"><div class="conv-av">'+initials(num)+'</div><div class="conv-body"><div class="conv-top"><span class="conv-name">+'+num+'</span><span class="conv-time">'+fmtDate(last.created_at)+'</span></div><div class="conv-msg">'+(last.user_message||'').substring(0,50)+'<span class="conv-tag">'+g.instance+'</span></div></div></div>';}).join('');
+}
+function filterConvs(){var q=document.getElementById('conv-search').value.toLowerCase();renderConvList(Object.values(CONV_GROUPS).filter(function(g){return g.from.includes(q)||g.instance.includes(q)||g.msgs.some(function(m){return(m.user_message||'').toLowerCase().includes(q);});}));}
+function openConv(instance,from){
+  CUR_CONV={instance:instance,from:from};
+  var num=from.replace('@s.whatsapp.net','');
+  document.getElementById('conv-head').innerHTML='<h3>+'+num+' <span style="font-size:.68rem;color:var(--t2);font-weight:400">- '+instance+'</span></h3><span style="font-size:.68rem;color:var(--a)">Admin peut repondre</span>';
+  var key=instance+'::'+from;var group=CONV_GROUPS[key];if(!group)return;
+  var sorted=group.msgs.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at);});
+  var msgs=document.getElementById('conv-msgs');
+  msgs.innerHTML=sorted.map(function(m){var u=m.user_message||m.content||'';var a=m.ai_reply||'';return '<div style="display:flex;flex-direction:column;gap:2px">'+(u?'<div class="msg usr">'+u+'</div>':'')+(a?'<div class="msg bot">IA: '+a+'</div>':'')+'</div>';}).join('');
+  setTimeout(function(){msgs.scrollTop=msgs.scrollHeight;},50);
+}
+function sendAdminMsg(){
+  if(!CUR_CONV){toast('Selectionnez une conversation','r');return;}
+  var txt=document.getElementById('msg-input').value.trim();
+  if(!txt)return;
+  fetch(API+'/admin/send-message',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H),body:JSON.stringify({instance:CUR_CONV.instance,number:CUR_CONV.from,text:txt})}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'r');return;}document.getElementById('msg-input').value='';toast('Envoye','g');var msgs=document.getElementById('conv-msgs');msgs.innerHTML+='<div class="msg" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);align-self:flex-end;border-radius:10px 10px 2px 10px;max-width:70%;font-size:.76rem;padding:.45rem .75rem">Admin: '+txt+'</div>';setTimeout(function(){msgs.scrollTop=msgs.scrollHeight;},50);}).catch(function(){toast('Erreur','r');});
+}
+function renderRevenus(){
+  var actifs=ALL_CLIENTS.filter(function(t){return t.statut==='actif';});
+  var byPlan={starter:0,pro:0,business:0};
+  actifs.forEach(function(t){byPlan[t.plan||'pro']++;});
+  document.getElementById('rev-plans').innerHTML=Object.entries(byPlan).map(function(e){var n=e[0],cnt=e[1];var rev=cnt*PLANS[n];var pct=STATS.mrr>0?Math.round(rev/STATS.mrr*100):0;return '<div style="margin-bottom:.8rem"><div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.3rem"><span style="font-weight:600;text-transform:capitalize">'+n+'</span><span style="color:var(--g)">'+fmt(rev)+' FCFA ('+cnt+' clients)</span></div><div style="background:var(--s2);border-radius:4px;height:6px"><div style="background:var(--g);height:6px;border-radius:4px;width:'+pct+'%"></div></div></div>';}).join('');
+  var ra=actifs.length===0?'<div class="empty">Aucun client actif</div>':actifs.map(function(t){return '<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;border-bottom:1px solid var(--br)"><div class="tbl-av">'+initials(t.nom)+'</div><div style="flex:1"><div style="font-size:.76rem;font-weight:600">'+t.nom+'</div><div style="font-size:.67rem;color:var(--t2)">'+(t.instance_name||'-')+'</div></div><div style="font-size:.78rem;font-weight:700;color:var(--g)">'+fmt(PLANS[t.plan||'pro'])+' F</div></div>';}).join('');
+  document.getElementById('rev-actifs').innerHTML=ra;
+}
+function sendBroadcast(){
+  var instance=document.getElementById('bc-instance').value.trim();
+  var target=document.getElementById('bc-target').value;
+  var msg=document.getElementById('bc-msg').value.trim();
+  if(!instance||!msg){toast('Instance et message requis','r');return;}
+  var recipients=[];
+  if(target==='custom'){var num=document.getElementById('bc-num').value.trim();if(!num){toast('Entrez un numero','r');return;}recipients=[num];}
+  else{var filter=target==='all'?'actif':'essai';recipients=ALL_CLIENTS.filter(function(t){return t.statut===filter&&t.telephone;}).map(function(t){return t.telephone;});}
+  if(!recipients.length){toast('Aucun destinataire','r');return;}
+  var status=document.getElementById('bc-status');
+  status.textContent='Envoi en cours ('+recipients.length+' destinataires)...';status.style.color='var(--a)';
+  var sent=0,errors=0;
+  Promise.all(recipients.map(function(num){return fetch(API+'/admin/send-message',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H),body:JSON.stringify({instance:instance,number:num,text:msg})}).then(function(r){return r.json();}).then(function(d){if(d.error)errors++;else sent++;}).catch(function(){errors++;});})).then(function(){status.textContent=sent+' messages envoyes'+(errors?', '+errors+' erreurs':'');status.style.color=errors?'var(--a)':'var(--g)';document.getElementById('bc-msg').value='';});
+}
+loadAll();
+setInterval(loadAll,60000);
+</script>
+</body></html>

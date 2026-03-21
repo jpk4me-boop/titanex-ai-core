@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Titanex AI - Connexion...</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#f0f0f0;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}@keyframes spin{to{transform:rotate(360deg)}}.logo{font-size:1.3rem;font-weight:800;margin-bottom:1rem}.logo em{color:#22c55e;font-style:normal}.msg{color:#888;font-size:.85rem;margin-bottom:1rem}.spinner{width:28px;height:28px;border:3px solid #252525;border-top-color:#22c55e;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}</style>
+</head><body>
+<div>
+  <div class="logo">Titanex <em>AI</em></div>
+  <div class="msg" id="msg">Connexion Google en cours...</div>
+  <div class="spinner"></div>
+</div>
+<script>
+var SUPABASE_URL = 'https://fkhbkxaqlehdlqnybqxt.supabase.co';
+var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZraGJreGFxbGVoZGxxbnlicXh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NDM1MTUsImV4cCI6MjA4NjUxOTUxNX0.2w42p0OGIpdYqK_CY1zWObDQblww6FoZHondualRb8Q';
+var API = window.location.protocol + '//' + window.location.hostname;
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+function setMsg(m){ document.getElementById('msg').textContent = m; }
+
+sb.auth.getSession().then(function(r) {
+  var session = r.data && r.data.session;
+  if (!session) {
+    setMsg('Session introuvable, redirection...');
+    setTimeout(function(){ location.href = '/dashboard/login.html'; }, 2000);
+    return;
+  }
+  var user = session.user;
+  var email = user.email || '';
+  var nom = (user.user_metadata && user.user_metadata.full_name) || email.split('@')[0];
+  setMsg('Compte Google detecte, configuration...');
+
+  fetch(API + '/auth/register', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      nom: nom,
+      email: email,
+      telephone: '',
+      password: 'google_oauth_' + user.id,
+      plan: 'starter',
+      instance_name: 'boutique_' + Date.now()
+    })
+  }).then(function(res){ return res.json(); })
+  .then(function(d) {
+    if (d.token) {
+      sessionStorage.setItem('titanex_token', d.token);
+      sessionStorage.setItem('titanex_user', JSON.stringify(d.tenant));
+      setMsg('Connexion reussie ! Redirection...');
+      setTimeout(function(){
+        if (d.tenant.role === 'admin' || d.tenant.role === 'superadmin') {
+          location.href = '/dashboard/superadmin.html';
+        } else {
+          location.href = '/dashboard/setup.html?instance=' + d.tenant.instance_name;
+        }
+      }, 800);
+    } else if (d.error && d.error.includes('deja inscrit')) {
+      fetch(API + '/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email: email, password: 'google_oauth_' + user.id })
+      }).then(function(res){ return res.json(); })
+      .then(function(d2) {
+        if (d2.token) {
+          sessionStorage.setItem('titanex_token', d2.token);
+          sessionStorage.setItem('titanex_user', JSON.stringify(d2.tenant));
+          setMsg('Connexion reussie !');
+          setTimeout(function(){
+            if (d2.tenant.role === 'admin' || d2.tenant.role === 'superadmin') {
+              location.href = '/dashboard/superadmin.html';
+            } else {
+              location.href = '/dashboard/';
+            }
+          }, 800);
+        } else {
+          setMsg('Erreur: ' + (d2.error || 'Connexion echouee'));
+          setTimeout(function(){ location.href = '/dashboard/login.html'; }, 3000);
+        }
+      });
+    } else {
+      setMsg('Erreur: ' + (d.error || 'Inconnue'));
+      setTimeout(function(){ location.href = '/dashboard/login.html'; }, 3000);
+    }
+  }).catch(function(e) {
+    setMsg('Erreur serveur: ' + e.message);
+    setTimeout(function(){ location.href = '/dashboard/login.html'; }, 3000);
+  });
+});
+</script>
+</body></html>

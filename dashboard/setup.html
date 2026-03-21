@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<script>
+(function(){
+  var token = localStorage.getItem('titanex_token') || sessionStorage.getItem('titanex_token');
+  if (!token) { location.href = '/dashboard/login.html'; return; }
+  fetch(window.location.protocol+'//'+window.location.hostname+'/auth/me', {
+    headers: {'Authorization': 'Bearer ' + token}
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (!d.tenant) { localStorage.removeItem('titanex_token'); sessionStorage.removeItem('titanex_token'); location.href = '/dashboard/login.html'; }
+  }).catch(function(){});
+})();
+</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Titanex AI - Configuration</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--g2:#16a34a;--r:#ef4444;--a:#f59e0b;--t:#f0f0f0;--t2:#888}body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}@keyframes spin{to{transform:rotate(360deg)}}.card{background:var(--s);border:1px solid var(--br);border-radius:20px;padding:2rem;width:100%;max-width:480px;animation:fadeUp .4s ease;box-shadow:0 20px 60px rgba(0,0,0,.5)}.logo{text-align:center;margin-bottom:.5rem}.logo-txt{font-size:1.2rem;font-weight:800}.logo-txt em{color:var(--g);font-style:normal}.step-title{font-size:1.1rem;font-weight:700;margin-bottom:.4rem;text-align:center}.step-sub{font-size:.8rem;color:var(--t2);margin-bottom:1.5rem;text-align:center;line-height:1.5}.progress{display:flex;gap:6px;margin-bottom:1.5rem;justify-content:center}.prog-dot{width:8px;height:8px;border-radius:50%;background:var(--br);transition:all .3s}.prog-dot.on{background:var(--g);width:24px;border-radius:4px}.fld{margin-bottom:1rem}.fld label{display:block;font-size:.72rem;color:var(--t2);margin-bottom:.35rem;font-weight:500}.fld input,.fld select,.fld textarea{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:.72rem 1rem;color:var(--t);font-size:.88rem;outline:none;font-family:inherit;transition:all .2s}.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(34,197,94,.1)}.fld select option{background:var(--s2)}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn-main{width:100%;background:var(--g);color:#000;border:none;border-radius:10px;padding:.88rem;font-weight:800;cursor:pointer;font-size:.92rem;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 15px rgba(34,197,94,.25);margin-top:.5rem}.btn-main:hover{background:var(--g2);transform:translateY(-1px)}.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none}.btn-ghost{width:100%;background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:10px;padding:.75rem;font-weight:600;cursor:pointer;font-size:.85rem;font-family:inherit;margin-top:.5rem}.btn-ghost:hover{border-color:var(--t2)}.msg{border-radius:10px;padding:.7rem 1rem;font-size:.8rem;margin-bottom:1rem;display:none}.msg.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--r)}.msg.ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:var(--g)}.spinner{width:18px;height:18px;border:2.5px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite}.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}.plan-card{background:var(--s2);border:2px solid var(--br);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;text-align:center}.plan-card:hover{border-color:rgba(34,197,94,.4)}.plan-card.on{border-color:var(--g);background:rgba(34,197,94,.05)}.plan-name{font-size:.82rem;font-weight:700;margin-bottom:.3rem}.plan-price{font-size:.75rem;color:var(--g);font-weight:700}.plan-desc{font-size:.65rem;color:var(--t2);margin-top:.2rem}</style>
+</head><body>
+<div class="card">
+  <div class="logo"><div class="logo-txt">Titanex <em>AI</em></div></div>
+  <div id="msg" class="msg"></div>
+
+  <div id="step1">
+    <div class="progress"><div class="prog-dot on"></div><div class="prog-dot"></div><div class="prog-dot"></div></div>
+    <div class="step-title">Votre profil</div>
+    <div class="step-sub">Personnalisez votre agent IA WhatsApp</div>
+    <div class="row2">
+      <div class="fld"><label>Prenom *</label><input id="s-prenom" placeholder="Amadou"></div>
+      <div class="fld"><label>Nom *</label><input id="s-nom" placeholder="Diallo"></div>
+    </div>
+    <div class="fld"><label>Telephone WhatsApp *</label><input id="s-tel" placeholder="237672482763" type="tel"></div>
+    <div class="fld"><label>Pays</label>
+      <select id="s-pays">
+        <option value="CM">Cameroun</option><option value="CI">Cote d Ivoire</option>
+        <option value="SN">Senegal</option><option value="CG">Congo</option>
+        <option value="CD">RD Congo</option><option value="TG">Togo</option>
+        <option value="BJ">Benin</option><option value="FR">France</option>
+      </select>
+    </div>
+    <button class="btn-main" onclick="goStep2()">Continuer</button>
+  </div>
+
+  <div id="step2" style="display:none">
+    <div class="progress"><div class="prog-dot"></div><div class="prog-dot on"></div><div class="prog-dot"></div></div>
+    <div class="step-title">Votre boutique</div>
+    <div class="step-sub">Ces infos configurent votre agent IA</div>
+    <div class="fld"><label>Nom de votre boutique *</label><input id="s-boutique" placeholder="Ma Super Boutique"></div>
+    <div class="fld"><label>Type de boutique *</label>
+      <select id="s-type">
+        <option value="">-- Choisir --</option>
+        <option>Artisanat et accessoires</option>
+        <option>Mode et vetements</option>
+        <option>Cosmetiques et beaute</option>
+        <option>Alimentation</option>
+        <option>Electronique</option>
+        <option>Services</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <div class="fld"><label>Description de votre activite</label>
+      <textarea id="s-desc" rows="3" placeholder="Ex: Boutique en ligne au Cameroun..."></textarea>
+    </div>
+    <button class="btn-main" onclick="goStep3()">Continuer</button>
+    <button class="btn-ghost" onclick="goStep(1)">Retour</button>
+  </div>
+
+  <div id="step3" style="display:none">
+    <div class="progress"><div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot on"></div></div>
+    <div class="step-title">Choisir votre plan</div>
+    <div class="step-sub">7 jours d essai gratuit - sans carte bancaire</div>
+    <div class="plan-grid">
+      <div class="plan-card" id="plan-starter" onclick="selectPlan('starter')">
+        <div class="plan-name">Starter</div><div class="plan-price">9 900 F</div><div class="plan-desc">1 agent</div>
+      </div>
+      <div class="plan-card on" id="plan-pro" onclick="selectPlan('pro')">
+        <div class="plan-name">Pro</div><div class="plan-price">24 900 F</div><div class="plan-desc">3 agents</div>
+      </div>
+      <div class="plan-card" id="plan-business" onclick="selectPlan('business')">
+        <div class="plan-name">Business</div><div class="plan-price">49 900 F</div><div class="plan-desc">5 agents</div>
+      </div>
+    </div>
+    <button class="btn-main" id="btn-finish" onclick="finishSetup()">Lancer mon agent IA</button>
+    <button class="btn-ghost" onclick="goStep(2)">Retour</button>
+  </div>
+</div>
+
+<script>
+var API = window.location.protocol + '//' + window.location.hostname;
+var PLAN = 'pro';
+var token = localStorage.getItem('titanex_token') || sessionStorage.getItem('titanex_token');
+var user = JSON.parse(localStorage.getItem('titanex_user') || sessionStorage.getItem('titanex_user') || '{}');
+var instance = new URLSearchParams(window.location.search).get('instance') || user.instance_name || '';
+if (!token) { location.href = '/dashboard/login.html'; }
+
+function showMsg(m,t){var e=document.getElementById('msg');e.textContent=m;e.className='msg '+t;e.style.display='block';}
+function goStep(n){[1,2,3].forEach(function(i){document.getElementById('step'+i).style.display=n===i?'block':'none';});document.getElementById('msg').style.display='none';}
+function goStep2(){var p=document.getElementById('s-prenom').value.trim(),n=document.getElementById('s-nom').value.trim(),t=document.getElementById('s-tel').value.trim();if(!p||!n||!t){showMsg('Remplissez tous les champs','err');return;}goStep(2);}
+function goStep3(){var b=document.getElementById('s-boutique').value.trim(),t=document.getElementById('s-type').value;if(!b||!t){showMsg('Remplissez nom et type de boutique','err');return;}goStep(3);}
+function selectPlan(p){PLAN=p;document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('on');});document.getElementById('plan-'+p).classList.add('on');}
+
+function finishSetup(){
+  var prenom=document.getElementById('s-prenom').value.trim();
+  var nom=document.getElementById('s-nom').value.trim();
+  var tel=document.getElementById('s-tel').value.trim();
+  var boutique=document.getElementById('s-boutique').value.trim();
+  var type=document.getElementById('s-type').value;
+  var desc=document.getElementById('s-desc').value.trim();
+  var btn=document.getElementById('btn-finish');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div>';
+  var prompt='Tu es un agent de vente IA pour '+boutique+' ('+type+'). '+(desc?desc+' ':'')+' Reponds en francais, sois chaleureux et vends efficacement.';
+  fetch(API+'/admin/tenants/'+user.id+'/setup',{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:JSON.stringify({nom:prenom+' '+nom+' - '+boutique,telephone:tel,plan:PLAN,system_prompt:prompt})
+  }).then(function(r){return r.json();}).then(function(d){
+    btn.disabled=false;btn.innerHTML='Lancer mon agent IA';
+    if(d.error){showMsg(d.error,'err');return;}
+    showMsg('Profil configure ! Connexion WhatsApp...','ok');
+    setTimeout(function(){location.href='/dashboard/qr-connect.html?instance='+instance;},1000);
+  }).catch(function(){btn.disabled=false;btn.innerHTML='Lancer mon agent IA';showMsg('Erreur, reessayez','err');});
+}
+</script>
+</body></html>

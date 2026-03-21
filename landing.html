@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Titanex AI — Automatisez vos ventes WhatsApp</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{brand:'#22c55e','brand-dark':'#16a34a'},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+@keyframes typing{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.float{animation:float 5s ease-in-out infinite}
+.pulse-dot{animation:pulse-dot 2s infinite}
+.typing span{animation:typing 1.3s ease infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+.fade-up{animation:fadeUp .6s ease forwards;opacity:0}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased overflow-x-hidden">
+
+<!-- NAV -->
+<nav style="position:sticky;top:0;z-index:100;background:#0a0a0a;border-bottom:1px solid #1a1a1a;height:60px;display:flex;align-items:center;padding:0 4%;gap:16px">
+  <div style="display:flex;align-items:center;gap:8px;margin-right:24px;flex-shrink:0">
+    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px">🤖</div>
+    <span style="font-weight:700;color:#fff;font-size:15px;letter-spacing:-.02em">Titanex <span style="color:#22c55e">AI</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:2px;flex:1">
+    <button onclick="scrollSec('features')" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Fonctionnalités</button>
+    <button onclick="scrollSec('tarifs')" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Tarifs</button>
+    <button onclick="scrollSec('demo')" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Démo</button>
+    <button onclick="location.href='/dashboard/'" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Boutique</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:4px;margin-left:auto">
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:#141414;border:1px solid #2a2a2a;cursor:pointer" onclick="document.getElementById('dw-inp')&&document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span style="font-size:11px;color:#555">Rechercher</span>
+      <kbd style="font-size:9px;background:#1e1e1e;border:1px solid #333;color:#555;padding:1px 5px;border-radius:4px;font-family:monospace">⌘K</kbd>
+    </div>
+    <div style="width:1px;height:16px;background:#2a2a2a;margin:0 4px"></div>
+    <button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'" title="Partager">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'" title="Favoris">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'" title="Panier">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </button>
+    <button id="lang-btn" onclick="toggleLang()" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    </button>
+    <div style="width:1px;height:16px;background:#2a2a2a;margin:0 4px"></div>
+    <button onclick="location.href='/dashboard/login.html'" style="padding:6px 14px;border-radius:8px;background:transparent;border:1px solid #2a2a2a;color:#a3a3a3;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#22c55e';this.style.color='#22c55e'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#a3a3a3'">Se connecter</button>
+    <button onclick="location.href='/dashboard/inscription.html'" style="padding:7px 18px;border-radius:8px;background:#22c55e;color:#000;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap" onmouseover="this.style.background='#16a34a';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#22c55e';this.style.transform='translateY(0)'">Essai gratuit 7 jours 🚀</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
+  <div class="space-y-8">
+    <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/25 rounded-full px-4 py-2 text-sm text-brand font-semibold">
+      <span class="w-2 h-2 bg-brand rounded-full pulse-dot"></span>
+      Powered by AI · Instant Setup
+    </div>
+    <h1 class="text-5xl md:text-6xl font-bold leading-[1.05] tracking-tight">
+      Automatisez<br>vos ventes<br><span class="text-brand">WhatsApp</span>
+    </h1>
+    <p class="text-lg text-gray-400 leading-relaxed max-w-md">
+      L'IA qui vend, encaisse et relance directement depuis votre WhatsApp. Zéro configuration complexe.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <span class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-400">
+        <i data-lucide="settings" class="w-3.5 h-3.5 text-brand"></i> Zéro Configuration
+      </span>
+      <span class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-400">
+        <i data-lucide="qr-code" class="w-3.5 h-3.5 text-brand"></i> Connexion QR Code
+      </span>
+      <span class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-400">
+        <i data-lucide="credit-card" class="w-3.5 h-3.5 text-brand"></i> Paiements MoMo
+      </span>
+    </div>
+    <div class="flex flex-wrap gap-4">
+      <button onclick="location.href='/dashboard/inscription.html'" class="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-brand text-black font-bold text-base hover:bg-brand-dark hover:-translate-y-0.5 transition-all shadow-xl shadow-brand/30">
+        <i data-lucide="rocket" class="w-5 h-5"></i> Lancer mon agent IA
+      </button>
+      <button onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-gray-700 text-white font-semibold text-base hover:border-brand/50 hover:text-brand transition-all">
+        <i data-lucide="play-circle" class="w-5 h-5"></i> Voir la Démo
+      </button>
+    </div>
+  </div>
+
+  <!-- Chat Demo -->
+  <div class="flex flex-col items-end gap-3">
+    <div class="flex items-center gap-2 bg-brand/10 border border-brand/25 rounded-full px-4 py-1.5 text-xs text-brand font-semibold">
+      <span class="w-1.5 h-1.5 bg-brand rounded-full pulse-dot"></span>
+      Agent Titanex IA — En ligne
+    </div>
+    <div class="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-3xl p-5 shadow-2xl shadow-black/60 float">
+      <div class="flex items-center gap-3 pb-4 mb-4 border-b border-gray-800">
+        <div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-black font-bold text-sm">IA</div>
+        <div>
+          <div class="font-bold text-sm">Agent Titanex IA</div>
+          <div class="flex items-center gap-1.5 text-xs text-brand">
+            <span class="w-1.5 h-1.5 bg-brand rounded-full pulse-dot"></span> En ligne
+          </div>
+        </div>
+        <div class="ml-auto bg-brand/10 border border-brand/20 text-brand text-xs font-bold px-2.5 py-1 rounded-full">+340% 📈</div>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] text-gray-300">
+          Vous avez les bagues en 42 ?
+          <div class="text-xs text-gray-600 mt-1">08:11</div>
+        </div>
+        <div class="bg-brand rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%] ml-auto text-black font-semibold">
+          Oui ! En stock 📦 Expédition demain.
+          <div class="text-xs text-black/50 mt-1 text-right">08:11 ✓</div>
+        </div>
+        <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] text-gray-300">
+          Combien ?
+          <div class="text-xs text-gray-600 mt-1">08:12</div>
+        </div>
+        <div class="bg-brand rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%] ml-auto text-black font-semibold">
+          45 000 XAF → Lien de paiement ↓
+          <div class="text-xs text-black/50 mt-1 text-right">08:12 ✓✓</div>
+        </div>
+        <div class="flex gap-1 px-3 py-2 bg-gray-800 rounded-full w-fit typing">
+          <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
+          <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
+          <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-1.5 text-xs text-brand font-semibold">
+      🛡️ Toujours actif
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="border-y border-gray-800 bg-gray-900/50">
+  <div class="max-w-5xl mx-auto px-6 py-10 flex flex-wrap justify-center gap-12">
+    <div class="text-center"><div class="text-4xl font-bold text-brand">+340%</div><div class="text-sm text-gray-500 mt-1">Taux de conversion</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">24h/24</div><div class="text-sm text-gray-500 mt-1">Disponibilité</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">&lt;3s</div><div class="text-sm text-gray-500 mt-1">Temps de réponse</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">+200</div><div class="text-sm text-gray-500 mt-1">Commerçants actifs</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">5min</div><div class="text-sm text-gray-500 mt-1">Pour démarrer</div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="bg-gray-900/30 border-b border-gray-800 py-24">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
+      <i data-lucide="map" class="w-3.5 h-3.5"></i> Comment ça marche
+    </div>
+    <h2 class="text-4xl font-bold mb-16 tracking-tight">3 étapes pour <span class="text-brand">vendre en automatique</span></h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 relative hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-brand/30">1</div>
+        <div class="text-3xl mb-5 mt-2">🏪</div>
+        <h3 class="font-bold text-base mb-3">Configurez votre Boutique</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-4">Créez votre catalogue, définissez le script de vente de votre agent.</p>
+        <div class="text-xs text-gray-600 border-t border-gray-800 pt-3 leading-relaxed">Ajoutez vos produits avec photos et prix depuis le dashboard.</div>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 relative hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-brand/30">2</div>
+        <div class="text-3xl mb-5 mt-2">📱</div>
+        <h3 class="font-bold text-base mb-3">Liez votre WhatsApp</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-4">Scannez le QR Code avec votre WhatsApp Business. L'IA devient une extension de votre numéro.</p>
+        <div class="text-xs text-gray-600 border-t border-gray-800 pt-3 leading-relaxed">QR Code unique. Multi-Device : actif même téléphone éteint.</div>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 relative hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-brand/30">3</div>
+        <div class="text-3xl mb-5 mt-2">🚀</div>
+        <h3 class="font-bold text-base mb-3">Laissez l'IA travailler</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-4">L'agent répond, présente les produits, envoie les liens de paiement 24h/24.</p>
+        <div class="text-xs text-gray-600 border-t border-gray-800 pt-3 leading-relaxed">Actif sur le cloud Titanex, même si votre téléphone est hors ligne.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="py-24">
+  <div class="max-w-xl mx-auto px-6 text-center">
+    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
+      <i data-lucide="zap" class="w-3.5 h-3.5"></i> Démo en direct
+    </div>
+    <h2 class="text-4xl font-bold mb-4 tracking-tight">Voyez l'IA en <span class="text-brand">action</span></h2>
+    <p class="text-gray-400 mb-10">Testez directement avec votre question.</p>
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/40">
+      <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-800">
+        <div class="w-9 h-9 rounded-full bg-brand flex items-center justify-center text-black font-bold text-sm">IA</div>
+        <div class="text-left">
+          <div class="font-bold text-sm">Titanex AI ✓</div>
+          <div class="flex items-center gap-1.5 text-xs text-brand"><span class="w-1.5 h-1.5 bg-brand rounded-full pulse-dot"></span> En ligne</div>
+        </div>
+      </div>
+      <div id="dw-msgs" class="p-5 flex flex-col gap-3 max-h-72 overflow-y-auto text-sm">
+        <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-gray-300">
+          Votre IA peut répondre à mes clients sur WhatsApp ?
+          <div class="text-xs text-gray-600 mt-1">08:11</div>
+        </div>
+        <div class="bg-brand rounded-2xl rounded-tr-sm px-4 py-3 max-w-[85%] ml-auto text-black font-semibold">
+          Absolument ! 🎯 Notre agent répond 24h/24, gère les questions, prend les commandes et encaisse les paiements.
+          <div class="text-xs text-black/50 mt-1 text-right">08:11 ✓✓</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 px-5 py-4 border-t border-gray-800">
+        <input id="dw-inp" type="text" placeholder="Posez une question..." onkeydown="if(event.key==='Enter')sendDemo()" class="flex-1 bg-gray-800 border border-gray-700 rounded-2xl px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-brand/50 transition-colors">
+        <button onclick="sendDemo()" class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center hover:bg-brand-dark transition-colors flex-shrink-0">
+          <i data-lucide="send" class="w-4 h-4 text-black"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="bg-gray-900/30 border-y border-gray-800 py-24">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Fonctionnalités
+    </div>
+    <h2 class="text-4xl font-bold mb-16 tracking-tight">Ce qui nous rend <span class="text-brand">uniques</span></h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">🤖</div>
+        <h3 class="font-bold text-base mb-3">Agent Vendeur Autonome</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-5">L'IA comprend le langage naturel, gère les objections et propose le bon produit automatiquement.</p>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Compréhension du langage naturel</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion intelligente des objections</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Recommandation de produits</li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">💳</div>
+        <h3 class="font-bold text-base mb-3">Paiements Mobile Money</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-5">L'IA génère automatiquement un lien de paiement Orange Money, MTN MoMo ou Wave.</p>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Orange Money, MTN MoMo, Wave</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Confirmation instantanée</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Historique des paiements</li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">📦</div>
+        <h3 class="font-bold text-base mb-3">Catalogue Intelligent</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-5">Gérez vos produits avec photos, prix et descriptions. L'agent les présente automatiquement.</p>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Photos et vidéos produits</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion des stocks</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimité</li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
+        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">📊</div>
+        <h3 class="font-bold text-base mb-3">Dashboard Complet</h3>
+        <p class="text-sm text-gray-400 leading-relaxed mb-5">Suivez vos conversations, clients et ventes en temps réel depuis votre tableau de bord.</p>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Statistiques en temps réel</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion des clients</li>
+          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Historique des conversations</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="tarifs" class="py-24">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
+      <i data-lucide="tag" class="w-3.5 h-3.5"></i> Tarification
+    </div>
+    <h2 class="text-4xl font-bold mb-3 tracking-tight">Tarification simple et <span class="text-brand">transparente</span></h2>
+    <p class="text-gray-400 mb-10">7 jours d'essai gratuit — aucune carte bancaire requise.</p>
+    <div class="grid md:grid-cols-3 gap-6 text-left">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 transition-all">
+        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">Starter</div>
+        <div class="text-5xl font-bold mb-1">9 900 <span class="text-lg font-normal text-gray-500">XAF</span></div>
+        <div class="text-xs text-gray-600 mb-6">/ mois</div>
+        <button onclick="location.href='/dashboard/inscription.html?plan=starter&prix=9900'" class="w-full py-3 rounded-xl border border-gray-700 text-sm font-bold hover:border-brand hover:text-brand transition-all mb-6">Commencer gratuitement</button>
+        <div class="text-xs text-center text-gray-600 mb-6">7 jours gratuits</div>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 1 agent WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 1 compte WhatsApp connecté</li>
+          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 3 000 crédits/mois</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimité</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Réponses 24h/24</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Paiements Mobile Money</li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 border-2 border-brand rounded-2xl p-8 relative -translate-y-2 shadow-2xl shadow-brand/20">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand text-black text-xs font-bold px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap">⭐ 82% choisissent ce plan</div>
+        <div class="text-xs text-brand uppercase tracking-wider font-semibold mb-3">Pro</div>
+        <div class="text-5xl font-bold mb-1">24 900 <span class="text-lg font-normal text-gray-500">XAF</span></div>
+        <div class="text-xs text-gray-600 mb-6">/ mois</div>
+        <button onclick="location.href='/dashboard/inscription.html?plan=pro&prix=24900'" class="w-full py-3 rounded-xl bg-brand text-black text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/25 mb-6">Commencer gratuitement</button>
+        <div class="text-xs text-center text-gray-600 mb-6">7 jours gratuits</div>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 2 agents WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 2 comptes WhatsApp connectés</li>
+          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 10 000 crédits/mois</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimité</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Réponses 24h/24</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Analyses &amp; rapports</li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 transition-all">
+        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">Business</div>
+        <div class="text-5xl font-bold mb-1">49 900 <span class="text-lg font-normal text-gray-500">XAF</span></div>
+        <div class="text-xs text-gray-600 mb-6">/ mois</div>
+        <button onclick="location.href='/dashboard/inscription.html?plan=business&prix=49900'" class="w-full py-3 rounded-xl border border-gray-700 text-sm font-bold hover:border-brand hover:text-brand transition-all mb-6">Commencer gratuitement</button>
+        <div class="text-xs text-center text-gray-600 mb-6">7 jours gratuits</div>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 4 agents WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 4 comptes WhatsApp connectés</li>
+          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 50 000 crédits/mois</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Marque blanche</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Accompagnement VIP</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Support dédié 24h/24</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="grid md:grid-cols-3 gap-6 mt-16 text-left">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <div class="text-yellow-400 text-sm mb-3">★★★★★</div>
+        <p class="text-sm text-gray-400 leading-relaxed italic mb-4">"Mes ventes ont augmenté de 60% en 2 mois. Mon agent répond même quand je dors !"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-xs font-bold text-brand">FM</div>
+          <div><div class="text-sm font-semibold">Fatima M.</div><div class="text-xs text-gray-500">Boutique mode, Douala</div></div>
+        </div>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <div class="text-yellow-400 text-sm mb-3">★★★★★</div>
+        <p class="text-sm text-gray-400 leading-relaxed italic mb-4">"L'agent présente mes produits parfaitement. Clients reçoivent photos et prix en secondes !"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-xs font-bold text-brand">PO</div>
+          <div><div class="text-sm font-semibold">Paul O.</div><div class="text-xs text-gray-500">Electronique, Yaounde</div></div>
+        </div>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <div class="text-yellow-400 text-sm mb-3">★★★★★</div>
+        <p class="text-sm text-gray-400 leading-relaxed italic mb-4">"Setup en 10 minutes, premier client automatisé dans l'heure. Je recommande !"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-xs font-bold text-brand">AS</div>
+          <div><div class="text-sm font-semibold">Aminata S.</div><div class="text-xs text-gray-500">Cosmétiques, Dakar</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bg-gradient-to-br from-brand/10 via-gray-950 to-gray-950 border-t border-gray-800 py-24 text-center">
+  <div class="max-w-2xl mx-auto px-6">
+    <h2 class="text-5xl font-bold mb-4 tracking-tight leading-tight">
+      Votre WhatsApp vend<br><span class="text-brand">pendant que vous dormez</span>
+    </h2>
+    <p class="text-gray-400 mb-10">+200 commerçants africains qui vendent 24h/24. 7 jours gratuits, sans carte bancaire.</p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <button onclick="location.href='/dashboard/inscription.html'" class="flex items-center gap-2 px-8 py-4 rounded-2xl bg-brand text-black font-bold text-base hover:bg-brand-dark hover:-translate-y-0.5 transition-all shadow-xl shadow-brand/30">
+        <i data-lucide="rocket" class="w-5 h-5"></i> Démarrer mon essai gratuit
+      </button>
+      <button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="flex items-center gap-2 px-8 py-4 rounded-2xl border border-gray-700 text-white font-semibold text-base hover:border-brand/50 hover:text-brand transition-all">
+        <i data-lucide="message-circle" class="w-5 h-5"></i> Nous contacter
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-gray-900 border-t border-gray-800 py-14">
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-10 mb-10">
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center text-black font-bold text-sm">T</div>
+        <span class="font-bold">Titanex <span class="text-brand">AI</span></span>
+      </div>
+      <p class="text-sm text-gray-500 leading-relaxed">La plateforme d'agent commercial IA pour WhatsApp conçue pour les entrepreneurs africains.</p>
+    </div>
+    <div>
+      <h4 class="text-xs text-gray-600 uppercase tracking-wider font-bold mb-4">Produit</h4>
+      <div class="space-y-2">
+        <button onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})" class="block text-sm text-gray-500 hover:text-brand transition-colors">Fonctionnalités</button>
+        <button onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})" class="block text-sm text-gray-500 hover:text-brand transition-colors">Tarifs</button>
+        <button onclick="location.href='/dashboard/'" class="block text-sm text-gray-500 hover:text-brand transition-colors">Dashboard</button>
+      </div>
+    </div>
+    <div>
+      <h4 class="text-xs text-gray-600 uppercase tracking-wider font-bold mb-4">Démarrer</h4>
+      <div class="space-y-2">
+        <button onclick="location.href='/dashboard/inscription.html'" class="block text-sm text-gray-500 hover:text-brand transition-colors">S'inscrire</button>
+        <button onclick="location.href='/dashboard/login.html'" class="block text-sm text-gray-500 hover:text-brand transition-colors">Se connecter</button>
+      </div>
+    </div>
+    <div>
+      <h4 class="text-xs text-gray-600 uppercase tracking-wider font-bold mb-4">Contact</h4>
+      <div class="space-y-2">
+        <button onclick="location.href='https://wa.me/237672482763'" class="block text-sm text-gray-500 hover:text-brand transition-colors">WhatsApp</button>
+        <button onclick="location.href='mailto:contact@titanexai.com'" class="block text-sm text-gray-500 hover:text-brand transition-colors">Email</button>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto px-6 border-t border-gray-800 pt-6 flex items-center justify-between">
+    <span class="text-xs text-gray-600">© 2026 Titanex AI</span>
+    <span class="text-xs text-gray-600">Made with ❤️ for Africa 🌍</span>
+  </div>
+</footer>
+
+<!-- WhatsApp Float -->
+<button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-xl shadow-green-500/40 hover:scale-110 transition-transform z-50">
+  <i data-lucide="message-circle" class="w-7 h-7 text-white"></i>
+</button>
+
+<script>
+var demoR=[
+  "Absolument ! 🎯 Notre agent répond 24h/24 et encaisse les paiements automatiquement.",
+  "Aucune limite ! 📦 Catalogue illimité avec photos, descriptions et prix.",
+  "Simple ! 💳 L'IA génère un lien Orange Money, MTN MoMo ou Wave en secondes.",
+  "Setup en 5 minutes ! Scannez le QR Code et votre agent est opérationnel."
+];
+var demoI=0;
+function sendDemo(){
+  var inp=document.getElementById("dw-inp"),val=inp.value.trim();
+  if(!val)return;
+  var w=document.getElementById("dw-msgs");
+  var d=document.createElement("div");
+  d.className="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-gray-300 text-sm";
+  d.innerHTML=val+'<div class="text-xs text-gray-600 mt-1">maintenant</div>';
+  w.appendChild(d);inp.value="";w.scrollTop=w.scrollHeight;
+  setTimeout(function(){
+    var d2=document.createElement("div");
+    d2.className="bg-brand rounded-2xl rounded-tr-sm px-4 py-3 max-w-[85%] ml-auto text-black font-semibold text-sm";
+    d2.innerHTML=demoR[demoI%demoR.length]+'<div class="text-xs text-black/50 mt-1 text-right">maintenant ✓✓</div>';
+    w.appendChild(d2);w.scrollTop=w.scrollHeight;demoI++;
+  },1000);
+}
+function scrollSec(id){
+  var el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+var _lang='fr';
+function toggleLang(){
+  _lang=_lang==='fr'?'en':'fr';
+  document.getElementById('lang-btn').title=_lang==='fr'?'Français':'English';
+}
+window.addEventListener('load',function(){lucide.createIcons();});
+</script>
+</body>
+</html>

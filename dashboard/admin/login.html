@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Titanex AI — Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--g2:#16a34a;--r:#ef4444;--t:#f0f0f0;--t2:#888}
+body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.card{background:var(--s);border:1px solid var(--br);border-radius:16px;padding:2rem;width:100%;max-width:360px;animation:fadeUp .4s ease}
+.logo{text-align:center;margin-bottom:2rem}
+.logo-icon{font-size:2rem;margin-bottom:.5rem}
+.logo-txt{font-size:1.3rem;font-weight:800}
+.logo-txt em{color:var(--g);font-style:normal}
+.logo-sub{font-size:.72rem;color:var(--t2);margin-top:4px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:20px;padding:.2rem .7rem;display:inline-block}
+.field{margin-bottom:1.2rem}
+.field label{display:block;font-size:.73rem;color:var(--t2);margin-bottom:.3rem;font-weight:500}
+.pw-wrap{position:relative}
+.field input{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:.7rem .9rem;color:var(--t);font-size:.88rem;outline:none;font-family:inherit;transition:border-color .2s}
+.field input:focus{border-color:var(--g)}
+.eye{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--t2);font-size:.9rem;user-select:none}
+.btn{width:100%;background:var(--g);color:#000;border:none;border-radius:10px;padding:.85rem;font-weight:800;cursor:pointer;font-size:.92rem;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{background:var(--g2);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:spin .8s linear infinite}
+.error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.65rem .9rem;font-size:.78rem;color:var(--r);margin-bottom:1rem;display:none}
+.back{text-align:center;margin-top:1.2rem;font-size:.75rem;color:var(--t2)}
+.back a{color:var(--g);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">⚙️</div>
+    <div class="logo-txt">Titanex <em>AI</em></div>
+    <div class="logo-sub">🔒 Accès administrateur</div>
+  </div>
+
+  <div class="error" id="err"></div>
+
+  <div class="field">
+    <label>Mot de passe administrateur</label>
+    <div class="pw-wrap">
+      <input id="inp-pw" type="password" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')login()">
+      <span class="eye" onclick="togglePw()">👁</span>
+    </div>
+  </div>
+
+  <button class="btn" id="btn" onclick="login()">
+    <span id="btn-txt">Accéder au panel</span>
+  </button>
+
+  <div class="back"><a href="/">← Retour à l'accueil</a></div>
+</div>
+
+<script>
+// Déjà connecté admin ?
+if (sessionStorage.getItem('titanex_admin') === 'true') {
+  window.location.href = '/dashboard/admin/';
+}
+
+function togglePw() {
+  var i = document.getElementById('inp-pw');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+async function login() {
+  var pw = document.getElementById('inp-pw').value.trim();
+  if (!pw) { showErr('Entrez le mot de passe'); return; }
+  var btn = document.getElementById('btn');
+  btn.disabled = true;
+  document.getElementById('btn-txt').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('err').style.display = 'none';
+
+  try {
+    var r = await fetch('/admin/auth/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    var d = await r.json();
+    if (!r.ok || d.error) { showErr(d.error || 'Mot de passe incorrect'); return; }
+    sessionStorage.setItem('titanex_admin', 'true');
+    sessionStorage.setItem('titanex_admin_key', pw);
+    window.location.href = '/dashboard/admin/';
+  } catch(e) {
+    showErr('Erreur réseau. Réessayez.');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('btn-txt').textContent = 'Accéder au panel';
+  }
+}
+
+function showErr(msg) {
+  var el = document.getElementById('err');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
+ENDOFFILEcat > /root/TitanexAI/dashboard/admin/index.html << 'ENDOFFILE'
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Titanex AI — Panel Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--g2:#16a34a;--r:#ef4444;--a:#f59e0b;--b:#3b82f6;--p:#8b5cf6;--t:#f0f0f0;--t2:#888;--t3:#444}
+body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;min-height:100vh}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOPBAR */
+.topb{height:52px;background:var(--s);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 1.5rem;gap:12px;position:sticky;top:0;z-index:50}
+.logo{font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.logo em{color:var(--g);font-style:normal}
+.admin-badge{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--r);border-radius:20px;padding:.18rem .7rem;font-size:.68rem;font-weight:700}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;background:var(--g);border-radius:50%;animation:pulse 2s infinite}
+.btn-sm{background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:6px;padding:.25rem .7rem;cursor:pointer;font-size:.73rem;font-family:inherit;transition:all .15s}
+.btn-sm:hover{border-color:var(--r);color:var(--r)}
+
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:200px;background:var(--s);border-right:1px solid var(--br);padding:.8rem 0;flex-shrink:0}
+.nav-item{display:flex;align-items:center;gap:9px;padding:.55rem 1.1rem;color:var(--t2);font-size:.82rem;cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{background:var(--s2);color:var(--t)}
+.nav-item.on{background:rgba(34,197,94,.06);color:var(--g);border-left-color:var(--g);font-weight:600}
+.nav-sep{height:1px;background:var(--br);margin:.5rem 1.1rem}
+.nav-lbl{font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:.5rem 1.1rem .2rem}
+.main{flex:1;padding:1.8rem;overflow-y:auto}
+
+/* PAGES */
+.pg{display:none}
+.pg.on{display:block;animation:fadeUp .3s ease}
+.pg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.pg-title{font-size:1.05rem;font-weight:700}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+.stat{background:var(--s);border:1px solid var(--br);border-radius:10px;padding:1rem;position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.stat.g::after{background:linear-gradient(90deg,var(--g),#4ade80)}
+.stat.b::after{background:linear-gradient(90deg,var(--b),#60a5fa)}
+.stat.a::after{background:linear-gradient(90deg,var(--a),#fbbf24)}
+.stat.r::after{background:linear-gradient(90deg,var(--r),#f87171)}
+.stat.p::after{background:linear-gradient(90deg,var(--p),#a78bfa)}
+.stat-lb{font-size:.68rem;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem}
+.stat-v{font-size:1.8rem;font-weight:800;line-height:1}
+.stat.g .stat-v{color:var(--g)}
+.stat.b .stat-v{color:var(--b)}
+.stat.a .stat-v{color:var(--a)}
+.stat.r .stat-v{color:var(--r)}
+.stat.p .stat-v{color:var(--p)}
+.stat-s{font-size:.68rem;color:var(--t3);margin-top:.2rem}
+
+/* CARD */
+.card{background:var(--s);border:1px solid var(--br);border-radius:10px;margin-bottom:1.2rem;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--br)}
+.card-head h3{font-size:.85rem;font-weight:600}
+.card-body{padding:1rem}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.79rem}
+.tbl th{text-align:left;padding:.6rem .8rem;color:var(--t2);font-weight:600;font-size:.69rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--br)}
+.tbl td{padding:.7rem .8rem;border-bottom:1px solid #16191f;vertical-align:middle}
+.tbl tr:last-child td{border:none}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;border-radius:20px;padding:.18rem .55rem;font-size:.67rem;font-weight:600}
+.badge::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor}
+.badge-actif{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--g)}
+.badge-essai{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--a)}
+.badge-suspendu{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--r)}
+.badge-expire{background:rgba(100,100,100,.1);border:1px solid rgba(100,100,100,.2);color:var(--t3)}
+
+/* BUTTONS */
+.btn-act{border:1px solid var(--br);border-radius:5px;padding:.2rem .5rem;font-size:.68rem;cursor:pointer;font-family:inherit;background:transparent;color:var(--t2);transition:all .15s}
+.btn-act:hover{border-color:var(--g);color:var(--g)}
+.btn-act.danger:hover{border-color:var(--r);color:var(--r)}
+.btn-primary{background:var(--g);color:#000;border:none;border-radius:7px;padding:.38rem .85rem;font-weight:700;cursor:pointer;font-size:.79rem;font-family:inherit;transition:all .15s}
+.btn-primary:hover{background:var(--g2)}
+.btn-ghost{background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:7px;padding:.38rem .85rem;font-weight:600;cursor:pointer;font-size:.79rem;font-family:inherit;transition:all .15s}
+.btn-ghost:hover{border-color:var(--g);color:var(--g)}
+
+/* FORM */
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:.71rem;color:var(--t2);margin-bottom:.28rem;font-weight:500}
+.field input,.field select,.field textarea{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:7px;padding:.58rem .85rem;color:var(--t);font-size:.83rem;outline:none;font-family:inherit;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--g)}
+.field select option{background:var(--s2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem;backdrop-filter:blur(4px)}
+.modal-bg.on{display:flex}
+.modal{background:var(--s);border:1px solid var(--br);border-radius:14px;padding:1.8rem;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.3rem}
+.modal-head h3{font-size:.92rem;font-weight:700}
+.close-btn{background:transparent;border:1px solid var(--br);color:var(--t2);cursor:pointer;border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+
+/* CONV */
+.conv-item{display:flex;align-items:flex-start;gap:10px;padding:.75rem 0;border-bottom:1px solid var(--br)}
+.conv-item:last-child{border:none}
+.conv-av{width:34px;height:34px;border-radius:50%;background:rgba(34,197,94,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--g);flex-shrink:0}
+.conv-body{flex:1;min-width:0}
+.conv-name{font-size:.8rem;font-weight:600;margin-bottom:.1rem}
+.conv-msg{font-size:.72rem;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-time{font-size:.67rem;color:var(--t3);flex-shrink:0}
+
+/* SEARCH */
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:.45rem .8rem;margin-bottom:1rem}
+.search-bar input{flex:1;background:transparent;border:none;color:var(--t);font-family:inherit;font-size:.8rem;outline:none}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:.65rem 1rem;font-size:.8rem;display:none;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+
+/* LOADER */
+.loader{display:flex;align-items:center;gap:8px;color:var(--t2);font-size:.78rem;padding:1.5rem 0}
+.spin{width:16px;height:16px;border:2px solid var(--br);border-top-color:var(--g);border-radius:50%;animation:spin 1s linear infinite}
+
+@media(max-width:768px){.sidebar{display:none}.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topb">
+  <div class="logo"><span class="dot"></span>Titanex <em>AI</em></div>
+  <span class="admin-badge">⚙️ ADMIN</span>
+  <div class="tb-right">
+    <span style="font-size:.75rem;color:var(--t2)" id="admin-time"></span>
+    <button class="btn-sm" onclick="logout()">Déconnexion</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-lbl">Navigation</div>
+    <div class="nav-item on" onclick="nav('overview')">📊 Vue d'ensemble</div>
+    <div class="nav-item" onclick="nav('clients')">👥 Clients</div>
+    <div class="nav-item" onclick="nav('conversations')">💬 Conversations</div>
+    <div class="nav-item" onclick="nav('payments')">💳 Paiements</div>
+    <div class="nav-sep"></div>
+    <div class="nav-lbl">Outils</div>
+    <div class="nav-item" onclick="nav('instances')">📱 Instances WA</div>
+    <div class="nav-item" onclick="window.open('/','_blank')">🌐 Landing page</div>
+    <div class="nav-item" onclick="window.open('/dashboard/inscription.html','_blank')">📝 Inscription</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- VUE D'ENSEMBLE -->
+    <div class="pg on" id="pg-overview">
+      <div class="pg-head">
+        <div class="pg-title">📊 Vue d'ensemble</div>
+        <button class="btn-ghost" onclick="loadAll()">↺ Actualiser</button>
+      </div>
+      <div class="stats">
+        <div class="stat g"><div class="stat-lb">Clients actifs</div><div class="stat-v" id="s-actif">—</div><div class="stat-s">Abonnés payants</div></div>
+        <div class="stat a"><div class="stat-lb">En essai</div><div class="stat-v" id="s-essai">—</div><div class="stat-s">Période gratuite</div></div>
+        <div class="stat r"><div class="stat-lb">Suspendus</div><div class="stat-v" id="s-susp">—</div><div class="stat-s">Abonnement expiré</div></div>
+        <div class="stat b"><div class="stat-lb">Total clients</div><div class="stat-v" id="s-total">—</div><div class="stat-s">Inscrits</div></div>
+        <div class="stat p"><div class="stat-lb">Conversations</div><div class="stat-v" id="s-conv">—</div><div class="stat-s">Total messages</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem">
+        <div class="card">
+          <div class="card-head"><h3>👥 Derniers inscrits</h3><button class="btn-ghost" style="font-size:.72rem;padding:.2rem .5rem" onclick="nav('clients')">Tout voir →</button></div>
+          <div class="card-body" id="recent-clients"><div class="loader"><div class="spin"></div>Chargement...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>💬 Conversations récentes</h3></div>
+          <div class="card-body" id="recent-convs"><div class="loader"><div class="spin"></div>Chargement...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="pg" id="pg-clients">
+      <div class="pg-head">
+        <div class="pg-title">👥 Gestion clients</div>
+        <button class="btn-primary" onclick="openModal('new-client')">＋ Nouveau client</button>
+      </div>
+      <div class="search-bar">
+        <span style="color:var(--t2)">🔍</span>
+        <input type="text" id="client-search" placeholder="Rechercher par nom, email, instance..." oninput="filterClients()">
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;overflow-x:auto">
+          <table class="tbl">
+            <thead><tr>
+              <th>Client</th><th>Instance</th><th>Plan</th><th>Statut</th><th>Expiration</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="clients-tbody"><tr><td colspan="6"><div class="loader" style="justify-content:center"><div class="spin"></div>Chargement...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONVERSATIONS -->
+    <div class="pg" id="pg-conversations">
+      <div class="pg-head"><div class="pg-title">💬 Conversations</div></div>
+      <div class="card">
+        <div class="card-body" id="convs-body"><div class="loader"><div class="spin"></div>Chargement...</div></div>
+      </div>
+    </div>
+
+    <!-- PAIEMENTS -->
+    <div class="pg" id="pg-payments">
+      <div class="pg-head"><div class="pg-title">💳 Paiements</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem">
+        <div class="card">
+          <div class="card-head"><h3>Initier un paiement</h3></div>
+          <div class="card-body">
+            <div class="field"><label>Tenant ID</label><input id="p-tid" placeholder="uuid du client"></div>
+            <div class="field"><label>Téléphone MTN/Orange</label><input id="p-ph" placeholder="237672482763"></div>
+            <button class="btn-primary" onclick="initPay()">💳 Envoyer demande</button>
+            <div id="p-res" style="margin-top:.9rem;font-size:.79rem;color:var(--g)"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Webhook Campay</h3></div>
+          <div class="card-body">
+            <p style="font-size:.77rem;color:var(--t2);margin-bottom:.8rem">URL à configurer dans Campay :</p>
+            <div style="background:var(--s2);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:.75rem;font-size:.78rem;font-family:monospace;color:var(--g);word-break:break-all">https://titanexai.com/payment/webhook</div>
+            <button class="btn-ghost" style="margin-top:.8rem;width:100%" onclick="navigator.clipboard.writeText('https://titanexai.com/payment/webhook').then(()=>toast('Copié !','g'))">📋 Copier</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Vérifier expiration manuelle</h3></div>
+        <div class="card-body">
+          <button class="btn-primary" onclick="checkExp()">🔄 Vérifier maintenant</button>
+          <div id="exp-res" style="margin-top:.8rem;font-size:.78rem;color:var(--t2)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTANCES -->
+    <div class="pg" id="pg-instances">
+      <div class="pg-head"><div class="pg-title">📱 Instances WhatsApp</div><button class="btn-ghost" onclick="loadInstances()">↺ Actualiser</button></div>
+      <div class="card">
+        <div class="card-body" id="instances-body"><div class="loader"><div class="spin"></div>Chargement...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL NOUVEAU CLIENT -->
+<div class="modal-bg" id="modal-new-client">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>➕ Nouveau client</h3>
+      <button class="close-btn" onclick="closeModal('new-client')">×</button>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Nom / Boutique *</label><input id="nc-nom" placeholder="Boutique Mode Douala"></div>
+      <div class="field"><label>Téléphone *</label><input id="nc-tel" placeholder="237672482763"></div>
+    </div>
+    <div class="field"><label>Email</label><input id="nc-email" type="email" placeholder="client@exemple.com"></div>
+    <div class="grid2">
+      <div class="field"><label>Instance WhatsApp *</label><input id="nc-inst" placeholder="boutique3"></div>
+      <div class="field"><label>Plan</label>
+        <select id="nc-plan">
+          <option value="starter">Starter — 9 900 FCFA</option>
+          <option value="pro" selected>Pro — 24 900 FCFA</option>
+          <option value="business">Business — 49 900 FCFA</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:.5rem">
+      <button class="btn-ghost" style="flex:1" onclick="closeModal('new-client')">Annuler</button>
+      <button class="btn-primary" style="flex:2" onclick="createClient()">✓ Créer le client</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="tk"></div>
+
+<script>
+var API = '';
+var KEY = 'titanex-admin-2026';
+var ALL_CLIENTS = [];
+
+// Auth check
+if (sessionStorage.getItem('titanex_admin') !== 'true') {
+  window.location.href = '/dashboard/admin/login.html';
+  throw new Error('not authenticated');
+}
+KEY = sessionStorage.getItem('titanex_admin_key') || KEY;
+
+// Horloge
+setInterval(function() {
+  document.getElementById('admin-time').textContent = new Date().toLocaleTimeString('fr-FR');
+}, 1000);
+
+// Navigation
+function nav(page) {
+  document.querySelectorAll('.pg').forEach(p => { p.classList.remove('on'); });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'));
+  document.getElementById('pg-' + page).classList.add('on');
+  event.currentTarget.classList.add('on');
+  if (page === 'overview') loadAll();
+  if (page === 'clients') loadClients();
+  if (page === 'conversations') loadConvs();
+  if (page === 'instances') loadInstances();
+}
+
+function logout() {
+  if (confirm('Se déconnecter du panel admin ?')) {
+    sessionStorage.removeItem('titanex_admin');
+    sessionStorage.removeItem('titanex_admin_key');
+    window.location.href = '/dashboard/admin/login.html';
+  }
+}
+
+// ── Chargement données ────────────────────────────────────────────────────
+
+async function loadAll() {
+  await Promise.all([loadStats(), loadRecentClients(), loadRecentConvs()]);
+}
+
+async function loadStats() {
+  try {
+    var r = await fetch(API + '/admin/tenants', { headers: { 'x-admin-key': KEY } });
+    var d = await r.json();
+    if (!Array.isArray(d)) return;
+    document.getElementById('s-actif').textContent = d.filter(t => t.statut === 'actif').length;
+    document.getElementById('s-essai').textContent = d.filter(t => t.statut === 'essai').length;
+    document.getElementById('s-susp').textContent = d.filter(t => t.statut === 'suspendu' || t.statut === 'expire').length;
+    document.getElementById('s-total').textContent = d.length;
+    ALL_CLIENTS = d;
+  } catch(e) { console.error(e); }
+
+  try {
+    var r2 = await fetch(API + '/admin/conv-count', { headers: { 'x-admin-key': KEY } });
+    var d2 = await r2.json();
+    document.getElementById('s-conv').textContent = d2.count || '—';
+  } catch(e) {}
+}
+
+async function loadRecentClients() {
+  var el = document.getElementById('recent-clients');
+  try {
+    var r = await fetch(API + '/admin/tenants', { headers: { 'x-admin-key': KEY } });
+    var d = await r.json();
+    if (!Array.isArray(d) || !d.length) { el.innerHTML = '<div style="color:var(--t2);font-size:.78rem">Aucun client</div>'; return; }
+    el.innerHTML = d.slice(0,5).map(t => `
+      <div style="display:flex;align-items:center;gap:9px;padding:.55rem 0;border-bottom:1px solid var(--br)">
+        <div style="width:30px;height:30px;border-radius:50%;background:rgba(34,197,94,.1);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--g);flex-shrink:0">${initials(t.nom)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.79rem;font-weight:600">${t.nom}</div>
+          <div style="font-size:.69rem;color:var(--t2)">${t.instance_name}</div>
+        </div>
+        <span class="badge badge-${t.statut}">${t.statut}</span>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--r);font-size:.78rem">Erreur de chargement</div>'; }
+}
+
+async function loadRecentConvs() {
+  var el = document.getElementById('recent-convs');
+  try {
+    var r = await fetch(API + '/admin/conversations?limit=5', { headers: { 'x-admin-key': KEY } });
+    var d = await r.json();
+    if (!Array.isArray(d) || !d.length) { el.innerHTML = '<div style="color:var(--t2);font-size:.78rem">Aucune conversation</div>'; return; }
+    el.innerHTML = d.map(c => `
+      <div class="conv-item">
+        <div class="conv-av">${initials(c.from || 'WA')}</div>
+        <div class="conv-body">
+          <div class="conv-name">${c.from || '—'}</div>
+          <div class="conv-msg">${(c.user_message || '').substring(0,50)}</div>
+        </div>
+        <div class="conv-time">${fmtDate(c.created_at)}</div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--r);font-size:.78rem">Erreur</div>'; }
+}
+
+async function loadClients() {
+  try {
+    var r = await fetch(API + '/admin/tenants', { headers: { 'x-admin-key': KEY } });
+    var d = await r.json();
+    if (!Array.isArray(d)) return;
+    ALL_CLIENTS = d;
+    renderClientsTable(d);
+  } catch(e) { document.getElementById('clients-tbody').innerHTML = '<tr><td colspan="6" style="color:var(--r);padding:1rem">Erreur de chargement</td></tr>'; }
+}
+
+function renderClientsTable(data) {
+  var tb = document.getElementById('clients-tbody');
+  if (!data.length) { tb.innerHTML = '<tr><td colspan="6" style="color:var(--t2);padding:1rem;text-align:center">Aucun client</td></tr>'; return; }
+  tb.innerHTML = data.map(t => `
+    <tr>
+      <td>
+        <div style="font-weight:600;font-size:.8rem">${t.nom}</div>
+        <div style="font-size:.69rem;color:var(--t2)">${t.email || t.telephone || '—'}</div>
+      </td>
+      <td><span style="font-family:monospace;font-size:.75rem;color:var(--b)">${t.instance_name}</span></td>
+      <td><span style="font-size:.72rem;font-weight:600;color:var(--a)">${t.plan || '—'}</span></td>
+      <td><span class="badge badge-${t.statut}">${t.statut}</span></td>
+      <td style="font-size:.72rem;color:var(--t2)">${t.date_fin ? new Date(t.date_fin).toLocaleDateString('fr-FR') : '—'}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${t.statut !== 'actif' ? `<button class="btn-act" onclick="chgSt('${t.id}','actif')">✓ Activer</button>` : ''}
+          ${t.statut === 'actif' ? `<button class="btn-act danger" onclick="chgSt('${t.id}','suspendu')">⊘ Suspendre</button>` : ''}
+          <button class="btn-act" onclick="copyId('${t.id}')">📋 ID</button>
+          <button class="btn-act" onclick="goToPay('${t.id}','${t.telephone||''}')">💳</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterClients() {
+  var q = document.getElementById('client-search').value.toLowerCase();
+  renderClientsTable(ALL_CLIENTS.filter(t =>
+    (t.nom||'').toLowerCase().includes(q) ||
+    (t.email||'').toLowerCase().includes(q) ||
+    (t.instance_name||'').toLowerCase().includes(q) ||
+    (t.telephone||'').includes(q)
+  ));
+}
+
+async function loadConvs() {
+  var el = document.getElementById('convs-body');
+  try {
+    var r = await fetch(API + '/admin/conversations?limit=50', { headers: { 'x-admin-key': KEY } });
+    var d = await r.json();
+    if (!Array.isArray(d) || !d.length) { el.innerHTML = '<div style="color:var(--t2);font-size:.78rem;padding:1rem">Aucune conversation</div>'; return; }
+    el.innerHTML = `<table class="tbl">
+      <thead><tr><th>Contact</th><th>Instance</th><th>Message</th><th>Réponse IA</th><th>Date</th></tr></thead>
+      <tbody>${d.map(c => `<tr>
+        <td style="font-size:.75rem">${c.from||'—'}</td>
+        <td><span style="font-family:monospace;font-size:.72rem;color:var(--b)">${c.instance||'—'}</span></td>
+        <td style="font-size:.73rem;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.user_message||'—'}</td>
+        <td style="font-size:.73rem;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t2)">${c.ai_reply||'—'}</td>
+        <td style="font-size:.67rem;color:var(--t3)">${fmtDate(c.created_at)}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  } catch(e) { el.innerHTML = '<div style="color:var(--r);font-size:.78rem">Erreur</div>'; }
+}
+
+async function loadInstances() {
+  var el = document.getElementById('instances-body');
+  try {
+    var r = await fetch('http://148.230.114.82:8080/instance/fetchInstances', { headers: { apikey: '429683C4C977415CAAFCCE10F7D57E11' } });
+    var d = await r.json();
+    el.innerHTML = `<table class="tbl">
+      <thead><tr><th>Instance</th><th>Statut</th><th>Propriétaire</th><th>Messages</th><th>Actions</th></tr></thead>
+      <tbody>${d.map(i => `<tr>
+        <td style="font-weight:600;font-size:.8rem">${i.name}</td>
+        <td><span class="badge ${i.connectionStatus==='open'?'badge-actif':i.connectionStatus==='connecting'?'badge-essai':'badge-suspendu'}">${i.connectionStatus}</span></td>
+        <td style="font-size:.72rem;color:var(--t2)">${i.ownerJid||'—'}</td>
+        <td style="font-size:.72rem">${(i._count?.Message||0).toLocaleString('fr-FR')}</td>
+        <td><button class="btn-act" onclick="window.open('/dashboard/qr-connect.html?instance=${i.name}','_blank')">📱 QR</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  } catch(e) { el.innerHTML = '<div style="color:var(--r);font-size:.78rem">Erreur Evolution API</div>'; }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────
+
+async function chgSt(id, statut) {
+  try {
+    var r = await fetch(API + '/admin/tenants/' + id + '/statut', {
+      method: 'PATCH',
+      headers: { 'x-admin-key': KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statut })
+    });
+    var d = await r.json();
+    if (d.error) { toast(d.error, 'r'); return; }
+    toast('Statut mis à jour : ' + statut, 'g');
+    loadClients();
+    loadStats();
+  } catch(e) { toast('Erreur', 'r'); }
+}
+
+async function createClient() {
+  var nom = document.getElementById('nc-nom').value.trim();
+  var tel = document.getElementById('nc-tel').value.trim();
+  var email = document.getElementById('nc-email').value.trim();
+  var inst = document.getElementById('nc-inst').value.trim();
+  var plan = document.getElementById('nc-plan').value;
+  if (!nom || !inst) { toast('Nom et instance requis', 'r'); return; }
+  try {
+    var r = await fetch(API + '/admin/tenants', {
+      method: 'POST',
+      headers: { 'x-admin-key': KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nom, email, telephone: tel, instance_name: inst, plan })
+    });
+    var d = await r.json();
+    if (d.error) { toast(d.error, 'r'); return; }
+    closeModal('new-client');
+    toast('Client créé avec succès !', 'g');
+    loadClients(); loadStats();
+  } catch(e) { toast('Erreur', 'r'); }
+}
+
+async function initPay() {
+  var tid = document.getElementById('p-tid').value.trim();
+  var ph = document.getElementById('p-ph').value.trim();
+  if (!tid || !ph) { toast('Remplissez les deux champs', 'r'); return; }
+  try {
+    var r = await fetch(API + '/payment/initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tenant_id: tid, phone: ph })
+    });
+    var d = await r.json();
+    if (d.error) { document.getElementById('p-res').style.color = 'var(--r)'; document.getElementById('p-res').textContent = d.error; return; }
+    document.getElementById('p-res').innerHTML = '✅ Envoyé !<br>USSD : <strong>' + d.ussd_code + '</strong><br>Ref : ' + d.reference;
+  } catch(e) { toast('Erreur', 'r'); }
+}
+
+async function checkExp() {
+  var el = document.getElementById('exp-res');
+  el.textContent = 'Vérification...';
+  try {
+    var r = await fetch(API + '/payment/check-expirations', { method: 'POST' });
+    var d = await r.json();
+    el.textContent = '✅ ' + (d.message || 'OK') + ' (' + (d.count || 0) + ' traité(s))';
+  } catch(e) { el.textContent = 'Erreur'; }
+}
+
+function copyId(id) {
+  navigator.clipboard.writeText(id).then(() => toast('ID copié : ' + id.substring(0,8) + '...', 'g'));
+}
+
+function goToPay(id, tel) {
+  document.getElementById('p-tid').value = id;
+  document.getElementById('p-ph').value = tel;
+  nav('payments');
+}
+
+// ── Modals ────────────────────────────────────────────────────────────────
+function openModal(name) { document.getElementById('modal-' + name).classList.add('on'); }
+function closeModal(name) { document.getElementById('modal-' + name).classList.remove('on'); }
+
+// ── Utils ─────────────────────────────────────────────────────────────────
+function initials(n) { return (n||'?').split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase()||'?'; }
+function fmtDate(d) { if(!d) return '—'; var dt = new Date(d); return dt.toLocaleDateString('fr-FR') + ' ' + dt.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}); }
+function toast(msg, type) {
+  var el = document.getElementById('tk');
+  el.textContent = msg;
+  el.style.color = type === 'g' ? '#22c55e' : '#ef4444';
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3500);
+}
+
+// Ajouter route conv-count dans admin.js
+// Démarrage
+loadAll();
+</script>
+</body>
+</html>

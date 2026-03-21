@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Titanex AI — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary: { DEFAULT:'#22c55e', foreground:'#fff' },
+        destructive: { DEFAULT:'#ef4444', foreground:'#fff' },
+        border: '#27272a',
+        card: '#18181b',
+        background: '#09090b',
+        foreground: '#fafafa',
+        muted: { DEFAULT:'#27272a', foreground:'#a1a1aa' },
+        secondary: { DEFAULT:'#1c1c1e', foreground:'#e4e4e7' },
+        sidebar: { DEFAULT:'#0a0a0a', border:'#1f1f23', foreground:'#fafafa', primary:'#22c55e', accent:'#1a1a1e' },
+        popover: { DEFAULT:'#18181b', foreground:'#fafafa' },
+        accent: '#1f1f23',
+        electric:'#3b82f6',
+        titan:'#d4af37',
+      },
+      borderRadius: { xl:'12px', '2xl':'16px' },
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:#09090b;color:#fafafa}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.sidebar{scrollbar-width:thin;scrollbar-color:#262626 transparent}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fade-in{animation:fadeIn .45s ease forwards}
+.scale-in{animation:scaleIn .25s ease forwards}
+.animate-spin{animation:spin 1s linear infinite}
+.animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+.delay-1{animation-delay:.06s}.delay-2{animation-delay:.12s}.delay-3{animation-delay:.18s}
+.delay-4{animation-delay:.24s}.delay-5{animation-delay:.3s}.delay-6{animation-delay:.36s}
+.nav-item{transition:all .15s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nav-item:hover{background:#1a1a1e}
+.nav-item:active{transform:scale(.97);opacity:.8}
+.nav-item.active{background:rgba(34,197,94,.1);color:#22c55e}
+.card-hover{transition:all .2s}.card-hover:hover{transform:translateY(-2px);box-shadow:0 8px 25px -5px rgba(0,0,0,.2)}
+.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.glass{background:rgba(24,24,27,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+/* Modal backdrop */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem}
+/* Progress bar */
+.progress-bar{height:8px;border-radius:4px;background:#27272a;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#22c55e,#4ade80);transition:width .6s ease}
+/* Score circle */
+.score-circle{position:relative;width:52px;height:52px}
+.score-circle svg{transform:rotate(-90deg)}
+@media(max-width:1024px){
+  .sidebar-wrapper{transform:translateX(-100%);position:fixed;z-index:50;transition:transform .3s}
+  .sidebar-wrapper.open{transform:translateX(0)}
+  .main-content{margin-left:0!important}
+  .mobile-overlay{display:block}
+}
+@media(min-width:1025px){
+  .sidebar-wrapper{position:fixed;z-index:40;transform:none}
+  .main-content{margin-left:256px}
+  .mobile-overlay{display:none!important}
+  .mobile-menu-btn{display:none!important}
+}
+</style>
+</head>
+<body class="dark">
+
+<!-- Mobile overlay -->
+<div id="mobileOverlay" class="mobile-overlay fixed inset-0 bg-black/60 z-40 hidden" onclick="toggleSidebar(false)"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- SIDEBAR -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<aside id="sidebar" class="sidebar-wrapper top-0 left-0 h-full w-64 bg-[#0a0a0a] border-r border-[#1f1f23] flex flex-col" style="height:100vh">
+  <!-- Logo -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-[#1f1f23]">
+    <a href="/" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-600 to-green-600 flex items-center justify-center text-sm shadow-lg shadow-emerald-500/30 font-bold">T</div>
+      <span class="text-lg font-bold text-white">Titanex <span class="text-emerald-400">AI</span></span>
+    </a>
+    <button class="lg:hidden text-white" onclick="toggleSidebar(false)"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto sidebar">
+    <button onclick="showPage('home')" id="nav-home" class="nav-item active w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all">
+      <i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Tableau de bord</span>
+    </button>
+    <button onclick="showPage('credits')" id="nav-credits" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="zap" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Credits</span>
+      <span id="badge-credits" class="ml-auto inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] font-bold text-red-400">0</span>
+    </button>
+    <button onclick="showPage('paiements')" id="nav-paiements" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="receipt" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Paiements</span>
+    </button>
+    <button onclick="showPage('transactions')" id="nav-transactions" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="receipt" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Mes Transactions</span>
+    </button>
+    <button onclick="showPage('agents')" id="nav-agents" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="bot" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Agents IA</span>
+    </button>
+    <button onclick="showPage('connections')" id="nav-connections" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-green-400 bg-green-500/5 border border-green-500/10 transition-all">
+      <i data-lucide="unplug" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Connexions</span>
+    </button>
+    <button onclick="showPage('catalogue')" id="nav-catalogue" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="package" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Produits et services</span>
+    </button>
+    <button onclick="showPage('catalogue')" class="nav-item w-full flex items-center gap-3 pl-9 pr-4 py-2 rounded-xl text-xs font-medium text-zinc-500 transition-all">
+      <i data-lucide="layout-list" class="w-[14px] h-[14px]"></i><span class="flex-1 text-left">Categories/Statuts</span>
+    </button>
+    <button onclick="showPage('knowledge')" id="nav-knowledge" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="book-open" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Base de connaissances</span>
+    </button>
+    <button onclick="showPage('orders')" id="nav-orders" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="shopping-cart" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Commandes</span>
+    </button>
+    <button onclick="showPage('clients')" id="nav-clients" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="users" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Leads</span>
+    </button>
+    <button onclick="showPage('conversations')" id="nav-conversations" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="message-square" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Conversations</span>
+      <span id="badge-conv" class="ml-auto inline-flex items-center rounded-full bg-emerald-600/20 px-2 py-0.5 text-[11px] font-bold text-emerald-400 hidden">0</span>
+    </button>
+    <button onclick="showPage('widgets')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="puzzle" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Widgets</span>
+    </button>
+    <button onclick="showPage('calendar')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="calendar-days" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Calendrier</span>
+    </button>
+    <button onclick="showPage('ambassador')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="crown" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Ambassadeurs</span>
+    </button>
+    <button onclick="showPage('settings')" id="nav-settings" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="settings" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Parametres</span>
+    </button>
+    <button onclick="showPage('domain')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="globe" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Domaine perso</span>
+    </button>
+    <button onclick="showPage('academy')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="graduation-cap" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Academy</span>
+    </button>
+  </nav>
+
+  <!-- Bottom -->
+  <div class="px-3 pb-4 space-y-1 border-t border-[#1f1f23] pt-3">
+    <button onclick="copyShareLink()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-[#1a1a1e] transition-all">
+      <i data-lucide="copy" class="w-[18px] h-[18px]"></i>Copier le lien
+    </button>
+    <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-[#1a1a1e] transition-all">
+      <i data-lucide="log-out" class="w-[18px] h-[18px]"></i>Deconnexion
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<main class="main-content min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-[#09090b]/80 backdrop-blur-lg border-b border-[#27272a] px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+    <div class="flex items-center gap-3">
+      <button class="mobile-menu-btn text-white" onclick="toggleSidebar(true)"><i data-lucide="menu" class="w-[22px] h-[22px]"></i></button>
+      <a href="/" class="hidden lg:flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"><i data-lucide="arrow-left" class="w-[18px] h-[18px]"></i></a>
+      <h1 id="page-title" class="text-lg sm:text-xl font-bold text-white truncate">Tableau de bord</h1>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Credits counter -->
+      <button onclick="openCreditModal()" id="header-credits" class="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-xs font-bold hover:bg-emerald-500/10 transition-all group">
+        <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span class="text-emerald-400" id="header-credits-count">— credits</span>
+        <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-emerald-400/70 group-hover:scale-110 transition-transform"></i>
+      </button>
+      <!-- User avatar -->
+      <div id="user-avatar" class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs">?</div>
+    </div>
+  </header>
+
+  <!-- Pages Container -->
+  <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: HOME (Dashboard Overview) -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-home" class="page-content">
+      <!-- Loading skeleton -->
+      <div id="home-loading" class="space-y-6">
+        <div class="space-y-3 animate-pulse"><div class="h-8 w-64 bg-zinc-800 rounded-lg"></div><div class="h-5 w-80 bg-zinc-800 rounded"></div></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 animate-pulse"><div class="h-4 w-32 bg-zinc-800 rounded mb-3"></div><div class="h-8 w-16 bg-zinc-800 rounded mb-2"></div><div class="h-3 w-24 bg-zinc-800 rounded"></div></div>
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 animate-pulse"><div class="h-4 w-32 bg-zinc-800 rounded mb-3"></div><div class="h-8 w-16 bg-zinc-800 rounded mb-2"></div><div class="h-3 w-24 bg-zinc-800 rounded"></div></div>
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 animate-pulse"><div class="h-4 w-32 bg-zinc-800 rounded mb-3"></div><div class="h-8 w-16 bg-zinc-800 rounded mb-2"></div><div class="h-3 w-24 bg-zinc-800 rounded"></div></div>
+        </div>
+      </div>
+
+      <!-- Actual content (hidden until loaded) -->
+      <div id="home-content" class="space-y-6 hidden">
+        <!-- Greeting -->
+        <div class="pt-2 fade-in">
+          <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            Ravi de vous retrouver <span class="text-emerald-400" id="greeting-name">utilisateur</span>, <span>&#x1F44B;</span>
+          </h1>
+          <p class="text-zinc-400 mt-1 text-sm sm:text-base">qu'est-ce que nous creons aujourd'hui ?</p>
+        </div>
+
+        <!-- Agent Cards Row (3 columns) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Total agents -->
+          <div class="fade-in delay-1 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 relative overflow-hidden cursor-pointer hover:border-emerald-500/30 transition-colors card-hover" onclick="showPage('agents')">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-emerald-400"></i></div>
+              <h3 class="text-sm font-bold text-white">Total des agents</h3>
+            </div>
+            <p class="text-4xl font-bold text-white" id="stat-agents-total">0</p>
+            <div class="flex items-center gap-2 mt-2">
+              <i data-lucide="timer" class="w-3 h-3 text-zinc-400"></i>
+              <span class="text-xs text-zinc-400">En ligne: <span id="stat-agents-active">0</span></span>
+            </div>
+          </div>
+
+          <!-- Recent agent -->
+          <div class="fade-in delay-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 relative overflow-hidden cursor-pointer hover:border-emerald-500/30 transition-colors card-hover" onclick="showPage('agents')">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center"><i data-lucide="star" class="w-4 h-4 text-white"></i></div>
+              <h3 class="text-sm font-bold text-white">Agent le plus recent</h3>
+            </div>
+            <p class="text-lg font-bold text-white truncate" id="stat-agent-recent-name">Aucun agent cree</p>
+            <p class="text-xs text-zinc-400 mt-1" id="stat-agent-recent-date"></p>
+            <div class="mt-2" id="stat-agent-recent-status"></div>
+          </div>
+
+          <!-- Second agent -->
+          <div class="fade-in delay-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 relative overflow-hidden cursor-pointer hover:border-emerald-500/30 transition-colors card-hover" onclick="showPage('agents')">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center"><i data-lucide="timer" class="w-4 h-4 text-white"></i></div>
+              <h3 class="text-sm font-bold text-white">Second plus recent</h3>
+            </div>
+            <p class="text-lg font-bold text-white truncate" id="stat-agent-second-name">—</p>
+            <p class="text-xs text-zinc-400 mt-1" id="stat-agent-second-date"></p>
+            <div class="mt-2" id="stat-agent-second-status"></div>
+          </div>
+        </div>
+
+        <!-- Leads Analysis -->
+        <div class="fade-in delay-4">
+          <h2 class="text-xl font-bold text-white mb-4">Analyse des leads</h2>
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <button onclick="setPeriod('7d')" id="period-7d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-all">7 derniers jours</button>
+            <button onclick="setPeriod('30d')" id="period-30d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 transition-all">30 derniers jours</button>
+            <button onclick="setPeriod('90d')" id="period-90d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 transition-all">90 derniers jours</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Total leads -->
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+              <div class="flex items-center gap-2 mb-3">
+                <i data-lucide="users" class="w-4 h-4 text-zinc-400"></i>
+                <h3 class="text-sm font-bold text-white">Nombre total de leads</h3>
+              </div>
+              <p class="text-4xl font-bold text-white" id="stat-leads-total">0</p>
+              <div class="flex items-center gap-2 mt-3">
+                <span id="leads-growth-badge" class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i>
+                  Croissance: <span id="leads-growth">+0.00</span>%
+                </span>
+              </div>
+            </div>
+
+            <!-- Leads generated -->
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="trending-up" class="w-4 h-4 text-zinc-400"></i>
+                  <h3 class="text-sm font-bold text-white">Leads generes</h3>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 mb-3">
+                <p class="text-4xl font-bold text-white" id="stat-leads-period">0</p>
+                <span id="leads-period-growth" class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> <span id="leads-period-pct">+0.00</span>%
+                </span>
+              </div>
+              <p class="text-xs text-zinc-400" id="leads-period-label">7 derniers jours</p>
+              <!-- Mini chart area (canvas) -->
+              <canvas id="leads-chart" height="120" class="mt-3 w-full"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- WhatsApp Status Banner -->
+        <div id="wa-banner" class="fade-in delay-5 hidden">
+          <div id="wa-banner-content"></div>
+        </div>
+
+        <!-- Credits & Referral Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Credits -->
+          <div class="fade-in delay-5 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+                <h3 class="text-sm font-bold text-white">Credits disponibles</h3>
+              </div>
+              <span class="text-xs font-semibold text-zinc-400" id="credits-pct">0%</span>
+            </div>
+            <div class="flex items-baseline gap-2 mb-3">
+              <span class="text-3xl font-bold text-white" id="credits-current">0</span>
+              <span class="text-sm text-zinc-400">/ <span id="credits-total">3,000</span></span>
+            </div>
+            <div class="progress-bar mb-3"><div class="progress-fill" id="credits-bar" style="width:0%"></div></div>
+            <div id="credits-warning" class="hidden text-xs text-red-400 font-medium mb-3">Credits presque epuises</div>
+            <button onclick="openCreditModal()" class="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i> Recharger
+            </button>
+          </div>
+
+          <!-- Referral -->
+          <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+              <h3 class="text-sm font-bold text-white">Programme de Parrainage</h3>
+            </div>
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="coins" class="w-4 h-4 text-emerald-400"></i>
+              <span class="text-2xl font-bold text-white" id="referral-points">0</span>
+              <span class="text-xs text-zinc-400">points cumules</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="flex-1 flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 text-xs font-mono text-zinc-400 truncate">
+                <i data-lucide="link" class="w-3 h-3 shrink-0"></i>
+                <span class="truncate" id="referral-link">...</span>
+              </div>
+              <button onclick="copyReferral()" class="shrink-0 w-9 h-9 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 flex items-center justify-center transition-all" id="referral-copy-btn">
+                <i data-lucide="copy" class="w-3.5 h-3.5 text-emerald-400"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="clock" class="w-[15px] h-[15px] text-emerald-400"></i>
+            <h3 class="text-sm font-bold text-white">Dernieres Actions de l'Agent</h3>
+          </div>
+          <div id="activity-feed" class="space-y-1">
+            <p class="text-sm text-zinc-400 text-center py-6">Aucune action recente</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: CONVERSATIONS -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-conversations" class="page-content hidden">
+      <div class="space-y-5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <h2 class="text-xl font-bold text-white">Conversations</h2>
+          <div class="relative flex-1 max-w-md">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+            <input type="text" id="conv-search" placeholder="Rechercher une conversation..." oninput="filterConversations()" class="w-full rounded-xl border border-zinc-800 bg-zinc-900 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all">
+          </div>
+        </div>
+        <div id="conv-loading" class="flex items-center justify-center py-20"><div class="w-7 h-7 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div></div>
+        <div id="conv-list" class="hidden">
+          <!-- Conversation list -->
+          <div id="conv-container" class="space-y-2"></div>
+          <div id="conv-empty" class="hidden rounded-2xl border border-zinc-800 p-12 text-center">
+            <i data-lucide="inbox" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i>
+            <p class="text-zinc-400">Aucune conversation trouvee.</p>
+          </div>
+        </div>
+        <!-- Conversation detail panel -->
+        <div id="conv-detail" class="hidden">
+          <button onclick="closeConvDetail()" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-4 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux conversations
+          </button>
+          <div class="rounded-2xl border border-zinc-800 bg-zinc-900 overflow-hidden">
+            <div class="px-5 py-4 border-b border-zinc-800 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm" id="conv-detail-avatar">?</div>
+              <div>
+                <h3 class="text-sm font-bold text-white" id="conv-detail-name">—</h3>
+                <p class="text-xs text-zinc-400" id="conv-detail-phone">—</p>
+              </div>
+              <div class="ml-auto flex items-center gap-2">
+                <span id="conv-detail-mode" class="text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+              </div>
+            </div>
+            <div id="conv-messages" class="p-4 space-y-3 max-h-[500px] overflow-y-auto" style="scroll-behavior:smooth"></div>
+            <div class="px-4 py-3 border-t border-zinc-800 flex items-center gap-2">
+              <input type="text" id="conv-reply-input" placeholder="Repondre..." class="flex-1 rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all" onkeydown="if(event.key==='Enter')sendReply()">
+              <button onclick="sendReply()" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-all flex items-center gap-1.5">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Envoyer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: AGENTS -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-agents" class="page-content hidden">
+      <!-- Agent list view -->
+      <div id="agents-list-view">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-bold text-white">Agents IA</h1>
+            <div class="flex items-center gap-1.5 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
+              <i data-lucide="bot" class="w-[13px] h-[13px] text-green-400"></i>
+              <span class="text-xs font-bold text-green-400" id="agents-count">0/0 agents</span>
+            </div>
+          </div>
+          <button onclick="openCreateAgent()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i> Creer un agent
+          </button>
+        </div>
+        <div class="relative mb-6 max-w-xs">
+          <i data-lucide="search" class="w-[15px] h-[15px] absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+          <input type="text" id="agents-search" placeholder="Rechercher un agent" oninput="filterAgents()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-zinc-800 bg-zinc-900 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all">
+        </div>
+        <div id="agents-grid" class="grid gap-4" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))"></div>
+        <div id="agents-empty" class="hidden text-center py-16">
+          <i data-lucide="bot" class="w-12 h-12 text-zinc-700 mx-auto mb-4"></i>
+          <p class="text-sm font-semibold text-zinc-400">Aucun agent cree</p>
+          <p class="text-xs text-zinc-500 mt-1">Creez votre premier agent IA WhatsApp</p>
+        </div>
+      </div>
+
+      <!-- Agent detail view -->
+      <div id="agents-detail-view" class="hidden">
+        <button onclick="closeAgentDetail()" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white mb-4 transition-colors">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux agents
+        </button>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left: Config -->
+          <div class="lg:col-span-2 space-y-5">
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+              <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-900 to-blue-950 flex items-center justify-center border border-white/10">
+                    <span class="text-lg font-bold text-blue-400" id="agent-detail-initials">AG</span>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-bold text-white" id="agent-detail-name">—</h2>
+                    <span id="agent-detail-status-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+                  </div>
+                </div>
+                <div id="agent-detail-score-container"></div>
+              </div>
+
+              <!-- Tabs -->
+              <div class="flex gap-1 mb-5 overflow-x-auto pb-1">
+                <button onclick="setAgentTab('prompt')" id="agent-tab-prompt" class="px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-1.5"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Prompt</button>
+                <button onclick="setAgentTab('settings')" id="agent-tab-settings" class="px-4 py-2 rounded-lg text-xs font-semibold text-zinc-400 border border-zinc-800 hover:bg-zinc-800 transition-all flex items-center gap-1.5"><i data-lucide="settings" class="w-3.5 h-3.5"></i> Parametres</button>
+              </div>
+
+              <!-- Tab: Prompt -->
+              <div id="agent-panel-prompt">
+                <div class="space-y-4">
+                  <div>
+                    <label class="text-sm font-medium text-white mb-1.5 block">Personnalite / Prompt systeme</label>
+                    <textarea id="agent-prompt" rows="10" placeholder="Decrivez la personnalite de votre agent, son role, ses instructions..." class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none resize-y transition-all"></textarea>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-white mb-1.5 block">Style de reponse</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="agent-styles">
+                      <button onclick="setAgentStyle('normal')" data-style="normal" class="px-3 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-semibold transition-all">Normal</button>
+                      <button onclick="setAgentStyle('formal')" data-style="formal" class="px-3 py-2 rounded-xl border border-zinc-800 text-zinc-400 text-xs font-semibold hover:bg-zinc-800 transition-all">Formel</button>
+                      <button onclick="setAgentStyle('friendly')" data-style="friendly" class="px-3 py-2 rounded-xl border border-zinc-800 text-zinc-400 text-xs font-semibold hover:bg-zinc-800 transition-all">Chaleureux</button>
+                      <button onclick="setAgentStyle('persuasive')" data-style="persuasive" class="px-3 py-2 rounded-xl border border-zinc-800 text-zinc-400 text-xs font-semibold hover:bg-zinc-800 transition-all">Persuasif</button>
+                    </div>
+                  </div>
+                  <div class="flex gap-3 pt-2">
+                    <button onclick="saveAgent()" id="agent-save-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-all">
+                      <i data-lucide="save" class="w-4 h-4"></i> Enregistrer
+                    </button>
+                    <button onclick="toggleCurrentAgent()" id="agent-toggle-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold transition-all">
+                      Deployer
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab: Settings -->
+              <div id="agent-panel-settings" class="hidden">
+                <div class="space-y-4">
+                  <p class="text-sm text-zinc-400">Parametres avances de l'agent — bientot disponibles.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Playground -->
+          <div class="space-y-5">
+            <div class="rounded-2xl border border-zinc-800 bg-zinc-900 overflow-hidden">
+              <div class="px-4 py-3 border-b border-zinc-800 flex items-center gap-2">
+                <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i>
+                <h3 class="text-sm font-bold text-white">Playground</h3>
+              </div>
+              <div id="playground-messages" class="p-4 space-y-3 h-80 overflow-y-auto" style="scroll-behavior:smooth">
+                <p class="text-xs text-zinc-500 text-center py-8">Envoyez un message pour tester votre agent</p>
+              </div>
+              <div class="px-4 py-3 border-t border-zinc-800 flex items-center gap-2">
+                <input type="text" id="playground-input" placeholder="Testez votre agent..." class="flex-1 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all" onkeydown="if(event.key==='Enter')sendPlayground()">
+                <button onclick="sendPlayground()" class="p-2.5 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 transition-all"><i data-lucide="send" class="w-4 h-4"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: CATALOGUE -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-catalogue" class="page-content hidden">
+      <div class="space-y-5">
+        <!-- Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="cat-stats"></div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-xl font-bold text-white">Produits et services</h1>
+          <span class="text-sm text-zinc-400 font-medium" id="cat-count">0 produits</span>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button onclick="openAddProduct()" class="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 transition-all shrink-0">
+            <i data-lucide="plus" class="w-4 h-4"></i> Ajouter un produit
+          </button>
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-[15px] h-[15px] absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+            <input type="text" id="cat-search" placeholder="Chercher un produit ou service" oninput="filterCatalogue()" class="w-full rounded-xl border border-zinc-800 bg-zinc-900/50 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all">
+          </div>
+        </div>
+        <div id="cat-loading" class="flex items-center justify-center py-20"><div class="w-7 h-7 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div></div>
+        <div id="cat-grid" class="hidden grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+        <div id="cat-empty" class="hidden rounded-2xl border border-zinc-800 p-16 text-center">
+          <div class="w-20 h-20 rounded-2xl bg-zinc-800 flex items-center justify-center mx-auto mb-5"><i data-lucide="package" class="w-9 h-9 text-zinc-600"></i></div>
+          <h3 class="text-lg font-bold text-white mb-2">Votre catalogue est vide</h3>
+          <p class="text-sm text-zinc-400 mb-6 max-w-md mx-auto">Ajoutez vos produits et services pour que l'agent IA puisse les proposer automatiquement.</p>
+          <button onclick="openAddProduct()" class="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter mon premier produit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: CLIENTS (Leads) -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-clients" class="page-content hidden">
+      <div class="space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="relative flex-1 max-w-md">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+            <input type="text" id="clients-search" placeholder="Rechercher un client..." oninput="filterClients()" class="w-full rounded-xl border border-zinc-800 bg-zinc-900 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all">
+          </div>
+          <button onclick="openAddClient()" class="flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i> Ajouter un client
+          </button>
+        </div>
+        <div id="clients-loading" class="flex items-center justify-center py-20"><div class="w-7 h-7 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div></div>
+        <div id="clients-grid" class="hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <div id="clients-empty" class="hidden rounded-2xl border border-zinc-800 p-12 text-center"><p class="text-zinc-400">Aucun client trouve.</p></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: CREDITS -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-credits" class="page-content hidden">
+      <div class="max-w-lg mx-auto space-y-6 py-8">
+        <h2 class="text-2xl font-bold text-white text-center">Recharger vos credits</h2>
+        <div class="space-y-3" id="credit-packs"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: CONNECTIONS -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-connections" class="page-content hidden">
+      <div class="max-w-md mx-auto text-center space-y-6 py-12" id="conn-content">
+        <div class="flex justify-center">
+          <div class="w-20 h-20 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center">
+            <i data-lucide="smartphone" class="w-8 h-8 text-emerald-400"></i>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-lg font-bold text-white">Connectez votre WhatsApp</h3>
+          <p class="text-sm text-zinc-400">Votre agent IA repondra automatiquement a vos clients.</p>
+        </div>
+        <button onclick="connectWhatsApp()" id="conn-btn" class="w-full py-3 rounded-xl text-sm font-bold text-white bg-green-600 hover:bg-green-700 transition-all flex items-center justify-center gap-2">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i> Connecter mon WhatsApp
+        </button>
+        <p class="text-xs text-zinc-500">Aucune installation - Securise</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: SETTINGS -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-settings" class="page-content hidden">
+      <div class="max-w-lg mx-auto space-y-6 py-8">
+        <h2 class="text-2xl font-bold text-white">Parametres</h2>
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 space-y-4">
+          <div>
+            <label class="text-sm font-medium text-white mb-1.5 block">Nom du magasin</label>
+            <input type="text" id="settings-store-name" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-emerald-500/50 focus:outline-none transition-all">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-white mb-1.5 block">Prompt systeme global</label>
+            <textarea id="settings-prompt" rows="6" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none resize-y transition-all"></textarea>
+          </div>
+          <button onclick="saveSettings()" class="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-all">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- GENERIC PLACEHOLDER PAGES -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-paiements" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="receipt" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Paiements</h2><p class="text-zinc-400 text-sm">Historique des paiements - bientot disponible.</p></div></div>
+    <div id="page-transactions" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="arrow-left-right" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Mes Transactions</h2><p class="text-zinc-400 text-sm">Suivi des transactions - bientot disponible.</p></div></div>
+    <div id="page-knowledge" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="book-open" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Base de connaissances</h2><p class="text-zinc-400 text-sm">Gerez les connaissances de votre agent - bientot disponible.</p></div></div>
+    <div id="page-orders" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="shopping-cart" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Commandes</h2><p class="text-zinc-400 text-sm">Gestion des commandes - bientot disponible.</p></div></div>
+    <div id="page-widgets" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="puzzle" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Widgets</h2><p class="text-zinc-400 text-sm">Configurez vos widgets - bientot disponible.</p></div></div>
+    <div id="page-calendar" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="calendar-days" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Calendrier</h2><p class="text-zinc-400 text-sm">Calendrier et RDV - bientot disponible.</p></div></div>
+    <div id="page-ambassador" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="crown" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Programme Ambassadeurs</h2><p class="text-zinc-400 text-sm">Parrainage et recompenses - bientot disponible.</p></div></div>
+    <div id="page-domain" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="globe" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Domaine personnalise</h2><p class="text-zinc-400 text-sm">Configuration de domaine - bientot disponible.</p></div></div>
+    <div id="page-academy" class="page-content hidden"><div class="py-20 text-center"><i data-lucide="graduation-cap" class="w-12 h-12 text-zinc-600 mx-auto mb-4"></i><h2 class="text-xl font-bold text-white mb-2">Academy</h2><p class="text-zinc-400 text-sm">Formation et tutoriels - bientot disponible.</p></div></div>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODALS -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Credit Recharge Modal -->
+<div id="credit-modal" class="modal-backdrop hidden" onclick="closeCreditModal()">
+  <div class="bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-zinc-800 scale-in" onclick="event.stopPropagation()">
+    <div class="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-800/50">
+      <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="zap" class="w-5 h-5 text-emerald-400"></i> Recharger vos credits</h3>
+      <button onclick="closeCreditModal()" class="p-1.5 hover:bg-zinc-700 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5 text-zinc-400"></i></button>
+    </div>
+    <div class="p-6 space-y-3">
+      <button onclick="buyPack(100,2500)" class="relative w-full border-2 border-zinc-800 rounded-xl p-4 text-left transition-all hover:border-emerald-500">
+        <div class="flex justify-between items-center">
+          <div><h4 class="font-bold text-white text-sm">Standard</h4><p class="text-2xl font-bold text-white">100 <span class="text-sm font-normal text-zinc-400">credits</span></p></div>
+          <div class="text-right"><p class="text-lg font-bold text-emerald-400">2 500 XAF</p><span class="text-xs font-semibold bg-emerald-500 text-white px-4 py-2 rounded-lg inline-flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Choisir</span></div>
+        </div>
+      </button>
+      <button onclick="buyPack(250,5000)" class="relative w-full border-2 border-emerald-500 bg-emerald-500/5 rounded-xl p-4 text-left transition-all hover:border-emerald-400">
+        <span class="absolute -top-2.5 right-4 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Populaire</span>
+        <div class="flex justify-between items-center">
+          <div><h4 class="font-bold text-white text-sm">Premium</h4><p class="text-2xl font-bold text-white">250 <span class="text-sm font-normal text-zinc-400">credits</span></p></div>
+          <div class="text-right"><p class="text-lg font-bold text-emerald-400">5 000 XAF</p><span class="text-xs font-semibold bg-emerald-500 text-white px-4 py-2 rounded-lg inline-flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Choisir</span></div>
+        </div>
+      </button>
+      <button onclick="buyPack(600,10000)" class="relative w-full border-2 border-zinc-800 rounded-xl p-4 text-left transition-all hover:border-emerald-500">
+        <div class="flex justify-between items-center">
+          <div><h4 class="font-bold text-white text-sm">Titan</h4><p class="text-2xl font-bold text-white">600 <span class="text-sm font-normal text-zinc-400">credits</span></p></div>
+          <div class="text-right"><p class="text-lg font-bold text-emerald-400">10 000 XAF</p><span class="text-xs font-semibold bg-emerald-500 text-white px-4 py-2 rounded-lg inline-flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Choisir</span></div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Agent Modal -->
+<div id="create-agent-modal" class="modal-backdrop hidden" onclick="closeCreateAgent()">
+  <div class="bg-zinc-900 rounded-2xl p-7 w-full max-w-sm border border-zinc-800 scale-in" onclick="event.stopPropagation()">
+    <h3 class="text-lg font-bold text-white mb-1">Nouvel agent IA</h3>
+    <p class="text-sm text-zinc-400 mb-5">Donnez un nom a votre agent pour commencer</p>
+    <input type="text" id="new-agent-name" placeholder="Ex: Agent Vente, Conseiller Pro..." class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none mb-4 transition-all" onkeydown="if(event.key==='Enter')createAgent()">
+    <div class="flex gap-3 justify-end">
+      <button onclick="closeCreateAgent()" class="px-5 py-2.5 rounded-xl border border-zinc-800 text-zinc-400 text-sm hover:bg-zinc-800 transition-all">Annuler</button>
+      <button onclick="createAgent()" class="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-all flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Creer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div id="add-product-modal" class="modal-backdrop hidden" onclick="closeAddProduct()">
+  <div class="bg-zinc-900 rounded-2xl p-7 w-full max-w-md border border-zinc-800 scale-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-bold text-white">Nouveau produit</h3>
+      <button onclick="closeAddProduct()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="space-y-4">
+      <div><label class="text-sm font-medium text-white mb-1.5 block">Nom *</label><input type="text" id="product-name" placeholder="Nom du produit" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+      <div><label class="text-sm font-medium text-white mb-1.5 block">Description</label><textarea id="product-desc" rows="3" placeholder="Description du produit" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none resize-y transition-all"></textarea></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-sm font-medium text-white mb-1.5 block">Prix (XAF)</label><input type="number" id="product-price" placeholder="0" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+        <div><label class="text-sm font-medium text-white mb-1.5 block">Stock</label><input type="number" id="product-stock" value="100" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+      </div>
+      <div><label class="text-sm font-medium text-white mb-1.5 block">URL Image (optionnel)</label><input type="url" id="product-image" placeholder="https://..." class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+    </div>
+    <div class="flex gap-3 pt-5">
+      <button onclick="closeAddProduct()" class="flex-1 rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-zinc-400 hover:bg-zinc-800 transition-all">Annuler</button>
+      <button onclick="saveProduct()" class="flex-1 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 transition-all">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div id="add-client-modal" class="modal-backdrop hidden" onclick="closeAddClient()">
+  <div class="bg-zinc-900 rounded-2xl p-7 w-full max-w-md border border-zinc-800 scale-in" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-bold text-white">Nouveau client</h3>
+      <button onclick="closeAddClient()" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="space-y-4">
+      <div><label class="text-sm font-medium text-white mb-1.5 block">Nom *</label><input type="text" id="client-name" placeholder="Nom du client" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+      <div><label class="text-sm font-medium text-white mb-1.5 block">Telephone WhatsApp</label><input type="tel" id="client-phone" placeholder="+237 6XX XXX XXX" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+      <div><label class="text-sm font-medium text-white mb-1.5 block">Email (optionnel)</label><input type="email" id="client-email" placeholder="email@exemple.com" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all"></div>
+    </div>
+    <div class="flex gap-3 pt-5">
+      <button onclick="closeAddClient()" class="flex-1 rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-zinc-400 hover:bg-zinc-800 transition-all">Annuler</button>
+      <button onclick="saveClient()" class="flex-1 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 transition-all">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-2"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+// ─── Config ────────────────────────────────────────────────────────────────────
+const API = window.location.origin;
+let SESSION = JSON.parse(localStorage.getItem('titanex_session') || 'null');
+let ADMIN_KEY = localStorage.getItem('titanex_admin_key') || '';
+let INSTANCE = SESSION?.instance_name || '';
+let currentPage = 'home';
+let currentPeriod = '7d';
+
+// ─── Data stores ──────────────────────────────────────────────────────────────
+let allConversations = [];
+let allAgents = [];
+let allProducts = [];
+let allClients = [];
+let selectedAgentObj = null;
+let selectedConvPhone = null;
+const _rendered = {}; // tracks which pages have been rendered
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  try { lucide.createIcons(); } catch(e) { console.warn('Lucide icons failed:', e); }
+  if (!SESSION) { location.href = '/dashboard/login.html'; return; }
+  INSTANCE = SESSION.instance_name || '';
+  try {
+    document.getElementById('greeting-name').textContent = SESSION.nom || SESSION.email?.split('@')[0] || 'utilisateur';
+    document.getElementById('user-avatar').textContent = (SESSION.nom || SESSION.email || '?')[0].toUpperCase();
+  } catch(e) { console.warn('Init UI error:', e); }
+  loadDashboard();
+
+  // Event delegation for sidebar nav — ensures buttons always work
+  document.querySelector('#sidebar nav').addEventListener('click', function(e) {
+    const btn = e.target.closest('.nav-item');
+    if (btn && btn.onclick) return; // let inline handler run
+    if (btn) {
+      // Extract page from onclick attribute as fallback
+      const attr = btn.getAttribute('onclick');
+      if (attr) {
+        const m = attr.match(/showPage\(['"](\w+)['"]\)/);
+        if (m) { e.preventDefault(); e.stopPropagation(); showPage(m[1]); }
+      }
+    }
+  });
+});
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `px-4 py-3 rounded-xl text-sm font-semibold shadow-lg border scale-in ${
+    type === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'
+  }`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+const PAGE_TITLES = {
+  home:'Tableau de bord', conversations:'Conversations', agents:'Agents IA',
+  catalogue:'Produits et services', clients:'Leads', credits:'Credits',
+  connections:'Connexions', settings:'Parametres', paiements:'Paiements',
+  transactions:'Mes Transactions', knowledge:'Base de connaissances', orders:'Commandes',
+  widgets:'Widgets', calendar:'Calendrier', ambassador:'Ambassadeurs',
+  domain:'Domaine perso', academy:'Academy'
+};
+
+function showPage(page) {
+  currentPage = page;
+  // Show the target page, hide all others
+  document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.remove('hidden');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
+
+  // Nav active state — reset all, then highlight current
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    // Restore default color unless it's the special Connexions button
+    if (n.id !== 'nav-connections') {
+      n.classList.add('text-zinc-400');
+      n.classList.remove('text-emerald-400');
+    } else {
+      // Reset Connexions to its default green highlight style
+      n.className = 'nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-green-400 bg-green-500/5 border border-green-500/10 transition-all';
+    }
+  });
+  const navBtn = document.getElementById('nav-' + page);
+  if (navBtn) {
+    navBtn.classList.add('active');
+    navBtn.classList.remove('text-zinc-400');
+    navBtn.classList.remove('text-green-400');
+  }
+  toggleSidebar(false);
+
+  // Render / load pages on navigation
+  switch (page) {
+    case 'conversations':
+      if (!_rendered.conversations) { _rendered.conversations = true; allConversations.length ? renderConversations() : loadConversations(); }
+      break;
+    case 'agents':
+      if (!_rendered.agents) { _rendered.agents = true; loadAgents(); }
+      break;
+    case 'catalogue':
+      if (!_rendered.catalogue) { _rendered.catalogue = true; allProducts.length ? renderCatalogue() : loadCatalogue(); }
+      break;
+    case 'clients':
+      if (!_rendered.clients) { _rendered.clients = true; loadClients(); }
+      break;
+    case 'credits':
+      renderCreditPacks();
+      break;
+  }
+}
+
+function toggleSidebar(open) {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('mobileOverlay');
+  if (open) {
+    sb.classList.add('open');
+    ov.classList.remove('hidden');
+  } else {
+    sb.classList.remove('open');
+    ov.classList.add('hidden');
+  }
+}
+
+// ─── API helpers ──────────────────────────────────────────────────────────────
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...opts.headers };
+  if (ADMIN_KEY) headers['x-admin-key'] = ADMIN_KEY;
+  const res = await fetch(API + path, { ...opts, headers });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Erreur reseau' }));
+    throw new Error(err.error || 'Erreur');
+  }
+  return res.json();
+}
+
+// ─── Dashboard Home ───────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const [statsRes, convsRes, catRes] = await Promise.all([
+      api('/admin/tenant-stats/' + INSTANCE).catch(() => ({ conversations: 0, produits: 0 })),
+      api('/admin/conversations/' + INSTANCE).catch(() => []),
+      api('/admin/catalogue/' + INSTANCE).catch(() => []),
+    ]);
+
+    allConversations = convsRes || [];
+    allProducts = catRes || [];
+
+    // Load local agents for stats
+    allAgents = JSON.parse(localStorage.getItem('titanex_agents_' + INSTANCE) || '[]');
+
+    // Stats
+    document.getElementById('stat-agents-total').textContent = allAgents.length;
+    document.getElementById('stat-agents-active').textContent = allAgents.filter(a => a.status).length;
+    document.getElementById('stat-leads-total').textContent = allConversations.length;
+    document.getElementById('stat-leads-period').textContent = allConversations.length;
+
+    // Credits
+    const credits = SESSION.credits || 0;
+    updateCreditsUI(credits, 3000);
+    document.getElementById('badge-credits').textContent = credits;
+    document.getElementById('header-credits-count').textContent = credits + ' credits';
+
+    // Conversation badge
+    if (allConversations.length > 0) {
+      const b = document.getElementById('badge-conv');
+      b.textContent = allConversations.length;
+      b.classList.remove('hidden');
+    }
+
+    // Agent cards — show recent agents from local storage
+    if (allAgents.length > 0) {
+      const r = allAgents[0];
+      document.getElementById('stat-agent-recent-name').textContent = r.name;
+      document.getElementById('stat-agent-recent-date').textContent = new Date(r.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+      document.getElementById('stat-agent-recent-status').innerHTML = `<span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${r.status ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">${r.status ? 'Actif' : 'Hors ligne'}<span class="w-2 h-2 rounded-full ${r.status ? 'bg-emerald-400' : 'bg-red-400'}"></span></span>`;
+      if (allAgents.length > 1) {
+        const s = allAgents[1];
+        document.getElementById('stat-agent-second-name').textContent = s.name;
+        document.getElementById('stat-agent-second-date').textContent = new Date(s.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+        document.getElementById('stat-agent-second-status').innerHTML = `<span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full ${s.status ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">${s.status ? 'Actif' : 'Hors ligne'}<span class="w-2 h-2 rounded-full ${s.status ? 'bg-emerald-400' : 'bg-red-400'}"></span></span>`;
+      }
+    } else if (allConversations.length > 0) {
+      const phones = [...new Set(allConversations.map(c => c.phone || c.remoteJid?.split('@')[0]))].filter(Boolean);
+      document.getElementById('stat-agent-recent-name').textContent = phones[0] || 'Aucun';
+      if (allConversations[0]?.created_at) {
+        document.getElementById('stat-agent-recent-date').textContent = new Date(allConversations[0].created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+      }
+    }
+
+    // Show content
+    document.getElementById('home-loading').classList.add('hidden');
+    document.getElementById('home-content').classList.remove('hidden');
+
+    // Draw mini chart
+    drawLeadsChart();
+  } catch (e) {
+    console.error('Dashboard load error:', e);
+    document.getElementById('home-loading').classList.add('hidden');
+    document.getElementById('home-content').classList.remove('hidden');
+  }
+}
+
+function updateCreditsUI(current, total) {
+  const pct = Math.min(Math.round((current / total) * 100), 100);
+  document.getElementById('credits-current').textContent = current.toLocaleString();
+  document.getElementById('credits-total').textContent = total.toLocaleString();
+  document.getElementById('credits-pct').textContent = pct + '%';
+  document.getElementById('credits-bar').style.width = pct + '%';
+  if (pct <= 10) document.getElementById('credits-warning').classList.remove('hidden');
+  else document.getElementById('credits-warning').classList.add('hidden');
+}
+
+// ─── Leads Chart (Canvas) ────────────────────────────────────────────────────
+function drawLeadsChart() {
+  const canvas = document.getElementById('leads-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.parentElement.offsetWidth;
+  canvas.width = w;
+  canvas.height = 120;
+  ctx.clearRect(0, 0, w, 120);
+
+  // Group conversations by day
+  const days = currentPeriod === '7d' ? 7 : currentPeriod === '30d' ? 30 : 90;
+  const data = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const count = allConversations.filter(c => c.created_at && c.created_at.slice(0, 10) === ds).length;
+    data.push(count);
+  }
+
+  if (data.length < 2) return;
+  const maxV = Math.max(...data, 1);
+  const step = w / (data.length - 1);
+  const pad = 10;
+  const h = 100;
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, h + pad);
+  grad.addColorStop(0, 'rgba(34,197,94,0.3)');
+  grad.addColorStop(1, 'rgba(34,197,94,0)');
+
+  ctx.beginPath();
+  ctx.moveTo(0, h + pad);
+  data.forEach((v, i) => {
+    const x = i * step;
+    const y = pad + h - (v / maxV) * h;
+    if (i === 0) ctx.lineTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(w, h + pad);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = i * step;
+    const y = pad + h - (v / maxV) * h;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function setPeriod(p) {
+  currentPeriod = p;
+  ['7d','30d','90d'].forEach(id => {
+    const btn = document.getElementById('period-' + id);
+    if (id === p) { btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-all'; }
+    else { btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 transition-all'; }
+  });
+  const labels = { '7d':'7 derniers jours', '30d':'30 derniers jours', '90d':'90 derniers jours' };
+  document.getElementById('leads-period-label').textContent = labels[p];
+
+  // Recount leads by period
+  const now = Date.now();
+  const ms = p === '7d' ? 7*864e5 : p === '30d' ? 30*864e5 : 90*864e5;
+  const filtered = allConversations.filter(c => c.created_at && (now - new Date(c.created_at).getTime()) < ms);
+  document.getElementById('stat-leads-period').textContent = filtered.length;
+  drawLeadsChart();
+}
+
+// ─── Conversations ────────────────────────────────────────────────────────────
+async function loadConversations() {
+  try {
+    const data = await api('/admin/conversations/' + INSTANCE);
+    allConversations = data || [];
+    renderConversations();
+  } catch (e) {
+    showToast('Erreur chargement conversations', 'error');
+  }
+}
+
+function renderConversations() {
+  document.getElementById('conv-loading').classList.add('hidden');
+  document.getElementById('conv-list').classList.remove('hidden');
+  const container = document.getElementById('conv-container');
+  container.innerHTML = '';
+
+  if (allConversations.length === 0) {
+    document.getElementById('conv-empty').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('conv-empty').classList.add('hidden');
+
+  // Group by phone
+  const grouped = {};
+  allConversations.forEach(c => {
+    const phone = c.phone || c.remoteJid?.split('@')[0] || 'inconnu';
+    if (!grouped[phone]) grouped[phone] = { phone, messages: [], lastAt: c.created_at };
+    grouped[phone].messages.push(c);
+    if (c.created_at > grouped[phone].lastAt) grouped[phone].lastAt = c.created_at;
+  });
+
+  const sorted = Object.values(grouped).sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
+
+  sorted.forEach(conv => {
+    const last = conv.messages[0];
+    const el = document.createElement('div');
+    el.className = 'flex items-center gap-3 p-4 rounded-2xl border border-zinc-800 hover:border-emerald-500/30 cursor-pointer transition-all card-hover';
+    el.onclick = () => openConvDetail(conv);
+    el.innerHTML = `
+      <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm shrink-0">${(conv.phone || '?')[0]}</div>
+      <div class="flex-1 min-w-0">
+        <h3 class="text-sm font-bold text-white truncate">${conv.phone}</h3>
+        <p class="text-xs text-zinc-400 truncate">${last.content || last.message || '...'}</p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="text-[10px] text-zinc-500">${formatTime(conv.lastAt)}</p>
+        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">${conv.messages.length}</span>
+      </div>`;
+    container.appendChild(el);
+  });
+}
+
+function filterConversations() {
+  const q = document.getElementById('conv-search').value.toLowerCase();
+  const cards = document.getElementById('conv-container').children;
+  for (const card of cards) {
+    card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+  }
+}
+
+function openConvDetail(conv) {
+  selectedConvPhone = conv.phone;
+  document.getElementById('conv-list').classList.add('hidden');
+  document.getElementById('conv-detail').classList.remove('hidden');
+  document.getElementById('conv-detail-avatar').textContent = (conv.phone || '?')[0];
+  document.getElementById('conv-detail-name').textContent = conv.phone;
+  document.getElementById('conv-detail-phone').textContent = conv.phone;
+
+  const mc = document.getElementById('conv-messages');
+  mc.innerHTML = '';
+  const msgs = [...conv.messages].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  msgs.forEach(m => {
+    const isBot = m.direction === 'outgoing' || m.role === 'assistant';
+    const div = document.createElement('div');
+    div.className = `flex ${isBot ? 'justify-end' : 'justify-start'}`;
+    div.innerHTML = `
+      <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${isBot ? 'bg-emerald-500/20 text-emerald-100' : 'bg-zinc-800 text-white'}">
+        <p>${m.content || m.message || ''}</p>
+        <p class="text-[10px] mt-1 ${isBot ? 'text-emerald-400/60' : 'text-zinc-500'}">${formatTime(m.created_at)}</p>
+      </div>`;
+    mc.appendChild(div);
+  });
+  mc.scrollTop = mc.scrollHeight;
+}
+
+function closeConvDetail() {
+  document.getElementById('conv-detail').classList.add('hidden');
+  document.getElementById('conv-list').classList.remove('hidden');
+}
+
+async function sendReply() {
+  const input = document.getElementById('conv-reply-input');
+  const text = input.value.trim();
+  if (!text || !selectedConvPhone) return;
+  input.value = '';
+  try {
+    await api('/admin/send-message', {
+      method: 'POST',
+      body: JSON.stringify({ instance: INSTANCE, number: selectedConvPhone, text }),
+      headers: { 'x-admin-key': ADMIN_KEY }
+    });
+    // Add to UI
+    const mc = document.getElementById('conv-messages');
+    const div = document.createElement('div');
+    div.className = 'flex justify-end';
+    div.innerHTML = `<div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm bg-emerald-500/20 text-emerald-100"><p>${escapeHtml(text)}</p><p class="text-[10px] mt-1 text-emerald-400/60">${formatTime(new Date().toISOString())}</p></div>`;
+    mc.appendChild(div);
+    mc.scrollTop = mc.scrollHeight;
+    showToast('Message envoye !');
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+// ─── Agents ───────────────────────────────────────────────────────────────────
+async function loadAgents() {
+  // Agents are stored in conversations context for now (no dedicated agents table in admin API)
+  // We'll create a simple local agent system
+  allAgents = JSON.parse(localStorage.getItem('titanex_agents_' + INSTANCE) || '[]');
+  renderAgents();
+}
+
+function renderAgents() {
+  const grid = document.getElementById('agents-grid');
+  const empty = document.getElementById('agents-empty');
+  grid.innerHTML = '';
+  document.getElementById('agents-count').textContent = allAgents.length + '/' + allAgents.length + ' agents';
+  document.getElementById('stat-agents-total').textContent = allAgents.length;
+  document.getElementById('stat-agents-active').textContent = allAgents.filter(a => a.status).length;
+
+  if (allAgents.length === 0) {
+    empty.classList.remove('hidden');
+    grid.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  grid.classList.remove('hidden');
+
+  const search = (document.getElementById('agents-search')?.value || '').toLowerCase();
+
+  allAgents.filter(a => a.name.toLowerCase().includes(search)).forEach(agent => {
+    const score = calcPromptScore(agent.personality || '');
+    const scoreColor = score >= 8 ? '#22c55e' : score >= 5 ? '#f59e0b' : '#ef4444';
+    const initials = agent.name.slice(0, 2).toUpperCase();
+
+    const card = document.createElement('div');
+    card.className = 'rounded-2xl border border-zinc-800 bg-zinc-900 p-5 cursor-pointer transition-all hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5 relative overflow-hidden';
+    card.onclick = () => openAgentDetail(agent);
+    card.innerHTML = `
+      <div class="absolute -bottom-5 -right-5 w-24 h-24 rounded-full pointer-events-none" style="background:${agent.status?'rgba(34,197,94,.05)':'rgba(239,68,68,.05)'}"></div>
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center border border-white/10" style="background:linear-gradient(135deg,#1e3a5f,#0f2847)">
+            <span class="text-base font-bold text-blue-400">${initials}</span>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-white">${escapeHtml(agent.name)}</h3>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1" style="background:${agent.status?'rgba(34,197,94,.15)':'rgba(239,68,68,.15)'};color:${agent.status?'#22c55e':'#ef4444'}">
+              <span class="w-[5px] h-[5px] rounded-full" style="background:currentColor"></span>
+              ${agent.status ? 'Actif' : 'Inactif'}
+            </span>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-[22px] font-bold leading-none" style="color:${scoreColor}">${score}</div>
+          <div class="text-[9px] text-zinc-500">/10</div>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-400 line-clamp-2 mb-3 leading-relaxed">${escapeHtml(agent.personality || 'Aucun prompt configure')}</p>
+      <div class="h-[3px] rounded bg-white/[.06] mb-3 overflow-hidden"><div class="h-full rounded" style="width:${score*10}%;background:linear-gradient(90deg,${scoreColor}88,${scoreColor});transition:width .6s"></div></div>
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] text-zinc-500 flex items-center gap-1"><i data-lucide="clock" class="w-[10px] h-[10px]"></i>${new Date(agent.created_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</span>
+        <div class="flex gap-1" onclick="event.stopPropagation()">
+          <button onclick="toggleAgent('${agent.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold" style="background:${agent.status?'rgba(239,68,68,.12)':'rgba(34,197,94,.12)'};color:${agent.status?'#ef4444':'#22c55e'}">${agent.status?'Desactiver':'Deployer'}</button>
+          <button onclick="deleteAgent('${agent.id}')" class="px-2 py-1 rounded-lg" style="background:rgba(239,68,68,.08);color:#ef4444"><i data-lucide="trash-2" class="w-[13px] h-[13px]"></i></button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  lucide.createIcons();
+}
+
+function filterAgents() { renderAgents(); }
+
+function calcPromptScore(prompt) {
+  let s = 0;
+  if (prompt.length > 200) s += 2;
+  if (prompt.length > 600) s += 1;
+  if (/produit|service|prix|XAF|FCFA/i.test(prompt)) s += 2;
+  if (/personnali|style|ton/i.test(prompt)) s += 1;
+  if (/objectif|mission|rôle/i.test(prompt)) s += 1;
+  if (/\n/.test(prompt)) s += 1;
+  if (/\*\*|##/.test(prompt)) s += 1;
+  if (prompt.length > 1200) s += 1;
+  return Math.min(s, 10);
+}
+
+function openCreateAgent() { document.getElementById('create-agent-modal').classList.remove('hidden'); document.getElementById('new-agent-name').focus(); }
+function closeCreateAgent() { document.getElementById('create-agent-modal').classList.add('hidden'); }
+
+function createAgent() {
+  const name = document.getElementById('new-agent-name').value.trim();
+  if (!name) return;
+  const agent = { id: 'ag_' + Date.now(), name, personality: '', status: false, style: 'normal', created_at: new Date().toISOString() };
+  allAgents.unshift(agent);
+  saveAgentsLocal();
+  renderAgents();
+  closeCreateAgent();
+  document.getElementById('new-agent-name').value = '';
+  openAgentDetail(agent);
+  showToast('Agent cree !');
+}
+
+function openAgentDetail(agent) {
+  selectedAgentObj = agent;
+  document.getElementById('agents-list-view').classList.add('hidden');
+  document.getElementById('agents-detail-view').classList.remove('hidden');
+  document.getElementById('agent-detail-name').textContent = agent.name;
+  document.getElementById('agent-detail-initials').textContent = agent.name.slice(0, 2).toUpperCase();
+  document.getElementById('agent-prompt').value = agent.personality || '';
+
+  // Status badge
+  const sb = document.getElementById('agent-detail-status-badge');
+  sb.textContent = agent.status ? 'Actif' : 'Inactif';
+  sb.className = `text-[10px] font-bold px-2 py-0.5 rounded-full ${agent.status ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`;
+
+  // Toggle button
+  const tb = document.getElementById('agent-toggle-btn');
+  if (agent.status) {
+    tb.textContent = 'Desactiver';
+    tb.className = 'flex items-center gap-2 px-5 py-2.5 rounded-xl border border-red-500/30 text-red-400 text-sm font-bold hover:bg-red-500/10 transition-all';
+  } else {
+    tb.textContent = 'Deployer';
+    tb.className = 'flex items-center gap-2 px-5 py-2.5 rounded-xl border border-green-500/30 text-green-400 text-sm font-bold hover:bg-green-500/10 transition-all';
+  }
+
+  // Style
+  setAgentStyle(agent.style || 'normal');
+
+  // Score
+  updateScoreDisplay();
+  document.getElementById('agent-prompt').oninput = updateScoreDisplay;
+
+  // Reset playground
+  document.getElementById('playground-messages').innerHTML = '<p class="text-xs text-zinc-500 text-center py-8">Envoyez un message pour tester votre agent</p>';
+
+  setAgentTab('prompt');
+}
+
+function updateScoreDisplay() {
+  const score = calcPromptScore(document.getElementById('agent-prompt').value);
+  const color = score >= 8 ? '#22c55e' : score >= 5 ? '#f59e0b' : '#ef4444';
+  document.getElementById('agent-detail-score-container').innerHTML = `
+    <div class="flex items-center gap-2">
+      <span class="text-[11px] text-zinc-500">Prompt score</span>
+      <div class="score-circle">
+        <svg width="52" height="52"><circle cx="26" cy="26" r="20" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/><circle cx="26" cy="26" r="20" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${(score/10)*125.6} 125.6" style="transition:stroke-dasharray .6s"/></svg>
+        <div class="absolute inset-0 flex items-center justify-center"><span class="text-sm font-bold" style="color:${color}">${score}</span></div>
+      </div>
+      <span class="text-[11px] text-zinc-500">/10</span>
+    </div>`;
+}
+
+function closeAgentDetail() {
+  document.getElementById('agents-detail-view').classList.add('hidden');
+  document.getElementById('agents-list-view').classList.remove('hidden');
+  selectedAgentObj = null;
+}
+
+function setAgentTab(tab) {
+  ['prompt','settings'].forEach(t => {
+    document.getElementById('agent-tab-' + t).className = t === tab
+      ? 'px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-1.5'
+      : 'px-4 py-2 rounded-lg text-xs font-semibold text-zinc-400 border border-zinc-800 hover:bg-zinc-800 transition-all flex items-center gap-1.5';
+    document.getElementById('agent-panel-' + t).classList.toggle('hidden', t !== tab);
+  });
+}
+
+function setAgentStyle(style) {
+  if (selectedAgentObj) selectedAgentObj.style = style;
+  document.querySelectorAll('#agent-styles button').forEach(b => {
+    if (b.dataset.style === style) { b.className = 'px-3 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-semibold transition-all'; }
+    else { b.className = 'px-3 py-2 rounded-xl border border-zinc-800 text-zinc-400 text-xs font-semibold hover:bg-zinc-800 transition-all'; }
+  });
+}
+
+function saveAgent() {
+  if (!selectedAgentObj) return;
+  selectedAgentObj.personality = document.getElementById('agent-prompt').value;
+  const idx = allAgents.findIndex(a => a.id === selectedAgentObj.id);
+  if (idx >= 0) allAgents[idx] = { ...selectedAgentObj };
+  saveAgentsLocal();
+  showToast('Agent enregistre !');
+  updateScoreDisplay();
+}
+
+function toggleAgent(id) {
+  const agent = allAgents.find(a => a.id === id);
+  if (!agent) return;
+  agent.status = !agent.status;
+  saveAgentsLocal();
+  renderAgents();
+  if (selectedAgentObj?.id === id) openAgentDetail(agent);
+  showToast(agent.status ? 'Agent deploye !' : 'Agent desactive');
+}
+
+function toggleCurrentAgent() {
+  if (!selectedAgentObj) return;
+  toggleAgent(selectedAgentObj.id);
+}
+
+function deleteAgent(id) {
+  if (!confirm('Supprimer cet agent ?')) return;
+  allAgents = allAgents.filter(a => a.id !== id);
+  saveAgentsLocal();
+  if (selectedAgentObj?.id === id) closeAgentDetail();
+  renderAgents();
+  showToast('Agent supprime');
+}
+
+function saveAgentsLocal() {
+  localStorage.setItem('titanex_agents_' + INSTANCE, JSON.stringify(allAgents));
+}
+
+function sendPlayground() {
+  const input = document.getElementById('playground-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  const mc = document.getElementById('playground-messages');
+  // Clear placeholder
+  if (mc.querySelector('p.text-center')) mc.innerHTML = '';
+  // User message
+  mc.innerHTML += `<div class="flex justify-end"><div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm bg-emerald-500/20 text-emerald-100"><p>${escapeHtml(text)}</p><p class="text-[10px] mt-0.5 text-emerald-400/50">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p></div></div>`;
+  mc.scrollTop = mc.scrollHeight;
+  // Bot reply (simulated)
+  setTimeout(() => {
+    mc.innerHTML += `<div class="flex justify-start"><div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm bg-zinc-800 text-white"><p>Bonjour ! Je suis en mode test. Configurez mon prompt pour voir mes vraies reponses.</p><p class="text-[10px] mt-0.5 text-zinc-500">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p></div></div>`;
+    mc.scrollTop = mc.scrollHeight;
+  }, 800);
+}
+
+// ─── Catalogue ────────────────────────────────────────────────────────────────
+async function loadCatalogue() {
+  try {
+    const data = await api('/admin/catalogue/' + INSTANCE);
+    allProducts = data || [];
+    renderCatalogue();
+  } catch (e) {
+    showToast('Erreur chargement catalogue', 'error');
+    renderCatalogue();
+  }
+}
+
+function renderCatalogue() {
+  document.getElementById('cat-loading').classList.add('hidden');
+  const grid = document.getElementById('cat-grid');
+  const empty = document.getElementById('cat-empty');
+  const statsEl = document.getElementById('cat-stats');
+
+  const total = allProducts.length;
+  const inStock = allProducts.filter(p => (p.stock || 0) > 0).length;
+  const outStock = allProducts.filter(p => (p.stock || 0) === 0).length;
+  const totalValue = allProducts.reduce((s, p) => s + (p.prix || 0) * (p.stock || 0), 0);
+
+  document.getElementById('cat-count').textContent = total + ' produit' + (total !== 1 ? 's' : '');
+  statsEl.innerHTML = `
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center"><i data-lucide="package" class="w-5 h-5 text-emerald-400"></i></div><div><p class="text-2xl font-bold text-white">${total}</p><p class="text-[11px] text-zinc-400">Total produits</p></div></div>
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center"><i data-lucide="box" class="w-5 h-5 text-green-400"></i></div><div><p class="text-2xl font-bold text-white">${inStock}</p><p class="text-[11px] text-zinc-400">En stock</p></div></div>
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-400"></i></div><div><p class="text-2xl font-bold text-white">${outStock}</p><p class="text-[11px] text-zinc-400">Rupture</p></div></div>
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-zinc-800/50 flex items-center justify-center"><i data-lucide="trending-up" class="w-5 h-5 text-white"></i></div><div><p class="text-2xl font-bold text-white">${totalValue.toLocaleString()}</p><p class="text-[11px] text-zinc-400">Valeur stock (XAF)</p></div></div>`;
+
+  if (total === 0) {
+    empty.classList.remove('hidden');
+    grid.classList.add('hidden');
+  } else {
+    empty.classList.add('hidden');
+    grid.classList.remove('hidden');
+    grid.innerHTML = '';
+    const search = (document.getElementById('cat-search')?.value || '').toLowerCase();
+    allProducts.filter(p => (p.nom || '').toLowerCase().includes(search)).forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'rounded-2xl border border-zinc-800 overflow-hidden group hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer';
+      card.innerHTML = `
+        <div class="aspect-[4/3] bg-zinc-800/50 flex items-center justify-center overflow-hidden relative">
+          ${p.image_url ? `<img src="${p.image_url}" alt="${escapeHtml(p.nom)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">` : `<div class="flex flex-col items-center gap-2 text-zinc-600"><i data-lucide="package" class="w-9 h-9"></i><span class="text-[10px]">Pas d'image</span></div>`}
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <button onclick="event.stopPropagation();deleteProduct('${p.id}')" class="p-2.5 rounded-xl bg-zinc-900/90 text-white hover:bg-red-500 transition-all shadow-lg"><i data-lucide="trash-2" class="w-[15px] h-[15px]"></i></button>
+          </div>
+        </div>
+        <div class="p-4 space-y-2">
+          <h3 class="text-base font-bold text-white leading-snug line-clamp-2 tracking-tight">${escapeHtml(p.nom)}</h3>
+          ${p.description ? `<p class="text-xs text-zinc-400 line-clamp-2 leading-relaxed">${escapeHtml(p.description)}</p>` : ''}
+          <p class="text-lg font-bold text-white tracking-tight">${(p.prix||0).toLocaleString()} FCFA</p>
+          <p class="text-xs text-zinc-400">Stock: ${(p.stock||0) >= 999999 ? 'Illimite' : (p.stock||0) > 0 ? p.stock : '<span class="text-red-400 font-semibold">Rupture</span>'}</p>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+  lucide.createIcons();
+}
+
+function filterCatalogue() { renderCatalogue(); }
+function openAddProduct() { document.getElementById('add-product-modal').classList.remove('hidden'); }
+function closeAddProduct() { document.getElementById('add-product-modal').classList.add('hidden'); }
+
+async function saveProduct() {
+  const nom = document.getElementById('product-name').value.trim();
+  if (!nom) return showToast('Nom requis', 'error');
+  try {
+    await api('/admin/catalogue', {
+      method: 'POST',
+      body: JSON.stringify({
+        instance_name: INSTANCE,
+        nom,
+        description: document.getElementById('product-desc').value.trim(),
+        prix: parseFloat(document.getElementById('product-price').value) || 0,
+        stock: parseInt(document.getElementById('product-stock').value) || 100,
+        image_url: document.getElementById('product-image').value.trim() || null,
+      })
+    });
+    closeAddProduct();
+    showToast('Produit ajoute !');
+    ['product-name','product-desc','product-price','product-image'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('product-stock').value = '100';
+    loadCatalogue();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Supprimer ce produit ?')) return;
+  try {
+    await api('/admin/catalogue/' + id, { method: 'DELETE' });
+    showToast('Produit supprime');
+    loadCatalogue();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+// ─── Clients ──────────────────────────────────────────────────────────────────
+async function loadClients() {
+  // Clients from conversations (extract unique phones)
+  allClients = [];
+  const phones = new Set();
+  allConversations.forEach(c => {
+    const phone = c.phone || c.remoteJid?.split('@')[0];
+    if (phone && !phones.has(phone)) {
+      phones.add(phone);
+      allClients.push({ id: phone, name: phone, phone, email: null, total_orders: 0, total_spent: 0 });
+    }
+  });
+  // Also load from localStorage
+  const localClients = JSON.parse(localStorage.getItem('titanex_clients_' + INSTANCE) || '[]');
+  localClients.forEach(c => {
+    if (!phones.has(c.phone || c.id)) {
+      allClients.push(c);
+    }
+  });
+  renderClients();
+}
+
+function renderClients() {
+  document.getElementById('clients-loading').classList.add('hidden');
+  const grid = document.getElementById('clients-grid');
+  const empty = document.getElementById('clients-empty');
+  const search = (document.getElementById('clients-search')?.value || '').toLowerCase();
+  const filtered = allClients.filter(c => (c.name||'').toLowerCase().includes(search) || (c.email||'').toLowerCase().includes(search));
+
+  if (filtered.length === 0) {
+    empty.classList.remove('hidden');
+    grid.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  grid.classList.remove('hidden');
+  grid.innerHTML = '';
+
+  filtered.forEach(client => {
+    const card = document.createElement('div');
+    card.className = 'rounded-2xl border border-zinc-800 bg-zinc-900/70 backdrop-blur p-5 hover:border-emerald-500/30 transition-all card-hover';
+    card.innerHTML = `
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-400 font-bold text-sm">${(client.name||'?')[0].toUpperCase()}</div>
+        <div>
+          <h3 class="text-sm font-bold text-white">${escapeHtml(client.name)}</h3>
+          <p class="text-xs text-zinc-400">${client.email || client.phone || '—'}</p>
+        </div>
+      </div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-zinc-400">Commandes</span><span class="font-semibold text-white">${client.total_orders||0}</span></div>
+        <div class="flex justify-between"><span class="text-zinc-400">Depense</span><span class="font-semibold text-white">${(client.total_spent||0).toLocaleString()} XAF</span></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function filterClients() { renderClients(); }
+function openAddClient() { document.getElementById('add-client-modal').classList.remove('hidden'); }
+function closeAddClient() { document.getElementById('add-client-modal').classList.add('hidden'); }
+
+function saveClient() {
+  const name = document.getElementById('client-name').value.trim();
+  if (!name) return showToast('Nom requis', 'error');
+  const client = {
+    id: 'cl_' + Date.now(),
+    name,
+    phone: document.getElementById('client-phone').value.trim() || null,
+    email: document.getElementById('client-email').value.trim() || null,
+    total_orders: 0, total_spent: 0
+  };
+  allClients.unshift(client);
+  // Save to localStorage
+  const local = JSON.parse(localStorage.getItem('titanex_clients_' + INSTANCE) || '[]');
+  local.unshift(client);
+  localStorage.setItem('titanex_clients_' + INSTANCE, JSON.stringify(local));
+  closeAddClient();
+  renderClients();
+  showToast('Client ajoute !');
+  ['client-name','client-phone','client-email'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ─── Credits ──────────────────────────────────────────────────────────────────
+function renderCreditPacks() {
+  const el = document.getElementById('credit-packs');
+  el.innerHTML = `
+    <div class="rounded-2xl border-2 border-zinc-800 p-5 hover:border-emerald-500 transition-all cursor-pointer" onclick="buyPack(100,2500)">
+      <div class="flex justify-between items-center"><div><h4 class="font-bold text-white text-sm">Standard</h4><p class="text-2xl font-bold text-white">100 <span class="text-sm font-normal text-zinc-400">credits</span></p></div><p class="text-lg font-bold text-emerald-400">2 500 XAF</p></div>
+    </div>
+    <div class="rounded-2xl border-2 border-emerald-500 bg-emerald-500/5 p-5 relative hover:border-emerald-400 transition-all cursor-pointer" onclick="buyPack(250,5000)">
+      <span class="absolute -top-2.5 right-4 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Populaire</span>
+      <div class="flex justify-between items-center"><div><h4 class="font-bold text-white text-sm">Premium</h4><p class="text-2xl font-bold text-white">250 <span class="text-sm font-normal text-zinc-400">credits</span></p></div><p class="text-lg font-bold text-emerald-400">5 000 XAF</p></div>
+    </div>
+    <div class="rounded-2xl border-2 border-zinc-800 p-5 hover:border-emerald-500 transition-all cursor-pointer" onclick="buyPack(600,10000)">
+      <div class="flex justify-between items-center"><div><h4 class="font-bold text-white text-sm">Titan</h4><p class="text-2xl font-bold text-white">600 <span class="text-sm font-normal text-zinc-400">credits</span></p></div><p class="text-lg font-bold text-emerald-400">10 000 XAF</p></div>
+    </div>`;
+}
+
+function openCreditModal() { document.getElementById('credit-modal').classList.remove('hidden'); }
+function closeCreditModal() { document.getElementById('credit-modal').classList.add('hidden'); }
+
+function buyPack(points, amount) {
+  showToast('Redirection vers le paiement...');
+  // Integration with payment gateway placeholder
+  closeCreditModal();
+}
+
+// ─── Connections ──────────────────────────────────────────────────────────────
+function connectWhatsApp() {
+  window.location.href = '/dashboard/qr-connect.html';
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+function saveSettings() {
+  showToast('Parametres enregistres !');
+}
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+function formatTime(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000) return 'maintenant';
+  if (diff < 3600000) return Math.floor(diff / 60000) + 'min';
+  if (diff < 86400000) return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function copyShareLink() {
+  const text = 'Creez votre agent commercial WhatsApp IA et boostez vos ventes avec Titanex AI. ' + window.location.origin;
+  navigator.clipboard.writeText(text).then(() => showToast('Lien copie !')).catch(() => showToast('Impossible de copier', 'error'));
+}
+
+function copyReferral() {
+  const link = document.getElementById('referral-link').textContent;
+  navigator.clipboard.writeText(link).then(() => showToast('Lien de parrainage copie !')).catch(() => {});
+}
+
+function logout() {
+  localStorage.removeItem('titanex_session');
+  location.href = '/dashboard/login.html';
+}
+</script>
+</body>
+</html>
