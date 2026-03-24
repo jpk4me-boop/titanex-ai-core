@@ -7,456 +7,940 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{colors:{brand:'#22c55e','brand-dark':'#16a34a'},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+/* ─── Animations ─── */
+@keyframes bookOpen{
+  0%{transform:perspective(800px) rotateY(-90deg) translateX(-60px);opacity:0;transform-origin:left center}
+  50%{transform:perspective(800px) rotateY(-15deg) translateX(-10px);opacity:.9;transform-origin:left center}
+  70%{transform:perspective(800px) rotateY(5deg) translateX(3px);opacity:1;transform-origin:left center}
+  85%{transform:perspective(800px) rotateY(-3deg) translateX(-1px);transform-origin:left center}
+  100%{transform:perspective(800px) rotateY(0deg) translateX(0);opacity:1;transform-origin:left center}
+}
+@keyframes floatHover{
+  0%,100%{transform:translateY(0) rotate(0deg);box-shadow:0 20px 60px rgba(0,0,0,.15)}
+  33%{transform:translateY(-8px) rotate(.5deg);box-shadow:0 30px 80px rgba(0,0,0,.2)}
+  66%{transform:translateY(-4px) rotate(-.3deg);box-shadow:0 25px 70px rgba(0,0,0,.18)}
+}
+.slide-stick{animation:bookOpen .7s cubic-bezier(.23,1,.32,1) .2s forwards,floatHover 4s ease-in-out .9s infinite;opacity:0}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
 @keyframes typing{0%,100%{opacity:.3}50%{opacity:1}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.float{animation:float 5s ease-in-out infinite}
+@keyframes waMsgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .pulse-dot{animation:pulse-dot 2s infinite}
-.typing span{animation:typing 1.3s ease infinite}
-.typing span:nth-child(2){animation-delay:.2s}
-.typing span:nth-child(3){animation-delay:.4s}
 .fade-up{animation:fadeUp .6s ease forwards;opacity:0}
+.wa-msg{animation:waMsgIn .3s ease forwards}
+.hero-msg{opacity:0;transform:translateY(8px);transition:all .35s ease}
+.hero-msg.show{opacity:1;transform:translateY(0)}
+.hero-typing{display:none;align-items:center;gap:0;padding:8px 14px;background:#ddd;border-radius:16px;border-top-left-radius:4px;width:fit-content}
+.hero-typing.show{display:flex}
+.hero-typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#999;margin:0 1.5px;animation:typing 1.3s ease infinite}
+.hero-typing span:nth-child(2){animation-delay:.2s}
+.hero-typing span:nth-child(3){animation-delay:.4s}
+.wa-typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:#999;margin:0 1.5px;animation:typing 1.4s ease-in-out infinite}
+.wa-typing span:nth-child(2){animation-delay:.2s}
+.wa-typing span:nth-child(3){animation-delay:.4s}
+.hero-cta-primary:hover{transform:scale(1.04);box-shadow:0 6px 32px rgba(34,197,94,.35)!important}
 html{scroll-behavior:smooth}
+
+/* ─── Light mode (default) ─── */
+body.light-mode{background:#ffffff;color:#0f172a}
+body.light-mode nav.main-nav{background:rgba(255,255,255,.97)!important;border-bottom-color:#e2e8f0!important;backdrop-filter:blur(12px)}
+body.light-mode nav.main-nav .nav-link{color:#475569!important}
+body.light-mode nav.main-nav .nav-link:hover{color:#0f172a!important}
+body.light-mode nav.main-nav .nav-logo{color:#0f172a!important}
+body.light-mode nav.main-nav .nav-logo .brand-ai{color:#16a34a!important}
+body.light-mode nav.main-nav .search-box{background:#f8fafc!important;border:1.5px solid #cbd5e1!important;border-radius:10px!important;padding:6px 12px!important}
+body.light-mode nav.main-nav .search-box span{color:#374151!important;font-size:13px!important}
+body.light-mode nav.main-nav .search-box kbd{background:#fff!important;border-color:#d1d5db!important;color:#374151!important}
+body.light-mode nav.main-nav .search-box:hover{border-color:#10b981!important;background:#fff!important}
+body.light-mode nav.main-nav .nav-icon{color:#374151!important;border:1.5px solid #e2e8f0!important;background:#f8fafc!important;border-radius:10px!important;width:36px!important;height:36px!important}
+body.light-mode nav.main-nav .nav-icon svg{stroke-width:2px!important}
+body.light-mode nav.main-nav .nav-icon:hover{background:#fff!important;border-color:#10b981!important;color:#10b981!important}
+body.light-mode nav.main-nav .nav-sep{background:#e2e8f0!important}
+body.light-mode nav.main-nav .btn-login{border:1.5px solid #374151!important;background:#ffffff!important;color:#111827!important;font-weight:600!important;border-radius:10px!important;padding:8px 18px!important}
+body.light-mode nav.main-nav .btn-login:hover{border-color:#10b981!important;color:#10b981!important}
+body.light-mode nav.main-nav .btn-cta{background:#10b981!important;color:#ffffff!important;font-weight:700!important;border-radius:10px!important;padding:8px 18px!important;box-shadow:0 2px 8px rgba(16,185,129,0.3)!important}
+body.light-mode nav.main-nav .btn-cta:hover{background:#059669!important;transform:translateY(-1px)!important}
+body.light-mode .sec-alt{background:#f8fafc!important}
+body.light-mode .sec-white{background:#ffffff!important}
+body.light-mode .card-dark{background:rgba(0,0,0,.03)!important;border-color:#e2e8f0!important}
+body.light-mode .card-dark:hover{border-color:rgba(34,197,94,.3)!important}
+body.light-mode .text-sub{color:#475569!important}
+body.light-mode .text-muted{color:#64748b!important}
+body.light-mode .text-faint{color:#94a3b8!important}
+body.light-mode .border-sec{border-color:#e2e8f0!important}
+body.light-mode .stats-bar{background:#f8fafc!important;border-color:#e2e8f0!important}
+body.light-mode footer{background:#f8fafc!important;border-color:#e2e8f0!important}
+
+/* ─── Dark mode ─── */
+body.dark-mode{background:#030712;color:#f1f5f9}
+body.dark-mode nav.main-nav{background:rgba(3,7,18,.97)!important;border-bottom-color:#1e293b!important;backdrop-filter:blur(12px)}
+body.dark-mode nav.main-nav .nav-link{color:#94a3b8!important}
+body.dark-mode nav.main-nav .nav-link:hover{color:#fff!important}
+body.dark-mode nav.main-nav .nav-logo{color:#fff!important}
+body.dark-mode nav.main-nav .search-box{background:#0f172a!important;border-color:#1e293b!important}
+body.dark-mode nav.main-nav .search-box span{color:#475569!important}
+body.dark-mode nav.main-nav .search-box kbd{background:#1e293b!important;border-color:#334155!important;color:#475569!important}
+body.dark-mode nav.main-nav .nav-icon{color:#64748b!important}
+body.dark-mode nav.main-nav .nav-icon:hover{color:#fff!important;background:#1e293b!important}
+body.dark-mode nav.main-nav .nav-sep{background:#1e293b!important}
+body.dark-mode nav.main-nav .btn-login{border-color:#334155!important;color:#94a3b8!important}
+body.dark-mode nav.main-nav .btn-login:hover{border-color:#22c55e!important;color:#22c55e!important}
+body.dark-mode .sec-alt{background:#0f172a!important}
+body.dark-mode .sec-white{background:#030712!important}
+body.dark-mode .card-dark{background:rgba(255,255,255,.03)!important;border-color:#1e293b!important}
+body.dark-mode .card-dark:hover{border-color:rgba(34,197,94,.3)!important}
+body.dark-mode .text-sub{color:#cbd5e1!important}
+body.dark-mode .text-muted{color:#94a3b8!important}
+body.dark-mode .text-faint{color:#64748b!important}
+body.dark-mode .border-sec{border-color:#1e293b!important}
+body.dark-mode .stats-bar{background:#0f172a!important;border-color:#1e293b!important}
+body.dark-mode footer{background:#0f172a!important;border-color:#1e293b!important}
+body.dark-mode h1,body.dark-mode h2,body.dark-mode h3,body.dark-mode h4{color:#f1f5f9}
+body.dark-mode .pricing-card{background:rgba(255,255,255,.04)!important;border-color:#1e293b!important}
+body.dark-mode .pricing-card.pro{border-color:#22c55e!important}
+body.dark-mode .testimonial-card{background:rgba(255,255,255,.03)!important;border-color:#1e293b!important}
+body.dark-mode #mobile-menu{background:#0f172a!important;border-bottom-color:#1e293b!important}
+body.dark-mode #mobile-menu a,body.dark-mode #mobile-menu button{color:#94a3b8!important}
+body.dark-mode #mobile-menu a:hover,body.dark-mode #mobile-menu button:hover{background:#1e293b!important;color:#fff!important}
+body.dark-mode #mobile-menu-btn{border-color:#334155!important}
+body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
+
+/* ─── Responsive ─── */
+@media(max-width:640px){
+  .hide-mobile{display:none!important}
+  .show-mobile{display:flex!important}
+  .full-mobile{width:100%!important}
+  .stack-mobile{flex-direction:column!important}
+  .hero-grid{grid-template-columns:1fr!important;gap:2rem!important;padding-top:4rem!important;padding-bottom:4rem!important}
+  .hero-chat-col{display:none!important}
+  .hero-btns{flex-direction:column!important}
+  .hero-btns button{width:100%!important}
+  .pricing-grid{grid-template-columns:1fr!important}
+  .pricing-grid>div{max-width:380px!important;margin-left:auto!important;margin-right:auto!important}
+  .pricing-grid>div.pro-card{order:-1!important}
+  .feat-grid{grid-template-columns:1fr!important}
+  .test-grid{grid-template-columns:1fr!important}
+  .footer-grid{grid-template-columns:1fr 1fr!important;gap:1.5rem!important}
+  .stats-row{gap:1.5rem!important}
+  .cta-btns{flex-direction:column!important}
+  .cta-btns button,.cta-btns a{width:100%!important}
+  .nav-links,.nav-icons,.nav-auth{display:none!important}
+  #mobile-menu-btn{display:flex!important}
+  .hide-desktop{display:inline-flex!important}
+}
+@media(min-width:641px){
+  #mobile-menu-btn{display:none!important}
+  #mobile-menu{display:none!important}
+  .hide-desktop{display:none!important}
+}
+@media(max-width:1024px) and (min-width:641px){
+  .hero-grid{gap:2rem!important}
+  .pricing-grid{grid-template-columns:1fr!important}
+  .pricing-grid>div{max-width:420px!important;margin-left:auto!important;margin-right:auto!important}
+  .footer-grid{grid-template-columns:1fr 1fr!important}
+}
+#mobile-menu-btn{width:40px;height:40px;background:transparent;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;flex-direction:column;gap:5px;align-items:center;justify-content:center;flex-shrink:0}
+#mobile-menu-btn span{display:block;width:18px;height:2px;background:#475569;border-radius:1px;transition:all .2s}
+#mobile-menu-btn.open span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+#mobile-menu-btn.open span:nth-child(2){opacity:0}
+#mobile-menu-btn.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+#mobile-menu{position:fixed;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 20px;z-index:99;display:none;flex-direction:column;gap:4px}
+#mobile-menu.open{display:flex}
+#mobile-menu a,#mobile-menu button{display:block;width:100%;padding:12px 16px;border-radius:10px;font-size:15px;font-weight:500;color:#475569;background:transparent;border:none;cursor:pointer;text-align:left;text-decoration:none;font-family:inherit}
+#mobile-menu a:hover,#mobile-menu button:hover{background:#f1f5f9;color:#0f172a}
+#mobile-menu .mobile-cta{background:#22c55e;color:#fff;font-weight:700;text-align:center;margin-top:8px;border-radius:10px}
 </style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
-<body class="bg-gray-950 text-gray-100 font-sans antialiased overflow-x-hidden">
+<body class="light-mode font-sans antialiased overflow-x-hidden">
 
 <!-- NAV -->
-<nav style="position:sticky;top:0;z-index:100;background:#0a0a0a;border-bottom:1px solid #1a1a1a;height:60px;display:flex;align-items:center;padding:0 4%;gap:16px">
+<nav class="main-nav" style="position:sticky;top:0;z-index:100;height:60px;display:flex;align-items:center;padding:0 4%;gap:16px;border-bottom:1px solid #e2e8f0;background:rgba(255,255,255,.97);backdrop-filter:blur(12px)">
   <div style="display:flex;align-items:center;gap:8px;margin-right:24px;flex-shrink:0">
     <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px">🤖</div>
-    <span style="font-weight:700;color:#fff;font-size:15px;letter-spacing:-.02em">Titanex <span style="color:#22c55e">AI</span></span>
+    <span class="nav-logo" style="font-weight:700;font-size:15px;letter-spacing:-.02em;color:#0f172a">Titanex <span class="brand-ai" style="color:#16a34a">AI</span></span>
   </div>
-  <div style="display:flex;align-items:center;gap:2px;flex:1">
-    <button onclick="scrollSec('features')" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Fonctionnalités</button>
-    <button onclick="scrollSec('tarifs')" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Tarifs</button>
-    <button onclick="scrollSec('demo')" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Démo</button>
-    <button onclick="location.href='/dashboard/'" style="padding:6px 14px;border-radius:8px;color:#a3a3a3;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a3a3a3'">Boutique</button>
+  <div class="nav-links" style="display:flex;align-items:center;gap:2px;flex:1">
+    <button onclick="scrollSec('features')" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_features">Fonctionnalites</button>
+    <button onclick="scrollSec('tarifs')" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_pricing">Tarifs</button>
+    <button onclick="scrollSec('demo')" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_demo">Demo</button>
+    <button onclick="location.href='/dashboard/'" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_store">Boutique</button>
   </div>
-  <div style="display:flex;align-items:center;gap:4px;margin-left:auto">
-    <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:#141414;border:1px solid #2a2a2a;cursor:pointer" onclick="document.getElementById('dw-inp')&&document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <span style="font-size:11px;color:#555">Rechercher</span>
-      <kbd style="font-size:9px;background:#1e1e1e;border:1px solid #333;color:#555;padding:1px 5px;border-radius:4px;font-family:monospace">⌘K</kbd>
+  <div class="nav-icons" style="display:flex;align-items:center;gap:4px;margin-left:auto">
+    <div class="search-box" style="display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer" onclick="scrollSec('demo')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#94a3b8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span style="font-size:11px;color:#94a3b8">Rechercher</span>
+      <kbd style="font-size:9px;background:#fff;border:1px solid #d1d5db;color:#94a3b8;padding:1px 5px;border-radius:4px;font-family:monospace">⌘K</kbd>
     </div>
-    <div style="width:1px;height:16px;background:#2a2a2a;margin:0 4px"></div>
-    <button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'" title="Partager">
+    <div class="nav-sep" style="width:1px;height:16px;background:#e2e8f0;margin:0 4px"></div>
+    <button class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Partager">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     </button>
-    <button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'" title="Favoris">
+    <button class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Favoris">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
-    <button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'" title="Panier">
+    <button class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Panier">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
     </button>
-    <button id="lang-btn" onclick="toggleLang()" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666;transition:all .2s" onmouseover="this.style.color='#fff';this.style.background='#1a1a1a'" onmouseout="this.style.color='#666';this.style.background='transparent'">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    <button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" class="nav-icon" style="padding:6px 12px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;width:auto!important;height:auto!important">FR</button>
+    <button id="theme-toggle-btn" onclick="toggleTheme()" class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Mode sombre">
+      <svg id="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
-    <div style="width:1px;height:16px;background:#2a2a2a;margin:0 4px"></div>
-    <button onclick="location.href='/dashboard/login.html'" style="padding:6px 14px;border-radius:8px;background:transparent;border:1px solid #2a2a2a;color:#a3a3a3;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#22c55e';this.style.color='#22c55e'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#a3a3a3'">Se connecter</button>
-    <button onclick="location.href='/dashboard/inscription.html'" style="padding:7px 18px;border-radius:8px;background:#22c55e;color:#000;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap" onmouseover="this.style.background='#16a34a';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#22c55e';this.style.transform='translateY(0)'">Essai gratuit 7 jours 🚀</button>
+    <div class="nav-sep" style="width:1px;height:16px;background:#e2e8f0;margin:0 4px"></div>
   </div>
+  <div class="nav-auth" style="display:flex;align-items:center;gap:8px">
+    <button onclick="location.href='/dashboard/login.html'" class="btn-login" style="padding:6px 14px;border-radius:8px;background:transparent;border:1px solid #d1d5db;color:#475569;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s" data-i18n="nav_login">Se connecter</button>
+    <button onclick="location.href='/dashboard/inscription.html'" class="btn-cta" style="padding:8px 18px;border-radius:10px;background:#10b981;color:#fff;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(16,185,129,0.3)" onmouseover="this.style.background='#059669';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#10b981';this.style.transform='translateY(0)'" data-i18n="nav_trial">Essai gratuit 7 jours 🚀</button>
+  </div>
+  <button onclick="location.href='/dashboard/inscription.html'" class="btn-cta hide-desktop" style="display:none;padding:6px 14px;border-radius:10px;background:#10b981;color:#fff;font-size:12px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;box-shadow:0 2px 8px rgba(16,185,129,0.3)">Essai gratuit 🚀</button>
+  <button id="mobile-menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('open');this.classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div id="mobile-menu">
+  <button onclick="scrollSec('features')" data-i18n="nav_features">Fonctionnalites</button>
+  <button onclick="scrollSec('tarifs')" data-i18n="nav_pricing">Tarifs</button>
+  <button onclick="scrollSec('demo')" data-i18n="nav_demo">Demo</button>
+  <button onclick="location.href='/dashboard/'" data-i18n="nav_store">Boutique</button>
+  <button onclick="toggleTheme()" data-i18n="theme_light">Mode Clair</button>
+  <button onclick="setLang(LANG==='fr'?'en':'fr')">🌐 EN/FR</button>
+  <button onclick="location.href='/dashboard/login.html'" data-i18n="nav_login">Se connecter</button>
+  <a href="/dashboard/inscription.html" class="mobile-cta" data-i18n="nav_trial">Essai gratuit 7 jours 🚀</a>
+</div>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- HERO -->
-<section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
-  <div class="space-y-8">
-    <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/25 rounded-full px-4 py-2 text-sm text-brand font-semibold">
-      <span class="w-2 h-2 bg-brand rounded-full pulse-dot"></span>
-      Powered by AI · Instant Setup
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="sec-white" style="position:relative;overflow:hidden">
+  <div class="hero-grid max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center" style="position:relative;z-index:2">
+    <!-- LEFT COLUMN -->
+    <div class="space-y-8">
+      <div class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-brand font-semibold" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+        <span class="w-2 h-2 bg-brand rounded-full pulse-dot"></span>
+        <span data-i18n="hero_badge">Powered by AI · Instant Setup</span>
+      </div>
+      <h1 class="font-extrabold leading-[1.08] tracking-tight" style="font-size:clamp(1.8rem,5vw,3.5rem)">
+        <span data-i18n="hero_title1">Votre WhatsApp</span><br><span data-i18n="hero_title2">vend pendant que</span><br><span class="text-brand" data-i18n="hero_title3">vous dormez</span>
+      </h1>
+      <p class="text-sub text-lg leading-relaxed max-w-md" data-i18n="hero_desc">
+        L'IA qui vend, encaisse et relance vos clients 24h/24 directement depuis votre WhatsApp. Zero configuration complexe.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <span class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm card-dark border text-sub" style="border-color:#e2e8f0">
+          <i data-lucide="settings" class="w-3.5 h-3.5 text-brand"></i> <span data-i18n="usp1">Zero Configuration</span>
+        </span>
+        <span class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm card-dark border text-sub" style="border-color:#e2e8f0">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5 text-brand"></i> <span data-i18n="usp2">Connexion QR Code</span>
+        </span>
+        <span class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm card-dark border text-sub" style="border-color:#e2e8f0">
+          <i data-lucide="credit-card" class="w-3.5 h-3.5 text-brand"></i> <span data-i18n="usp3">Paiements MoMo</span>
+        </span>
+      </div>
+      <div class="hero-btns flex flex-wrap gap-4">
+        <button onclick="location.href='/dashboard/inscription.html'" class="hero-cta-primary flex items-center gap-2 px-7 py-4 rounded-xl font-bold text-base transition-all" style="background:#22c55e;color:#fff;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(34,197,94,.25)">
+          <i data-lucide="rocket" class="w-5 h-5"></i> <span data-i18n="hero_cta">Demarrer mon essai gratuit</span>
+        </button>
+        <button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="flex items-center gap-2 px-7 py-4 rounded-xl font-semibold text-base transition-all text-sub" style="background:transparent;border:1.5px solid #d1d5db;cursor:pointer" onmouseover="this.style.borderColor='#22c55e';this.style.color='#22c55e'" onmouseout="this.style.borderColor='#d1d5db';this.style.color=''">
+          <i data-lucide="message-circle" class="w-5 h-5"></i> <span data-i18n="hero_contact">Nous contacter</span>
+        </button>
+      </div>
     </div>
-    <h1 class="text-5xl md:text-6xl font-bold leading-[1.05] tracking-tight">
-      Automatisez<br>vos ventes<br><span class="text-brand">WhatsApp</span>
-    </h1>
-    <p class="text-lg text-gray-400 leading-relaxed max-w-md">
-      L'IA qui vend, encaisse et relance directement depuis votre WhatsApp. Zéro configuration complexe.
-    </p>
-    <div class="flex flex-wrap gap-3">
-      <span class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-400">
-        <i data-lucide="settings" class="w-3.5 h-3.5 text-brand"></i> Zéro Configuration
-      </span>
-      <span class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-400">
-        <i data-lucide="qr-code" class="w-3.5 h-3.5 text-brand"></i> Connexion QR Code
-      </span>
-      <span class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-400">
-        <i data-lucide="credit-card" class="w-3.5 h-3.5 text-brand"></i> Paiements MoMo
-      </span>
-    </div>
-    <div class="flex flex-wrap gap-4">
-      <button onclick="location.href='/dashboard/inscription.html'" class="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-brand text-black font-bold text-base hover:bg-brand-dark hover:-translate-y-0.5 transition-all shadow-xl shadow-brand/30">
-        <i data-lucide="rocket" class="w-5 h-5"></i> Lancer mon agent IA
-      </button>
-      <button onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-gray-700 text-white font-semibold text-base hover:border-brand/50 hover:text-brand transition-all">
-        <i data-lucide="play-circle" class="w-5 h-5"></i> Voir la Démo
-      </button>
-    </div>
-  </div>
 
-  <!-- Chat Demo -->
-  <div class="flex flex-col items-end gap-3">
-    <div class="flex items-center gap-2 bg-brand/10 border border-brand/25 rounded-full px-4 py-1.5 text-xs text-brand font-semibold">
-      <span class="w-1.5 h-1.5 bg-brand rounded-full pulse-dot"></span>
-      Agent Titanex IA — En ligne
-    </div>
-    <div class="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-3xl p-5 shadow-2xl shadow-black/60 float">
-      <div class="flex items-center gap-3 pb-4 mb-4 border-b border-gray-800">
-        <div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-black font-bold text-sm">IA</div>
-        <div>
-          <div class="font-bold text-sm">Agent Titanex IA</div>
-          <div class="flex items-center gap-1.5 text-xs text-brand">
-            <span class="w-1.5 h-1.5 bg-brand rounded-full pulse-dot"></span> En ligne
+    <!-- RIGHT COLUMN — WhatsApp Chat (vente avec images) -->
+    <div class="hero-chat-col flex flex-col items-end">
+      <div class="w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl slide-stick" style="background:#ece5dd;border:1px solid #d5cec3">
+        <!-- WA Header -->
+        <div class="flex items-center gap-3 px-4 py-3" style="background:#075e54">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold" style="font-size:14px;background:#25d366">T</div>
+          <div>
+            <div class="font-bold" style="font-size:13px;color:#fff"><span data-i18n="agent_name">Agent Titanex IA</span></div>
+            <div class="flex items-center gap-1.5" style="font-size:11px;color:rgba(255,255,255,.7)"><span data-i18n="agent_status">● En ligne</span></div>
           </div>
+          <div class="ml-auto text-white font-bold px-2 py-0.5 rounded-full" style="font-size:10px;background:rgba(255,255,255,.15)">+340% 📈</div>
         </div>
-        <div class="ml-auto bg-brand/10 border border-brand/20 text-brand text-xs font-bold px-2.5 py-1 rounded-full">+340% 📈</div>
-      </div>
-      <div class="space-y-3 text-sm">
-        <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] text-gray-300">
-          Vous avez les bagues en 42 ?
-          <div class="text-xs text-gray-600 mt-1">08:11</div>
-        </div>
-        <div class="bg-brand rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%] ml-auto text-black font-semibold">
-          Oui ! En stock 📦 Expédition demain.
-          <div class="text-xs text-black/50 mt-1 text-right">08:11 ✓</div>
-        </div>
-        <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] text-gray-300">
-          Combien ?
-          <div class="text-xs text-gray-600 mt-1">08:12</div>
-        </div>
-        <div class="bg-brand rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%] ml-auto text-black font-semibold">
-          45 000 XAF → Lien de paiement ↓
-          <div class="text-xs text-black/50 mt-1 text-right">08:12 ✓✓</div>
-        </div>
-        <div class="flex gap-1 px-3 py-2 bg-gray-800 rounded-full w-fit typing">
-          <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
-          <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
-          <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
+        <!-- Messages container -->
+        <div id="hero-msgs" class="p-4 space-y-2.5" style="min-height:340px;max-height:420px;overflow-y:auto">
         </div>
       </div>
-    </div>
-    <div class="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-4 py-1.5 text-xs text-brand font-semibold">
-      🛡️ Toujours actif
     </div>
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- STATS -->
-<div class="border-y border-gray-800 bg-gray-900/50">
-  <div class="max-w-5xl mx-auto px-6 py-10 flex flex-wrap justify-center gap-12">
-    <div class="text-center"><div class="text-4xl font-bold text-brand">+340%</div><div class="text-sm text-gray-500 mt-1">Taux de conversion</div></div>
-    <div class="text-center"><div class="text-4xl font-bold text-brand">24h/24</div><div class="text-sm text-gray-500 mt-1">Disponibilité</div></div>
-    <div class="text-center"><div class="text-4xl font-bold text-brand">&lt;3s</div><div class="text-sm text-gray-500 mt-1">Temps de réponse</div></div>
-    <div class="text-center"><div class="text-4xl font-bold text-brand">+200</div><div class="text-sm text-gray-500 mt-1">Commerçants actifs</div></div>
-    <div class="text-center"><div class="text-4xl font-bold text-brand">5min</div><div class="text-sm text-gray-500 mt-1">Pour démarrer</div></div>
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="stats-bar border-sec" style="border-top:1px solid;border-bottom:1px solid">
+  <div class="stats-row max-w-5xl mx-auto px-6 py-10 flex flex-wrap justify-center gap-12">
+    <div class="text-center"><div class="text-4xl font-bold text-brand">+340%</div><div class="text-sm text-muted mt-1" data-i18n="stats_conv">Taux de conversion</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">24h/24</div><div class="text-sm text-muted mt-1" data-i18n="stats_avail">Disponibilite</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">&lt;3s</div><div class="text-sm text-muted mt-1" data-i18n="stats_resp">Temps de reponse</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">+200</div><div class="text-sm text-muted mt-1" data-i18n="stats_merchants">Commercants actifs</div></div>
+    <div class="text-center"><div class="text-4xl font-bold text-brand">5min</div><div class="text-sm text-muted mt-1" data-i18n="stats_start">Pour demarrer</div></div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- HOW IT WORKS -->
-<section class="bg-gray-900/30 border-b border-gray-800 py-24">
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="sec-alt py-24 border-sec" style="border-bottom:1px solid">
   <div class="max-w-5xl mx-auto px-6">
-    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
-      <i data-lucide="map" class="w-3.5 h-3.5"></i> Comment ça marche
+    <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+      <i data-lucide="map" class="w-3.5 h-3.5"></i> <span data-i18n="how_badge">Comment ca marche</span>
     </div>
-    <h2 class="text-4xl font-bold mb-16 tracking-tight">3 étapes pour <span class="text-brand">vendre en automatique</span></h2>
+    <h2 class="text-4xl font-bold mb-16 tracking-tight"><span data-i18n="how_title_pre">3 etapes pour </span><span class="text-brand" data-i18n="how_title_green">vendre en automatique</span></h2>
     <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 relative hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-brand/30">1</div>
+      <div class="card-dark border rounded-2xl p-8 relative hover:-translate-y-1 transition-all">
+        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand/30">1</div>
         <div class="text-3xl mb-5 mt-2">🏪</div>
-        <h3 class="font-bold text-base mb-3">Configurez votre Boutique</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-4">Créez votre catalogue, définissez le script de vente de votre agent.</p>
-        <div class="text-xs text-gray-600 border-t border-gray-800 pt-3 leading-relaxed">Ajoutez vos produits avec photos et prix depuis le dashboard.</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="step1_title">Configurez votre Boutique</h3>
+        <p class="text-sm text-muted leading-relaxed mb-4" data-i18n="step1_desc">Creez votre catalogue, definissez le script de vente de votre agent.</p>
+        <div class="text-xs text-faint border-sec pt-3 leading-relaxed" style="border-top:1px solid" data-i18n="step1_detail">Ajoutez vos produits avec photos et prix depuis le dashboard.</div>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 relative hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-brand/30">2</div>
+      <div class="card-dark border rounded-2xl p-8 relative hover:-translate-y-1 transition-all">
+        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand/30">2</div>
         <div class="text-3xl mb-5 mt-2">📱</div>
-        <h3 class="font-bold text-base mb-3">Liez votre WhatsApp</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-4">Scannez le QR Code avec votre WhatsApp Business. L'IA devient une extension de votre numéro.</p>
-        <div class="text-xs text-gray-600 border-t border-gray-800 pt-3 leading-relaxed">QR Code unique. Multi-Device : actif même téléphone éteint.</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="step2_title">Liez votre WhatsApp</h3>
+        <p class="text-sm text-muted leading-relaxed mb-4" data-i18n="step2_desc">Scannez le QR Code avec votre WhatsApp Business. L'IA devient une extension de votre numero.</p>
+        <div class="text-xs text-faint border-sec pt-3 leading-relaxed" style="border-top:1px solid" data-i18n="step2_detail">QR Code unique. Multi-Device : actif meme telephone eteint.</div>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 relative hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-brand/30">3</div>
+      <div class="card-dark border rounded-2xl p-8 relative hover:-translate-y-1 transition-all">
+        <div class="absolute -top-4 left-8 w-8 h-8 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand/30">3</div>
         <div class="text-3xl mb-5 mt-2">🚀</div>
-        <h3 class="font-bold text-base mb-3">Laissez l'IA travailler</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-4">L'agent répond, présente les produits, envoie les liens de paiement 24h/24.</p>
-        <div class="text-xs text-gray-600 border-t border-gray-800 pt-3 leading-relaxed">Actif sur le cloud Titanex, même si votre téléphone est hors ligne.</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="step3_title">Laissez l'IA travailler</h3>
+        <p class="text-sm text-muted leading-relaxed mb-4" data-i18n="step3_desc">L'agent repond, presente les produits, envoie les liens de paiement 24h/24.</p>
+        <div class="text-xs text-faint border-sec pt-3 leading-relaxed" style="border-top:1px solid" data-i18n="step3_detail">Actif sur le cloud Titanex, meme si votre telephone est hors ligne.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DEMO -->
-<section id="demo" class="py-24">
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- DEMO — WhatsApp Simulation -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="demo" class="sec-white py-24">
   <div class="max-w-xl mx-auto px-6 text-center">
-    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
-      <i data-lucide="zap" class="w-3.5 h-3.5"></i> Démo en direct
+    <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+      <i data-lucide="zap" class="w-3.5 h-3.5"></i> <span data-i18n="demo_badge">Demo en direct</span>
     </div>
-    <h2 class="text-4xl font-bold mb-4 tracking-tight">Voyez l'IA en <span class="text-brand">action</span></h2>
-    <p class="text-gray-400 mb-10">Testez directement avec votre question.</p>
-    <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/40">
-      <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-800">
-        <div class="w-9 h-9 rounded-full bg-brand flex items-center justify-center text-black font-bold text-sm">IA</div>
-        <div class="text-left">
-          <div class="font-bold text-sm">Titanex AI ✓</div>
-          <div class="flex items-center gap-1.5 text-xs text-brand"><span class="w-1.5 h-1.5 bg-brand rounded-full pulse-dot"></span> En ligne</div>
+    <h2 class="text-4xl font-bold mb-4 tracking-tight"><span data-i18n="demo_title_pre">Voyez l'IA en </span><span class="text-brand" data-i18n="demo_title_green">action</span></h2>
+    <p class="text-muted mb-10" data-i18n="demo_desc">Simulation en boucle — observez votre agent commercial.</p>
+    <!-- WhatsApp frame -->
+    <div class="rounded-3xl overflow-hidden shadow-2xl text-left" style="background:#ece5dd;border:1px solid #d5cec3">
+      <!-- WA header -->
+      <div class="flex items-center gap-3 px-5 py-3" style="background:#075e54">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:#25d366">IA</div>
+        <div>
+          <div class="font-bold text-sm" style="color:#fff"><span data-i18n="agent_name">Agent Titanex IA</span> ✓</div>
+          <div class="flex items-center gap-1.5 text-xs" style="color:rgba(255,255,255,.7)"><span data-i18n="agent_status">● En ligne</span></div>
         </div>
       </div>
-      <div id="dw-msgs" class="p-5 flex flex-col gap-3 max-h-72 overflow-y-auto text-sm">
-        <div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-gray-300">
-          Votre IA peut répondre à mes clients sur WhatsApp ?
-          <div class="text-xs text-gray-600 mt-1">08:11</div>
-        </div>
-        <div class="bg-brand rounded-2xl rounded-tr-sm px-4 py-3 max-w-[85%] ml-auto text-black font-semibold">
-          Absolument ! 🎯 Notre agent répond 24h/24, gère les questions, prend les commandes et encaisse les paiements.
-          <div class="text-xs text-black/50 mt-1 text-right">08:11 ✓✓</div>
-        </div>
+      <!-- Messages container -->
+      <div id="dw-msgs" class="p-4 flex flex-col gap-2.5 text-sm" style="min-height:300px;max-height:380px;overflow-y:auto">
       </div>
-      <div class="flex items-center gap-3 px-5 py-4 border-t border-gray-800">
-        <input id="dw-inp" type="text" placeholder="Posez une question..." onkeydown="if(event.key==='Enter')sendDemo()" class="flex-1 bg-gray-800 border border-gray-700 rounded-2xl px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-brand/50 transition-colors">
-        <button onclick="sendDemo()" class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center hover:bg-brand-dark transition-colors flex-shrink-0">
-          <i data-lucide="send" class="w-4 h-4 text-black"></i>
+      <!-- Input -->
+      <div class="flex items-center gap-3 px-4 py-3" style="background:#f0f0f0">
+        <input id="dw-inp" type="text" placeholder="Posez une question..." data-i18n="demo_input" onkeydown="if(event.key==='Enter')sendDemo()" style="flex:1;background:#fff;border:1px solid #ddd;border-radius:20px;padding:8px 16px;font-size:14px;outline:none;font-family:inherit;color:#111b21">
+        <button onclick="sendDemo()" style="width:40px;height:40px;background:#075e54;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;flex-shrink:0">
+          <i data-lucide="send" class="w-4 h-4" style="color:#fff"></i>
         </button>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- FEATURES -->
-<section id="features" class="bg-gray-900/30 border-y border-gray-800 py-24">
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="features" class="sec-alt py-24 border-sec" style="border-top:1px solid;border-bottom:1px solid">
   <div class="max-w-5xl mx-auto px-6">
-    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
-      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Fonctionnalités
+    <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span data-i18n="feat_badge">Fonctionnalites</span>
     </div>
-    <h2 class="text-4xl font-bold mb-16 tracking-tight">Ce qui nous rend <span class="text-brand">uniques</span></h2>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">🤖</div>
-        <h3 class="font-bold text-base mb-3">Agent Vendeur Autonome</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-5">L'IA comprend le langage naturel, gère les objections et propose le bon produit automatiquement.</p>
+    <h2 class="text-4xl font-bold mb-16 tracking-tight"><span data-i18n="feat_title_pre">Ce qui nous rend </span><span class="text-brand" data-i18n="feat_title_green">uniques</span></h2>
+    <div class="feat-grid grid md:grid-cols-2 gap-6">
+      <div class="card-dark border rounded-2xl p-8 hover:-translate-y-1 transition-all">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-6" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15)">🤖</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="f1_title">Agent Vendeur Autonome</h3>
+        <p class="text-sm text-muted leading-relaxed mb-5" data-i18n="f1_desc">L'IA comprend le langage naturel, gere les objections et propose le bon produit automatiquement.</p>
         <ul class="space-y-2">
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Compréhension du langage naturel</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion intelligente des objections</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Recommandation de produits</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Comprehension du langage naturel</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion intelligente des objections</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Recommandation de produits</li>
         </ul>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">💳</div>
-        <h3 class="font-bold text-base mb-3">Paiements Mobile Money</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-5">L'IA génère automatiquement un lien de paiement Orange Money, MTN MoMo ou Wave.</p>
+      <div class="card-dark border rounded-2xl p-8 hover:-translate-y-1 transition-all">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-6" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15)">💳</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="f2_title">Paiements Mobile Money</h3>
+        <p class="text-sm text-muted leading-relaxed mb-5" data-i18n="f2_desc">L'IA genere automatiquement un lien de paiement Orange Money, MTN MoMo ou Wave.</p>
         <ul class="space-y-2">
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Orange Money, MTN MoMo, Wave</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Confirmation instantanée</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Historique des paiements</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Orange Money, MTN MoMo, Wave</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Confirmation instantanee</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Historique des paiements</li>
         </ul>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">📦</div>
-        <h3 class="font-bold text-base mb-3">Catalogue Intelligent</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-5">Gérez vos produits avec photos, prix et descriptions. L'agent les présente automatiquement.</p>
+      <div class="card-dark border rounded-2xl p-8 hover:-translate-y-1 transition-all">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-6" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15)">📦</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="f3_title">Catalogue Intelligent</h3>
+        <p class="text-sm text-muted leading-relaxed mb-5" data-i18n="f3_desc">Gerez vos produits avec photos, prix et descriptions. L'agent les presente automatiquement.</p>
         <ul class="space-y-2">
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Photos et vidéos produits</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion des stocks</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimité</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Photos et videos produits</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion des stocks</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimite</li>
         </ul>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 transition-all">
-        <div class="w-12 h-12 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center text-2xl mb-6">📊</div>
-        <h3 class="font-bold text-base mb-3">Dashboard Complet</h3>
-        <p class="text-sm text-gray-400 leading-relaxed mb-5">Suivez vos conversations, clients et ventes en temps réel depuis votre tableau de bord.</p>
+      <div class="card-dark border rounded-2xl p-8 hover:-translate-y-1 transition-all">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-6" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15)">📊</div>
+        <h3 class="font-bold text-base mb-3" data-i18n="f4_title">Dashboard Complet</h3>
+        <p class="text-sm text-muted leading-relaxed mb-5" data-i18n="f4_desc">Suivez vos conversations, clients et ventes en temps reel depuis votre tableau de bord.</p>
         <ul class="space-y-2">
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Statistiques en temps réel</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion des clients</li>
-          <li class="flex items-center gap-2 text-sm text-gray-500"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Historique des conversations</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Statistiques en temps reel</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Gestion des clients</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check" class="w-4 h-4 text-brand flex-shrink-0"></i> Historique des conversations</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- PRICING -->
-<section id="tarifs" class="py-24">
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section id="tarifs" class="sec-white py-24">
   <div class="max-w-5xl mx-auto px-6 text-center">
-    <div class="mb-4 inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider">
-      <i data-lucide="tag" class="w-3.5 h-3.5"></i> Tarification
+    <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+      <i data-lucide="tag" class="w-3.5 h-3.5"></i> <span data-i18n="price_badge">Tarification</span>
     </div>
-    <h2 class="text-4xl font-bold mb-3 tracking-tight">Tarification simple et <span class="text-brand">transparente</span></h2>
-    <p class="text-gray-400 mb-10">7 jours d'essai gratuit — aucune carte bancaire requise.</p>
-    <div class="grid md:grid-cols-3 gap-6 text-left">
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 transition-all">
-        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">Starter</div>
-        <div class="text-5xl font-bold mb-1">9 900 <span class="text-lg font-normal text-gray-500">XAF</span></div>
-        <div class="text-xs text-gray-600 mb-6">/ mois</div>
-        <button onclick="location.href='/dashboard/inscription.html?plan=starter&prix=9900'" class="w-full py-3 rounded-xl border border-gray-700 text-sm font-bold hover:border-brand hover:text-brand transition-all mb-6">Commencer gratuitement</button>
-        <div class="text-xs text-center text-gray-600 mb-6">7 jours gratuits</div>
+    <h2 class="text-4xl font-bold mb-3 tracking-tight"><span data-i18n="price_title_pre">Tarification simple et </span><span class="text-brand" data-i18n="price_title_green">transparente</span></h2>
+    <p class="text-muted mb-8" data-i18n="price_trial">7 jours d'essai gratuit — aucune carte bancaire requise.</p>
+
+    <!-- Toggle billing + currency -->
+    <div class="flex flex-wrap items-center justify-center gap-6 mb-10">
+      <!-- Monthly / Annual -->
+      <div class="flex items-center gap-3">
+        <span id="lbl-monthly" class="text-sm font-semibold" data-i18n="price_monthly">Mensuel</span>
+        <button id="billing-toggle" onclick="toggleBilling()" style="width:48px;height:26px;border-radius:13px;background:#d1d5db;border:none;cursor:pointer;position:relative;transition:background .2s">
+          <div id="billing-dot" style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)"></div>
+        </button>
+        <span id="lbl-annual" class="text-sm text-muted"><span data-i18n="price_annual">Annuel</span> <span class="text-brand font-bold" data-i18n="price_discount">-20%</span></span>
+      </div>
+      <!-- Currency -->
+      <select id="currency-sel" onchange="updatePrices()" style="padding:6px 12px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#475569">
+        <option value="XAF">XAF</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+      </select>
+    </div>
+
+    <!-- Cards -->
+    <div class="pricing-grid grid md:grid-cols-3 gap-6 text-left">
+      <!-- Starter -->
+      <div class="pricing-card card-dark border rounded-2xl p-8 hover:-translate-y-1 transition-all" style="background:rgba(0,0,0,.03)">
+        <div class="text-xs text-muted uppercase tracking-wider font-semibold mb-3" data-i18n="price_starter">Starter</div>
+        <div class="text-5xl font-bold mb-1"><span id="price-starter">9 900</span> <span class="text-lg font-normal text-muted" id="cur-starter">XAF</span></div>
+        <div class="text-xs text-faint mb-6" id="period-starter">/ mois</div>
+        <button onclick="location.href='/dashboard/inscription.html?plan=starter&prix=9900'" class="w-full py-3 rounded-xl border text-sm font-bold transition-all mb-6 border-sec text-sub" style="background:transparent;cursor:pointer" onmouseover="this.style.borderColor='#22c55e';this.style.color='#22c55e'" onmouseout="this.style.borderColor='';this.style.color=''" data-i18n="price_btn">Commencer gratuitement</button>
+        <div class="text-xs text-center text-faint mb-6" data-i18n="price_free">7 jours gratuits</div>
         <ul class="space-y-3">
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 1 agent WhatsApp</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 1 compte WhatsApp connecté</li>
-          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 3 000 crédits/mois</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimité</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Réponses 24h/24</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Paiements Mobile Money</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 1 agent WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 1 compte connecte</li>
+          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 3 000 credits/mois</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimite</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Reponses 24h/24</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Paiements Mobile Money</li>
         </ul>
       </div>
-      <div class="bg-gray-900 border-2 border-brand rounded-2xl p-8 relative -translate-y-2 shadow-2xl shadow-brand/20">
-        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand text-black text-xs font-bold px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap">⭐ 82% choisissent ce plan</div>
-        <div class="text-xs text-brand uppercase tracking-wider font-semibold mb-3">Pro</div>
-        <div class="text-5xl font-bold mb-1">24 900 <span class="text-lg font-normal text-gray-500">XAF</span></div>
-        <div class="text-xs text-gray-600 mb-6">/ mois</div>
-        <button onclick="location.href='/dashboard/inscription.html?plan=pro&prix=24900'" class="w-full py-3 rounded-xl bg-brand text-black text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/25 mb-6">Commencer gratuitement</button>
-        <div class="text-xs text-center text-gray-600 mb-6">7 jours gratuits</div>
+      <!-- Pro -->
+      <div class="pricing-card pro-card card-dark border-2 border-brand rounded-2xl p-8 relative -translate-y-2 shadow-2xl" style="background:rgba(0,0,0,.03);box-shadow:0 20px 50px rgba(34,197,94,.12)">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg whitespace-nowrap" data-i18n="price_popular">⭐ 82% choisissent ce plan</div>
+        <div class="text-xs text-brand uppercase tracking-wider font-semibold mb-3" data-i18n="price_pro">Pro</div>
+        <div class="text-5xl font-bold mb-1"><span id="price-pro">24 900</span> <span class="text-lg font-normal text-muted" id="cur-pro">XAF</span></div>
+        <div class="text-xs text-faint mb-6" id="period-pro">/ mois</div>
+        <button onclick="location.href='/dashboard/inscription.html?plan=pro&prix=24900'" class="w-full py-3 rounded-xl bg-brand text-white text-sm font-bold hover:bg-brand-dark transition-all shadow-lg shadow-brand/25 mb-6" style="border:none;cursor:pointer" data-i18n="price_btn">Commencer gratuitement</button>
+        <div class="text-xs text-center text-faint mb-6" data-i18n="price_free">7 jours gratuits</div>
         <ul class="space-y-3">
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 2 agents WhatsApp</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 2 comptes WhatsApp connectés</li>
-          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 10 000 crédits/mois</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimité</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Réponses 24h/24</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Analyses &amp; rapports</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 2 agents WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 2 comptes connectes</li>
+          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 10 000 credits/mois</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Catalogue illimite</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Reponses 24h/24</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Analyses &amp; rapports</li>
         </ul>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 hover:-translate-y-1 transition-all">
-        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">Business</div>
-        <div class="text-5xl font-bold mb-1">49 900 <span class="text-lg font-normal text-gray-500">XAF</span></div>
-        <div class="text-xs text-gray-600 mb-6">/ mois</div>
-        <button onclick="location.href='/dashboard/inscription.html?plan=business&prix=49900'" class="w-full py-3 rounded-xl border border-gray-700 text-sm font-bold hover:border-brand hover:text-brand transition-all mb-6">Commencer gratuitement</button>
-        <div class="text-xs text-center text-gray-600 mb-6">7 jours gratuits</div>
+      <!-- Business -->
+      <div class="pricing-card card-dark border rounded-2xl p-8 hover:-translate-y-1 transition-all" style="background:rgba(0,0,0,.03)">
+        <div class="text-xs text-muted uppercase tracking-wider font-semibold mb-3" data-i18n="price_business">Business</div>
+        <div class="text-5xl font-bold mb-1"><span id="price-business">49 900</span> <span class="text-lg font-normal text-muted" id="cur-business">XAF</span></div>
+        <div class="text-xs text-faint mb-6" id="period-business">/ mois</div>
+        <button onclick="location.href='/dashboard/inscription.html?plan=business&prix=49900'" class="w-full py-3 rounded-xl border text-sm font-bold transition-all mb-6 border-sec text-sub" style="background:transparent;cursor:pointer" onmouseover="this.style.borderColor='#22c55e';this.style.color='#22c55e'" onmouseout="this.style.borderColor='';this.style.color=''" data-i18n="price_btn">Commencer gratuitement</button>
+        <div class="text-xs text-center text-faint mb-6" data-i18n="price_free">7 jours gratuits</div>
         <ul class="space-y-3">
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 4 agents WhatsApp</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 4 comptes WhatsApp connectés</li>
-          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 50 000 crédits/mois</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Marque blanche</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Accompagnement VIP</li>
-          <li class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Support dédié 24h/24</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 4 agents WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> 4 comptes connectes</li>
+          <li class="flex items-center gap-2 text-sm text-brand font-semibold"><i data-lucide="zap" class="w-4 h-4 flex-shrink-0"></i> 50 000 credits/mois</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Marque blanche</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Accompagnement VIP</li>
+          <li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="check-circle" class="w-4 h-4 text-brand flex-shrink-0"></i> Support dedie 24h/24</li>
         </ul>
       </div>
     </div>
 
     <!-- Testimonials -->
-    <div class="grid md:grid-cols-3 gap-6 mt-16 text-left">
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+    <div class="test-grid grid md:grid-cols-3 gap-6 mt-16 text-left">
+      <div class="testimonial-card card-dark border rounded-2xl p-6">
         <div class="text-yellow-400 text-sm mb-3">★★★★★</div>
-        <p class="text-sm text-gray-400 leading-relaxed italic mb-4">"Mes ventes ont augmenté de 60% en 2 mois. Mon agent répond même quand je dors !"</p>
+        <p class="text-sm text-muted leading-relaxed italic mb-4">"Mes ventes ont augmente de 60% en 2 mois. Mon agent repond meme quand je dors !"</p>
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-xs font-bold text-brand">FM</div>
-          <div><div class="text-sm font-semibold">Fatima M.</div><div class="text-xs text-gray-500">Boutique mode, Douala</div></div>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-brand" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">FM</div>
+          <div><div class="text-sm font-semibold">Fatima M.</div><div class="text-xs text-faint">Boutique mode, Douala</div></div>
         </div>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+      <div class="testimonial-card card-dark border rounded-2xl p-6">
         <div class="text-yellow-400 text-sm mb-3">★★★★★</div>
-        <p class="text-sm text-gray-400 leading-relaxed italic mb-4">"L'agent présente mes produits parfaitement. Clients reçoivent photos et prix en secondes !"</p>
+        <p class="text-sm text-muted leading-relaxed italic mb-4">"L'agent presente mes produits parfaitement. Clients recoivent photos et prix en secondes !"</p>
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-xs font-bold text-brand">PO</div>
-          <div><div class="text-sm font-semibold">Paul O.</div><div class="text-xs text-gray-500">Electronique, Yaounde</div></div>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-brand" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">PO</div>
+          <div><div class="text-sm font-semibold">Paul O.</div><div class="text-xs text-faint">Electronique, Yaounde</div></div>
         </div>
       </div>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+      <div class="testimonial-card card-dark border rounded-2xl p-6">
         <div class="text-yellow-400 text-sm mb-3">★★★★★</div>
-        <p class="text-sm text-gray-400 leading-relaxed italic mb-4">"Setup en 10 minutes, premier client automatisé dans l'heure. Je recommande !"</p>
+        <p class="text-sm text-muted leading-relaxed italic mb-4">"Setup en 10 minutes, premier client automatise dans l'heure. Je recommande !"</p>
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-xs font-bold text-brand">AS</div>
-          <div><div class="text-sm font-semibold">Aminata S.</div><div class="text-xs text-gray-500">Cosmétiques, Dakar</div></div>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-brand" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">AS</div>
+          <div><div class="text-sm font-semibold">Aminata S.</div><div class="text-xs text-faint">Cosmetiques, Dakar</div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="bg-gradient-to-br from-brand/10 via-gray-950 to-gray-950 border-t border-gray-800 py-24 text-center">
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- CTA FINAL -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="sec-alt py-24 text-center border-sec" style="border-top:1px solid">
   <div class="max-w-2xl mx-auto px-6">
     <h2 class="text-5xl font-bold mb-4 tracking-tight leading-tight">
-      Votre WhatsApp vend<br><span class="text-brand">pendant que vous dormez</span>
+      <span data-i18n="cta_title1">Votre WhatsApp vend</span><br><span class="text-brand" data-i18n="cta_title2">pendant que vous dormez</span>
     </h2>
-    <p class="text-gray-400 mb-10">+200 commerçants africains qui vendent 24h/24. 7 jours gratuits, sans carte bancaire.</p>
-    <div class="flex flex-wrap gap-4 justify-center">
-      <button onclick="location.href='/dashboard/inscription.html'" class="flex items-center gap-2 px-8 py-4 rounded-2xl bg-brand text-black font-bold text-base hover:bg-brand-dark hover:-translate-y-0.5 transition-all shadow-xl shadow-brand/30">
-        <i data-lucide="rocket" class="w-5 h-5"></i> Démarrer mon essai gratuit
+    <p class="text-muted mb-10" data-i18n="cta_desc">+200 commercants africains qui vendent 24h/24. 7 jours gratuits, sans carte bancaire.</p>
+    <div class="cta-btns flex flex-wrap gap-4 justify-center">
+      <button onclick="location.href='/dashboard/inscription.html'" class="hero-cta-primary flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-base transition-all" style="background:#22c55e;color:#fff;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(34,197,94,.25)">
+        <i data-lucide="rocket" class="w-5 h-5"></i> <span data-i18n="hero_cta">Demarrer mon essai gratuit</span>
       </button>
-      <button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="flex items-center gap-2 px-8 py-4 rounded-2xl border border-gray-700 text-white font-semibold text-base hover:border-brand/50 hover:text-brand transition-all">
-        <i data-lucide="message-circle" class="w-5 h-5"></i> Nous contacter
+      <button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base transition-all text-sub" style="background:transparent;border:1.5px solid #d1d5db;cursor:pointer" onmouseover="this.style.borderColor='#22c55e';this.style.color='#22c55e'" onmouseout="this.style.borderColor='#d1d5db';this.style.color=''">
+        <i data-lucide="message-circle" class="w-5 h-5"></i> <span data-i18n="hero_contact">Nous contacter</span>
       </button>
     </div>
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- FOOTER -->
-<footer class="bg-gray-900 border-t border-gray-800 py-14">
-  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-10 mb-10">
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<footer class="border-sec py-14" style="border-top:1px solid">
+  <div class="footer-grid max-w-6xl mx-auto px-6 grid md:grid-cols-4 gap-10 mb-10">
     <div>
       <div class="flex items-center gap-2 mb-4">
-        <div class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center text-black font-bold text-sm">T</div>
+        <div class="w-8 h-8 rounded-xl bg-brand flex items-center justify-center text-white font-bold text-sm">T</div>
         <span class="font-bold">Titanex <span class="text-brand">AI</span></span>
       </div>
-      <p class="text-sm text-gray-500 leading-relaxed">La plateforme d'agent commercial IA pour WhatsApp conçue pour les entrepreneurs africains.</p>
+      <p class="text-sm text-muted leading-relaxed" data-i18n="footer_desc">La plateforme d'agent commercial IA pour WhatsApp concue pour les entrepreneurs africains.</p>
     </div>
     <div>
-      <h4 class="text-xs text-gray-600 uppercase tracking-wider font-bold mb-4">Produit</h4>
+      <h4 class="text-xs text-faint uppercase tracking-wider font-bold mb-4" data-i18n="footer_product">Produit</h4>
       <div class="space-y-2">
-        <button onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})" class="block text-sm text-gray-500 hover:text-brand transition-colors">Fonctionnalités</button>
-        <button onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})" class="block text-sm text-gray-500 hover:text-brand transition-colors">Tarifs</button>
-        <button onclick="location.href='/dashboard/'" class="block text-sm text-gray-500 hover:text-brand transition-colors">Dashboard</button>
+        <button onclick="scrollSec('features')" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-i18n="nav_features">Fonctionnalites</button>
+        <button onclick="scrollSec('tarifs')" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-i18n="nav_pricing">Tarifs</button>
+        <button onclick="location.href='/dashboard/'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit">Dashboard</button>
       </div>
     </div>
     <div>
-      <h4 class="text-xs text-gray-600 uppercase tracking-wider font-bold mb-4">Démarrer</h4>
+      <h4 class="text-xs text-faint uppercase tracking-wider font-bold mb-4" data-i18n="footer_start">Demarrer</h4>
       <div class="space-y-2">
-        <button onclick="location.href='/dashboard/inscription.html'" class="block text-sm text-gray-500 hover:text-brand transition-colors">S'inscrire</button>
-        <button onclick="location.href='/dashboard/login.html'" class="block text-sm text-gray-500 hover:text-brand transition-colors">Se connecter</button>
+        <button onclick="location.href='/dashboard/inscription.html'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-i18n="footer_signup">S'inscrire</button>
+        <button onclick="location.href='/dashboard/login.html'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-i18n="footer_login">Se connecter</button>
       </div>
     </div>
     <div>
-      <h4 class="text-xs text-gray-600 uppercase tracking-wider font-bold mb-4">Contact</h4>
+      <h4 class="text-xs text-faint uppercase tracking-wider font-bold mb-4" data-i18n="footer_contact">Contact</h4>
       <div class="space-y-2">
-        <button onclick="location.href='https://wa.me/237672482763'" class="block text-sm text-gray-500 hover:text-brand transition-colors">WhatsApp</button>
-        <button onclick="location.href='mailto:contact@titanexai.com'" class="block text-sm text-gray-500 hover:text-brand transition-colors">Email</button>
+        <button onclick="location.href='https://wa.me/237672482763'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit">WhatsApp</button>
+        <button onclick="location.href='mailto:contact@titanexai.com'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit">Email</button>
       </div>
     </div>
   </div>
-  <div class="max-w-6xl mx-auto px-6 border-t border-gray-800 pt-6 flex items-center justify-between">
-    <span class="text-xs text-gray-600">© 2026 Titanex AI</span>
-    <span class="text-xs text-gray-600">Made with ❤️ for Africa 🌍</span>
+  <div class="max-w-6xl mx-auto px-6 border-sec pt-6 flex items-center justify-between" style="border-top:1px solid">
+    <span class="text-xs text-faint" data-i18n="footer_copy">© 2026 Titanex AI</span>
+    <span class="text-xs text-faint" data-i18n="footer_made">Made with ❤️ for Africa 🌍</span>
   </div>
 </footer>
 
 <!-- WhatsApp Float -->
-<button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-xl shadow-green-500/40 hover:scale-110 transition-transform z-50">
-  <i data-lucide="message-circle" class="w-7 h-7 text-white"></i>
+<button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-50" style="background:#25D366;box-shadow:0 4px 20px rgba(37,211,102,.4)">
+  <i data-lucide="message-circle" class="w-7 h-7" style="color:#fff"></i>
 </button>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <script>
-var demoR=[
-  "Absolument ! 🎯 Notre agent répond 24h/24 et encaisse les paiements automatiquement.",
-  "Aucune limite ! 📦 Catalogue illimité avec photos, descriptions et prix.",
-  "Simple ! 💳 L'IA génère un lien Orange Money, MTN MoMo ou Wave en secondes.",
-  "Setup en 5 minutes ! Scannez le QR Code et votre agent est opérationnel."
-];
-var demoI=0;
+// ─── i18n ────────────────────────────────────────────────────────────
+var TRANSLATIONS={
+  fr:{
+    nav_features:"Fonctionnalites",nav_pricing:"Tarifs",nav_demo:"Demo",nav_store:"Boutique",
+    nav_login:"Se connecter",nav_trial:"Essai gratuit 7 jours \u{1F680}",
+    hero_badge:"Powered by AI \u00B7 Instant Setup",
+    hero_title1:"Votre WhatsApp",hero_title2:"vend pendant que",hero_title3:"vous dormez",
+    hero_desc:"L'IA qui vend, encaisse et relance vos clients 24h/24 directement depuis votre WhatsApp. Zero configuration complexe.",
+    hero_cta:"Demarrer mon essai gratuit",hero_contact:"Nous contacter",
+    usp1:"Zero Configuration",usp2:"Connexion QR Code",usp3:"Paiements MoMo",
+    stats_conv:"Taux de conversion",stats_avail:"Disponibilite",stats_resp:"Temps de reponse",stats_merchants:"Commercants actifs",stats_start:"Pour demarrer",
+    how_badge:"Comment ca marche",how_title_pre:"3 etapes pour ",how_title_green:"vendre en automatique",
+    step1_title:"Configurez votre Boutique",step1_desc:"Creez votre catalogue, definissez le script de vente de votre agent.",step1_detail:"Ajoutez vos produits avec photos et prix depuis le dashboard.",
+    step2_title:"Liez votre WhatsApp",step2_desc:"Scannez le QR Code avec votre WhatsApp Business. L'IA devient une extension de votre numero.",step2_detail:"QR Code unique. Multi-Device : actif meme telephone eteint.",
+    step3_title:"Laissez l'IA travailler",step3_desc:"L'agent repond, presente les produits, envoie les liens de paiement 24h/24.",step3_detail:"Actif sur le cloud Titanex, meme si votre telephone est hors ligne.",
+    demo_badge:"Demo en direct",demo_title_pre:"Voyez l'IA en ",demo_title_green:"action",demo_desc:"Simulation en boucle \u2014 observez votre agent commercial.",demo_input:"Posez une question...",
+    feat_badge:"Fonctionnalites",feat_title_pre:"Ce qui nous rend ",feat_title_green:"uniques",
+    f1_title:"Agent Vendeur Autonome",f1_desc:"L'IA comprend le langage naturel, gere les objections et propose le bon produit automatiquement.",
+    f2_title:"Paiements Mobile Money",f2_desc:"L'IA genere automatiquement un lien de paiement Orange Money, MTN MoMo ou Wave.",
+    f3_title:"Catalogue Intelligent",f3_desc:"Gerez vos produits avec photos, prix et descriptions. L'agent les presente automatiquement.",
+    f4_title:"Dashboard Complet",f4_desc:"Suivez vos conversations, clients et ventes en temps reel depuis votre tableau de bord.",
+    price_badge:"Tarification",price_title_pre:"Tarification simple et ",price_title_green:"transparente",
+    price_trial:"7 jours d'essai gratuit \u2014 aucune carte bancaire requise.",
+    price_monthly:"Mensuel",price_annual:"Annuel",price_discount:"-20%",
+    price_starter:"Starter",price_pro:"Pro",price_business:"Business",
+    price_btn:"Commencer gratuitement",price_free:"7 jours gratuits",
+    price_popular:"\u2B50 82% choisissent ce plan",
+    cta_title1:"Votre WhatsApp vend",cta_title2:"pendant que vous dormez",
+    cta_desc:"+200 commercants africains qui vendent 24h/24. 7 jours gratuits, sans carte bancaire.",
+    footer_desc:"La plateforme d'agent commercial IA pour WhatsApp concue pour les entrepreneurs africains.",
+    footer_product:"Produit",footer_start:"Demarrer",footer_contact:"Contact",
+    footer_signup:"S'inscrire",footer_login:"Se connecter",
+    footer_copy:"\u00A9 2026 Titanex AI",footer_made:"Made with \u2764\uFE0F for Africa \uD83C\uDF0D",
+    theme_dark:"Mode Sombre",theme_light:"Mode Clair",
+    agent_name:"Agent Titanex IA",agent_status:"● En ligne"
+  },
+  en:{
+    nav_features:"Features",nav_pricing:"Pricing",nav_demo:"Demo",nav_store:"Store",
+    nav_login:"Sign in",nav_trial:"Start free trial \u{1F680}",
+    hero_badge:"Powered by AI \u00B7 Instant Setup",
+    hero_title1:"Your WhatsApp",hero_title2:"sells while",hero_title3:"you sleep",
+    hero_desc:"The AI that sells, collects payments and follows up with your clients 24/7 directly from your WhatsApp. Zero complex setup.",
+    hero_cta:"Start my free trial",hero_contact:"Contact us",
+    usp1:"Zero Configuration",usp2:"QR Code Connection",usp3:"MoMo Payments",
+    stats_conv:"Conversion rate",stats_avail:"Availability",stats_resp:"Response time",stats_merchants:"Active merchants",stats_start:"To get started",
+    how_badge:"How it works",how_title_pre:"3 steps to ",how_title_green:"sell automatically",
+    step1_title:"Set up your Store",step1_desc:"Create your catalog, define your agent's sales script.",step1_detail:"Add your products with photos and prices from the dashboard.",
+    step2_title:"Link your WhatsApp",step2_desc:"Scan the QR Code with WhatsApp Business. The AI becomes an extension of your number.",step2_detail:"Unique QR Code. Multi-Device: active even with phone off.",
+    step3_title:"Let the AI work",step3_desc:"The agent responds, presents products, sends payment links 24/7.",step3_detail:"Active on Titanex cloud, even if your phone is offline.",
+    demo_badge:"Live demo",demo_title_pre:"See the AI in ",demo_title_green:"action",demo_desc:"Looping simulation \u2014 watch your sales agent.",demo_input:"Ask a question...",
+    feat_badge:"Features",feat_title_pre:"What makes us ",feat_title_green:"unique",
+    f1_title:"Autonomous Sales Agent",f1_desc:"The AI understands natural language, handles objections and suggests the right product automatically.",
+    f2_title:"Mobile Money Payments",f2_desc:"The AI automatically generates a payment link for Orange Money, MTN MoMo or Wave.",
+    f3_title:"Smart Catalog",f3_desc:"Manage your products with photos, prices and descriptions. The agent presents them automatically.",
+    f4_title:"Complete Dashboard",f4_desc:"Track your conversations, clients and sales in real time from your dashboard.",
+    price_badge:"Pricing",price_title_pre:"Simple and ",price_title_green:"transparent pricing",
+    price_trial:"7-day free trial \u2014 no credit card required.",
+    price_monthly:"Monthly",price_annual:"Annual",price_discount:"-20%",
+    price_starter:"Starter",price_pro:"Pro",price_business:"Business",
+    price_btn:"Start for free",price_free:"7 days free",
+    price_popular:"\u2B50 82% choose this plan",
+    cta_title1:"Your WhatsApp sells",cta_title2:"while you sleep",
+    cta_desc:"+200 African merchants selling 24/7. 7 days free, no credit card.",
+    footer_desc:"The AI sales agent platform for WhatsApp built for African entrepreneurs.",
+    footer_product:"Product",footer_start:"Get started",footer_contact:"Contact",
+    footer_signup:"Sign up",footer_login:"Sign in",
+    footer_copy:"\u00A9 2026 Titanex AI",footer_made:"Made with \u2764\uFE0F for Africa \uD83C\uDF0D",
+    theme_dark:"Dark mode",theme_light:"Light mode",
+    agent_name:"Titanex AI Agent",agent_status:"● Online"
+  }
+};
+var LANG=localStorage.getItem('titanex_lang')||'fr';
+function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
+function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');var val=t(key);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else{el.textContent=val;}
+  });
+  if(typeof lucide!=='undefined')lucide.createIcons();
+}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+
+// ─── Hero chat animation (vente avec images, en boucle) ─────────────
+(function(){
+  var IMG_STYLE='border-radius:12px;max-width:180px;width:100%;height:130px;object-fit:cover;display:block;margin-bottom:6px;box-shadow:0 2px 8px rgba(0,0,0,.15)';
+  function getHeroConv(){
+    if(LANG==='en') return [
+      {from:'client',text:'Hello! Do you have Puma in stock?',time:'08:11',delay:1000},
+      {from:'agent',html:'Yes! 👟 Here\'s our Puma RS-X:<br><img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=200&h=150&fit=crop" alt="Puma RS-X" style="'+IMG_STYLE+'">Puma RS-X White/Red — 42,000 XAF ✅',time:'08:11',typing:1200,delay:2200},
+      {from:'client',text:'Great! Do you have clothes too?',time:'08:12',delay:4500},
+      {from:'agent',html:'Absolutely! Check these out:<br><div style="display:flex;gap:6px;margin-bottom:6px"><img src="/dashboard/img-homme.jpg" alt="Man outfit" style="width:88px;height:120px;object-fit:cover;object-position:top center;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)" onerror="this.src=\'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=150&h=200&fit=crop\'"><img src="/dashboard/img-femme.jpg" alt="Woman outfit" style="width:88px;height:120px;object-fit:cover;object-position:top center;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)" onerror="this.src=\'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=150&h=200&fit=crop\'"></div>👔 Man Shirt+Tie — 28,000 XAF | 👗 Woman Dashiki Dress — 32,000 XAF 🔥',time:'08:12',typing:1200,delay:5800},
+      {from:'client',text:'Is it delivered to Douala?',time:'08:13',delay:8000},
+      {from:'agent',text:'Yes! 🚚 24h delivery to Douala. Payment via MTN MoMo or Orange Money 💳',time:'08:13',typing:1000,delay:9200},
+      {from:'client',text:'I\'ll take the Puma and the outfit!',time:'08:14',delay:11000},
+      {from:'agent',text:'🎉 Great choice! Total: 70,000 XAF. Send to *237 6XX XXX XX* via MTN MoMo → I\'ll confirm upon receipt ✅',time:'08:14',typing:1500,delay:12300}
+    ];
+    return [
+      {from:'client',text:'Bonjour ! Vous avez des Puma en stock ?',time:'08:11',delay:1000},
+      {from:'agent',html:'Oui ! 👟 Voici notre Puma RS-X :<br><img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=200&h=150&fit=crop" alt="Puma RS-X" style="'+IMG_STYLE+'">Puma RS-X Blanc/Rouge — 42 000 XAF ✅',time:'08:11',typing:1200,delay:2200},
+      {from:'client',text:'Super ! Vous avez aussi des vetements ?',time:'08:12',delay:4500},
+      {from:'agent',html:'Absolument ! Regardez ca :<br><div style="display:flex;gap:6px;margin-bottom:6px"><img src="/dashboard/img-homme.jpg" alt="Chemise Homme" style="width:88px;height:120px;object-fit:cover;object-position:top center;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)" onerror="this.src=\'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=150&h=200&fit=crop\'"><img src="/dashboard/img-femme.jpg" alt="Robe Dashiki Femme" style="width:88px;height:120px;object-fit:cover;object-position:top center;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)" onerror="this.src=\'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=150&h=200&fit=crop\'"></div>👔 Chemise+Cravate Homme — 28 000 XAF | 👗 Robe Dashiki Femme — 32 000 XAF 🔥',time:'08:12',typing:1200,delay:5800},
+      {from:'client',text:'C\'est livre jusqu\'a Douala ?',time:'08:13',delay:8000},
+      {from:'agent',text:'Oui ! 🚚 Livraison 24h a Douala. Paiement MTN MoMo ou Orange Money 💳',time:'08:13',typing:1000,delay:9200},
+      {from:'client',text:'Je prends la Puma et le vetement !',time:'08:14',delay:11000},
+      {from:'agent',text:'🎉 Super choix ! Total : 70 000 XAF. Envoyez au *237 6XX XXX XX* via MTN MoMo → je confirme des reception ✅',time:'08:14',typing:1500,delay:12300}
+    ];
+  }
+  function heroAddMsg(container,msg){
+    var d=document.createElement('div');
+    d.className='wa-msg';
+    if(msg.from==='client'){
+      d.innerHTML='<div class="rounded-2xl rounded-tl-sm px-3.5 py-2 max-w-[88%]" style="font-size:13px;background:#fff;color:#111b21;box-shadow:0 1px 1px rgba(0,0,0,.06)">'+msg.text+'<div style="font-size:10px;color:#667781;margin-top:2px">'+msg.time+'</div></div>';
+    } else {
+      d.style.cssText='display:flex;justify-content:flex-end';
+      var content=msg.html||msg.text;
+      d.innerHTML='<div class="rounded-2xl rounded-tr-sm px-3.5 py-2 max-w-[88%]" style="font-size:13px;background:#dcf8c6;color:#111b21;box-shadow:0 1px 1px rgba(0,0,0,.06)">'+content+'<div style="font-size:10px;color:#667781;margin-top:2px;text-align:right">'+msg.time+' <span style="color:#53bdeb">✓✓</span></div></div>';
+    }
+    container.appendChild(d);
+    container.scrollTop=container.scrollHeight;
+  }
+  function heroAddTyping(container){
+    var d=document.createElement('div');
+    d.id='hero-typing-ind';
+    d.style.cssText='display:flex;justify-content:flex-end';
+    d.innerHTML='<div style="display:flex;align-items:center;gap:0;padding:8px 14px;background:#dcf8c6;border-radius:16px;border-top-right-radius:4px;width:fit-content"><span class="wa-typing"><span></span><span></span><span></span></span></div>';
+    container.appendChild(d);
+    container.scrollTop=container.scrollHeight;
+  }
+  function heroRemoveTyping(){
+    var el=document.getElementById('hero-typing-ind');
+    if(el)el.remove();
+  }
+  function runHeroLoop(){
+    var w=document.getElementById('hero-msgs');
+    if(!w)return;
+    w.innerHTML='';
+    var timers=[];
+    getHeroConv().forEach(function(msg){
+      if(msg.from==='agent'&&msg.typing){
+        timers.push(setTimeout(function(){heroAddTyping(w);},msg.delay-msg.typing));
+        timers.push(setTimeout(function(){heroRemoveTyping();heroAddMsg(w,msg);},msg.delay));
+      } else {
+        timers.push(setTimeout(function(){heroAddMsg(w,msg);},msg.delay));
+      }
+    });
+    timers.push(setTimeout(function(){runHeroLoop();},16000));
+  }
+  setTimeout(runHeroLoop,900);
+})();
+
+// ─── Demo WhatsApp simulation (looping) ─────────────────────────────
+function getDemoConv(){
+  if(LANG==='en') return [
+    {from:'client',text:'Can your AI respond to my clients on WhatsApp?'},
+    {from:'agent',text:'Absolutely! 🎯 Our agent responds 24/7, handles questions, takes orders and collects payments.'},
+    {from:'client',text:'How much does it cost?'},
+    {from:'agent',text:'Starting at 9,900 XAF/month! 💰 And you get a 7-day free trial.'},
+    {from:'client',text:'What about Mobile Money payments?'},
+    {from:'agent',text:'Built-in! 💳 Orange Money, MTN MoMo and Wave. The link is sent automatically.'},
+    {from:'client',text:'Is it hard to set up?'},
+    {from:'agent',text:'No! ⚡ 5 minutes setup: add your products, scan the QR, and you\'re good to go 🚀'}
+  ];
+  return [
+    {from:'client',text:'Votre IA peut repondre a mes clients sur WhatsApp ?'},
+    {from:'agent',text:'Absolument ! 🎯 Notre agent repond 24h/24, gere les questions, prend les commandes et encaisse les paiements.'},
+    {from:'client',text:'Ca coute combien ?'},
+    {from:'agent',text:'A partir de 9 900 XAF/mois ! 💰 Et vous avez 7 jours d\'essai gratuit.'},
+    {from:'client',text:'Et les paiements Mobile Money ?'},
+    {from:'agent',text:'Integres ! 💳 Orange Money, MTN MoMo et Wave. Le lien est envoye automatiquement.'},
+    {from:'client',text:'C\'est difficile a configurer ?'},
+    {from:'agent',text:'Non ! ⚡ 5 minutes de setup : ajoutez vos produits, scannez le QR, et c\'est parti 🚀'}
+  ];
+}
+var demoIdx=0,demoRunning=false;
+function addDemoMsg(from,text){
+  var w=document.getElementById('dw-msgs');
+  if(!w)return;
+  var d=document.createElement('div');
+  if(from==='client'){
+    d.className='wa-msg rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] text-sm';
+    d.style.cssText='background:#fff;color:#111b21;box-shadow:0 1px 1px rgba(0,0,0,.06)';
+    d.innerHTML=text+'<div style="font-size:10px;color:#667781;margin-top:3px">maintenant</div>';
+  } else {
+    d.style.cssText='display:flex;justify-content:flex-end';
+    d.innerHTML='<div class="wa-msg rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%] text-sm" style="background:#dcf8c6;color:#111b21;box-shadow:0 1px 1px rgba(0,0,0,.06)">'+text+'<div style="font-size:10px;color:#667781;margin-top:3px;text-align:right">maintenant <span style=color:#53bdeb>✓✓</span></div></div>';
+  }
+  w.appendChild(d);w.scrollTop=w.scrollHeight;
+}
+function addDemoTyping(){
+  var w=document.getElementById('dw-msgs');
+  if(!w)return;
+  var d=document.createElement('div');
+  d.id='demo-typing';
+  d.style.cssText='display:flex;justify-content:flex-end';
+  d.innerHTML='<div class="wa-typing" style="display:flex;align-items:center;gap:0;padding:8px 14px;background:#dcf8c6;border-radius:16px;border-top-right-radius:4px;width:fit-content"><span></span><span></span><span></span></div>';
+  w.appendChild(d);w.scrollTop=w.scrollHeight;
+}
+function removeDemoTyping(){
+  var el=document.getElementById('demo-typing');
+  if(el)el.remove();
+}
+function runDemoLoop(){
+  if(demoRunning)return;
+  demoRunning=true;
+  var w=document.getElementById('dw-msgs');
+  if(w)w.innerHTML='';
+  demoIdx=0;
+  function step(){
+    if(demoIdx>=getDemoConv().length){
+      setTimeout(function(){
+        if(w)w.innerHTML='';
+        demoIdx=0;
+        step();
+      },3000);
+      return;
+    }
+    var msg=getDemoConv()[demoIdx];demoIdx++;
+    if(msg.from==='client'){
+      addDemoMsg('client',msg.text);
+      setTimeout(step,1200);
+    } else {
+      addDemoTyping();
+      setTimeout(function(){
+        removeDemoTyping();
+        addDemoMsg('agent',msg.text);
+        setTimeout(step,1500);
+      },1000);
+    }
+  }
+  step();
+}
+// Auto-start demo when visible
+var demoObs=new IntersectionObserver(function(entries){
+  if(entries[0].isIntersecting){runDemoLoop();demoObs.disconnect();}
+},{threshold:0.3});
+var demoEl=document.getElementById('demo');
+if(demoEl)demoObs.observe(demoEl);
+
+// Manual demo send
+function getManualR(){
+  if(LANG==='en') return [
+    "Absolutely! 🎯 Our agent responds 24/7 and collects payments automatically.",
+    "No limits! 📦 Unlimited catalog with photos, descriptions and prices.",
+    "Simple! 💳 The AI generates an Orange Money, MTN MoMo or Wave link in seconds.",
+    "Setup in 5 minutes! Scan the QR Code and your agent is operational."
+  ];
+  return [
+    "Absolument ! 🎯 Notre agent repond 24h/24 et encaisse les paiements automatiquement.",
+    "Aucune limite ! 📦 Catalogue illimite avec photos, descriptions et prix.",
+    "Simple ! 💳 L'IA genere un lien Orange Money, MTN MoMo ou Wave en secondes.",
+    "Setup en 5 minutes ! Scannez le QR Code et votre agent est operationnel."
+  ];
+}
+var manualI=0;
 function sendDemo(){
-  var inp=document.getElementById("dw-inp"),val=inp.value.trim();
+  var inp=document.getElementById('dw-inp'),val=inp.value.trim();
   if(!val)return;
-  var w=document.getElementById("dw-msgs");
-  var d=document.createElement("div");
-  d.className="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-gray-300 text-sm";
-  d.innerHTML=val+'<div class="text-xs text-gray-600 mt-1">maintenant</div>';
-  w.appendChild(d);inp.value="";w.scrollTop=w.scrollHeight;
+  demoRunning=false;
+  addDemoMsg('client',val);
+  inp.value='';
+  addDemoTyping();
   setTimeout(function(){
-    var d2=document.createElement("div");
-    d2.className="bg-brand rounded-2xl rounded-tr-sm px-4 py-3 max-w-[85%] ml-auto text-black font-semibold text-sm";
-    d2.innerHTML=demoR[demoI%demoR.length]+'<div class="text-xs text-black/50 mt-1 text-right">maintenant ✓✓</div>';
-    w.appendChild(d2);w.scrollTop=w.scrollHeight;demoI++;
+    removeDemoTyping();
+    addDemoMsg('agent',getManualR()[manualI%getManualR().length]);
+    manualI++;
   },1000);
 }
+
+// ─── Pricing ────────────────────────────────────────────────────────
+var _annual=false;
+var basePrices={starter:9900,pro:24900,business:49900};
+var rates={XAF:1,USD:0.00167,EUR:0.00153};
+
+function toggleBilling(){
+  _annual=!_annual;
+  var dot=document.getElementById('billing-dot');
+  var tog=document.getElementById('billing-toggle');
+  if(_annual){
+    dot.style.left='24px';
+    tog.style.background='#22c55e';
+  } else {
+    dot.style.left='2px';
+    tog.style.background='#d1d5db';
+  }
+  updatePrices();
+}
+
+function updatePrices(){
+  var cur=document.getElementById('currency-sel').value;
+  var r=rates[cur]||1;
+  var plans=['starter','pro','business'];
+  plans.forEach(function(p){
+    var base=basePrices[p];
+    var price=_annual?Math.round(base*12*0.8):base;
+    var converted=cur==='XAF'?price:Math.round(price*r*100)/100;
+    var formatted=cur==='XAF'?converted.toLocaleString('fr-FR'):converted.toLocaleString('en-US',{minimumFractionDigits:cur==='XAF'?0:2});
+    document.getElementById('price-'+p).textContent=formatted;
+    document.getElementById('cur-'+p).textContent=cur;
+    document.getElementById('period-'+p).textContent=_annual?'/ an':'/ mois';
+  });
+}
+
+// ─── Theme toggle ───────────────────────────────────────────────────
+function applyTheme(t){
+  var body=document.body;
+  var sun=document.getElementById('icon-sun');
+  var moon=document.getElementById('icon-moon');
+  var btn=document.getElementById('theme-toggle-btn');
+  if(t==='dark'){
+    body.classList.remove('light-mode');
+    body.classList.add('dark-mode');
+    if(sun){sun.style.display='none';}
+    if(moon){moon.style.display='block';}
+    if(btn)btn.title='Mode clair';
+  } else {
+    body.classList.remove('dark-mode');
+    body.classList.add('light-mode');
+    if(sun){sun.style.display='block';}
+    if(moon){moon.style.display='none';}
+    if(btn)btn.title='Mode sombre';
+  }
+}
+function toggleTheme(){
+  var isLight=document.body.classList.contains('light-mode');
+  var next=isLight?'dark':'light';
+  localStorage.setItem('titanex_theme',next);
+  applyTheme(next);
+}
+(function(){
+  var t=localStorage.getItem('titanex_theme');
+  if(t==='dark'){applyTheme('dark');}
+  else{applyTheme('light');}
+})();
+
+// ─── Language toggle (handled by setLang/applyTranslations above) ───
+
+// ─── Nav helpers ────────────────────────────────────────────────────
 function scrollSec(id){
   var el=document.getElementById(id);
-  if(el) el.scrollIntoView({behavior:'smooth'});
+  if(el)el.scrollIntoView({behavior:'smooth'});
+  var menu=document.getElementById('mobile-menu');
+  if(menu)menu.classList.remove('open');
+  var btn=document.getElementById('mobile-menu-btn');
+  if(btn)btn.classList.remove('open');
 }
-var _lang='fr';
-function toggleLang(){
-  _lang=_lang==='fr'?'en':'fr';
-  document.getElementById('lang-btn').title=_lang==='fr'?'Français':'English';
-}
-window.addEventListener('load',function(){lucide.createIcons();});
+
+// ─── Init ───────────────────────────────────────────────────────────
+window.addEventListener('load',function(){
+  if(typeof lucide!=='undefined')lucide.createIcons();
+});
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
 </script>
 </body>
 </html>

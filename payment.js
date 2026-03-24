@@ -138,6 +138,16 @@ router.post("/webhook", async (req, res) => {
     const { status, external_reference, operator_reference, amount } = req.body;
     console.log("[WEBHOOK CAMPAY]", status, external_reference);
 
+    // Log ALL webhook calls to transactions table
+    await supabaseAdmin.from("transactions").insert({
+      user_id: external_reference,
+      amount: parseInt(amount) || 0,
+      currency: "XAF",
+      status: status,
+      payment_reference: operator_reference || req.body.reference || null
+    }).then(() => console.log("[TX LOG] Saved:", status, external_reference))
+      .catch(e => console.warn("[TX LOG WARN]", e.message));
+
     if (status !== "SUCCESSFUL") {
       console.log("[WEBHOOK] Statut non-successful:", status);
       return;

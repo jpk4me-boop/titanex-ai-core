@@ -73,4 +73,116 @@ router.get("/me", async (req, res) => {
   } catch(e) { res.status(401).json({ error: "Token invalide ou expire" }); }
 });
 
+// ─── JWT middleware ───────────────────────────────────────────────────────────
+function authJWT(req, res, next) {
+  const token = (req.headers.authorization||'').replace('Bearer ','');
+  if(!token) return res.status(401).json({error:'Token manquant'});
+  try { req.user = jwt.verify(token, JWT_SECRET); next(); }
+  catch(e) { return res.status(401).json({error:'Token invalide ou expire'}); }
+}
+
+// ─── GET /auth/profile ───────────────────────────────────────────────────────
+router.get("/profile", authJWT, async (req, res) => {
+  try {
+    const { data: t } = await supabaseAdmin.from("tenants").select("*").eq("id", req.user.id).single();
+    if(!t) return res.status(404).json({error:'Compte introuvable'});
+    const { data: s } = await supabaseAdmin.from("stores").select("*").eq("tenant_id", t.id).single().catch(()=>({data:null}));
+    const parts = (t.nom||'').split(' ');
+    res.json({
+      prenom: parts[0]||'', nom: parts.slice(1).join(' ')||'',
+      email: t.email||'', whatsapp: t.telephone||'',
+      shop_name: t.merchant_name || s?.instance_name || '',
+      preferred_lang: 'fr',
+      ai_script: s?.system_prompt||'',
+      credits: 0, agents_actifs: 0, agents_total: 0,
+      member_since: t.created_at || t.date_debut || '',
+      logo_url: s?.logo_url||null, banner_url: s?.banner_url||null,
+      plan: t.plan||'starter', statut: t.statut||'essai',
+      instance_name: t.instance_name
+    });
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── PUT /auth/profile ───────────────────────────────────────────────────────
+router.put("/profile", authJWT, async (req, res) => {
+  try {
+    const { prenom, nom, whatsapp } = req.body;
+    const fullName = ((prenom||'') + ' ' + (nom||'')).trim();
+    const { error } = await supabaseAdmin.from("tenants").update({
+      nom: fullName, telephone: whatsapp||''
+    }).eq("id", req.user.id);
+    if(error) throw error;
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── PUT /auth/shop ──────────────────────────────────────────────────────────
+router.put("/shop", authJWT, async (req, res) => {
+  try {
+    const { shop_name, preferred_lang, ai_script } = req.body;
+    if(shop_name) await supabaseAdmin.from("tenants").update({merchant_name:shop_name}).eq("id",req.user.id);
+    const { data: s } = await supabaseAdmin.from("stores").select("id").eq("tenant_id",req.user.id).single();
+    if(s && ai_script!==undefined) await supabaseAdmin.from("stores").update({system_prompt:ai_script}).eq("id",s.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── POST /auth/change-password ──────────────────────────────────────────────
+router.post("/change-password", authJWT, async (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+    if(!current_password||!new_password) return res.status(400).json({error:'Champs requis'});
+    const { data: t } = await supabaseAdmin.from("tenants").select("password_hash").eq("id",req.user.id).single();
+    if(!t||!t.password_hash) return res.status(400).json({error:'Compte sans mot de passe'});
+    const valid = await bcrypt.compare(current_password, t.password_hash);
+    if(!valid) return res.status(400).json({error:'Mot de passe actuel incorrect'});
+    const hash = await bcrypt.hash(new_password, 10);
+    await supabaseAdmin.from("tenants").update({password_hash:hash}).eq("id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── PUT /auth/logo & /auth/banner ───────────────────────────────────────────
+router.put("/logo", authJWT, async (req, res) => {
+  try {
+    const { logo_url } = req.body;
+    await supabaseAdmin.from("stores").update({logo_url:logo_url||null}).eq("tenant_id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+router.delete("/logo", authJWT, async (req, res) => {
+  try {
+    await supabaseAdmin.from("stores").update({logo_url:null}).eq("tenant_id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+router.put("/banner", authJWT, async (req, res) => {
+  try {
+    const { banner_url } = req.body;
+    await supabaseAdmin.from("stores").update({banner_url:banner_url||null}).eq("tenant_id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+router.delete("/banner", authJWT, async (req, res) => {
+  try {
+    await supabaseAdmin.from("stores").update({banner_url:null}).eq("tenant_id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── POST /auth/deactivate & DELETE /auth/account ────────────────────────────
+router.post("/deactivate", authJWT, async (req, res) => {
+  try {
+    await supabaseAdmin.from("tenants").update({statut:'inactif'}).eq("id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+router.delete("/account", authJWT, async (req, res) => {
+  try {
+    await supabaseAdmin.from("stores").delete().eq("tenant_id",req.user.id);
+    await supabaseAdmin.from("tenants").delete().eq("id",req.user.id);
+    res.json({success:true});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+
 module.exports = router;

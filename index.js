@@ -12,7 +12,8 @@ const supabase=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_KEY);
 const supabaseAdmin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_KEY||process.env.SUPABASE_KEY);
 const groq=new OpenAI({apiKey:process.env.GROQ_API_KEY,baseURL:"https://api.groq.com/openai/v1"});
 const app=express();
-app.use(express.json());
+app.use(express.json({limit:'50mb'}));
+app.use(express.urlencoded({extended:true,limit:'50mb'}));
 app.use("/dashboard", require("express").static(__dirname + "/dashboard"));
 const adminRouter = require("./admin");
 app.use("/admin", adminRouter);
@@ -143,4 +144,5 @@ app.get('/qr/status', async (req, res) => {
 });
 const authRouter = require("./auth");
 app.use("/auth", authRouter);
+app.use("/api/tenant", authRouter);
 app.listen(PORT,"0.0.0.0",()=>console.log("Titanex AI actif sur le port "+PORT));

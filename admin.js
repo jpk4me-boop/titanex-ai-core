@@ -44,8 +44,15 @@ router.post("/ai/description", async (req, res) => {
 
 
 router.patch("/catalogue/:id", async (req, res) => {
-  const { nom, prix, description } = req.body;
-  const { data, error } = await supabaseAdmin.from("catalogue").update({ nom, prix, description }).eq("id", req.params.id).select().single();
+  const { nom, description, prix, stock, image_url } = req.body;
+  const update = {};
+  if(nom !== undefined) update.nom = nom;
+  if(description !== undefined) update.description = description;
+  if(prix !== undefined) update.prix = prix;
+  if(stock !== undefined) update.stock = stock;
+  if(image_url !== undefined) update.image_url = image_url;
+  update.updated_at = new Date().toISOString();
+  const { data, error } = await supabaseAdmin.from("catalogue").update(update).eq("id", req.params.id).select().single();
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true, produit: data });
 });
@@ -99,22 +106,96 @@ router.get('/tenant/:id', async (req, res) => {
 });
 
 // Route QR — proxifie Evolution API
+// Gère 3 cas : instance inexistante (404) → crée ; instance connectée → déconnecte ; retourne QR
 router.get('/qr/:instance', async (req, res) => {
-  try {
-    const EVO_URL = (process.env.EVOLUTION_API_URL || 'http://localhost:8080').replace(/\/$/, '');
-    const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
-    const r = await require('axios').get(EVO_URL + '/instance/connect/' + req.params.instance, {
+  const axios = require('axios');
+  const EVO_URL = (process.env.EVOLUTION_API_URL || '').replace(/\/$/, '');
+  const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
+  const instance = req.params.instance;
+
+  async function getQR() {
+    const r = await axios.get(EVO_URL + '/instance/connect/' + instance, {
       headers: { apikey: EVO_KEY }
     });
-    const code = r.data.code || r.data.base64 || null;
-    if (!code) return res.json({ waiting: true });
-    res.json({ code });
+    return r.data;
+  }
+
+  async function createInstance() {
+    await axios.post(EVO_URL + '/instance/create', {
+      instanceName: instance,
+      integration: 'WHATSAPP-BAILEYS',
+      qrcode: true
+    }, { headers: { apikey: EVO_KEY } });
+    await new Promise(r => setTimeout(r, 2000));
+  }
+
+  async function logoutInstance() {
+    await axios.delete(EVO_URL + '/instance/logout/' + instance, {
+      headers: { apikey: EVO_KEY }
+    }).catch(() => {});
+    await new Promise(r => setTimeout(r, 1500));
+  }
+
+  try {
+    let data = await getQR();
+
+    // Instance connectée → déconnecter pour forcer un nouveau QR
+    if (!data.base64 && !data.code) {
+      const state = (data.instance && data.instance.state) || data.state || '';
+      if (state === 'open' || state === 'connecting') {
+        await logoutInstance();
+        data = await getQR();
+      }
+    }
+
+    res.json({ base64: data.base64 || null, code: data.code || null });
   } catch(e) {
-    res.status(500).json({ error: e.message });
+    // Instance inexistante (404) → créer puis récupérer QR
+    if (e.response && e.response.status === 404) {
+      try {
+        await createInstance();
+        const data = await getQR();
+        return res.json({ base64: data.base64 || null, code: data.code || null });
+      } catch(e2) {
+        return res.json({ error: e2.message });
+      }
+    }
+    res.json({ error: e.message });
   }
 });
 
-// Route statut connexion WhatsApp
+router.post('/qr/:instance/logout', async (req, res) => {
+  try {
+    const axios = require('axios');
+    const EVO_URL = (process.env.EVOLUTION_API_URL || '').replace(/\/$/, '');
+    const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
+    await axios.delete(EVO_URL + '/instance/logout/' + req.params.instance, {
+      headers: { apikey: EVO_KEY }
+    });
+    res.json({ success: true });
+  } catch(e) {
+    res.json({ success: false, error: e.message });
+  }
+});
+
+router.post('/qr/:instance/refresh', async (req, res) => {
+  try {
+    const axios = require('axios');
+    const EVO_URL = (process.env.EVOLUTION_API_URL || '').replace(/\/$/, '');
+    const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
+    await axios.delete(EVO_URL + '/instance/logout/' + req.params.instance, {
+      headers: { apikey: EVO_KEY }
+    }).catch(() => {});
+    await new Promise(r => setTimeout(r, 1500));
+    const r = await axios.get(EVO_URL + '/instance/connect/' + req.params.instance, {
+      headers: { apikey: EVO_KEY }
+    });
+    res.json({ base64: r.data.base64 || null, code: r.data.code || null });
+  } catch(e) {
+    res.json({ error: e.message });
+  }
+});
+
 router.get('/qr/:instance/status', async (req, res) => {
   try {
     const EVO_URL = (process.env.EVOLUTION_API_URL || 'http://localhost:8080').replace(/\/$/, '');
