@@ -222,6 +222,24 @@ tr:hover td{background:#f8fafc;}
     </div>
   </div>
 
+  <!-- RÉSEAUX SOCIAUX -->
+  <div class="card" id="social-card" style="margin-top:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div class="ct" style="margin-bottom:0;">📱 Visites Réseaux Sociaux</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span id="social-total" style="background:#eef2ff;color:#6366f1;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;">— interactions</span>
+        <span id="social-updated" style="font-size:11px;color:#94a3b8;"></span>
+        <button onclick="loadSocial()" style="background:#f1f5f9;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;color:#64748b;" title="Actualiser" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">🔄</button>
+      </div>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:8px;font-size:12.5px;color:#166534;">
+      <span>✅</span><span>Données réelles depuis Supabase — aucune valeur fictive</span>
+    </div>
+    <div id="social-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+      <div style="text-align:center;padding:24px;color:#94a3b8;grid-column:1/-1;">Chargement...</div>
+    </div>
+  </div>
+
   <div class="dz">
     <div style="font-size:15px;font-weight:700;color:#b91c1c;margin-bottom:8px;">&#9888;&#65039; Zone dangereuse</div>
     <p style="font-size:13px;color:#9f1239;margin-bottom:14px;">Actions reservees au Super Administrateur.</p>
@@ -332,6 +350,7 @@ document.addEventListener('DOMContentLoaded', function(){
   init();
   initCharts();
   renderPays(PAYS_DATA);
+  loadSocial();
 });
 
 async function init(){
@@ -479,6 +498,49 @@ function closePromo(){document.getElementById('pm').classList.remove('open');}
 document.getElementById('pm').addEventListener('click',function(e){if(e.target===this)closePromo();});
 
 function fd(s){if(!s)return'&mdash;';return new Date(s).toLocaleDateString('fr-FR');}
+
+// ─── Réseaux Sociaux ─────────────────────────────────────────────────────────
+async function loadSocial(){
+  var grid=document.getElementById('social-grid');
+  var totalEl=document.getElementById('social-total');
+  var updatedEl=document.getElementById('social-updated');
+  if(grid)grid.innerHTML='<div style="text-align:center;padding:24px;color:#94a3b8;grid-column:1/-1;">⏳ Chargement des données réelles...</div>';
+  try{
+    var r=await fetch('/api/admin/stats/social',{headers:AH()});
+    var data=await r.json();
+    if(data.error)throw new Error(data.error);
+    if(totalEl)totalEl.textContent=(data.total||0).toLocaleString('fr-FR')+' messages WhatsApp · '+( data.unique_contacts||0)+' contacts';
+    if(updatedEl)updatedEl.textContent='Mis à jour '+new Date().toLocaleTimeString('fr-FR');
+    var platforms=data.platforms||[];
+    var maxScore=Math.max.apply(null,platforms.map(function(p){return p.score;}));
+    if(maxScore===0)maxScore=1;
+    if(!grid)return;
+    grid.innerHTML=platforms.map(function(p){
+      var pct=Math.round((p.score/maxScore)*100);
+      var isTop=p.score>0&&p.score===Math.max.apply(null,platforms.map(function(x){return x.score;}));
+      var connected=p.score>0;
+      return '<div style="background:'+(isTop?'linear-gradient(135deg,#f0fdf4,#dcfce7)':'#fff')+';border:1.5px solid '+(isTop?'#86efac':'#f1f5f9')+';border-radius:14px;padding:16px 18px;transition:all .15s;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 4px 16px rgba(0,0,0,.07)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'+
+          '<span style="font-size:24px;">'+p.icon+'</span>'+
+          '<div style="flex:1;">'+
+            '<div style="font-size:13.5px;font-weight:700;color:#1e293b;">'+p.label+'</div>'+
+            '<div style="font-size:11px;color:#94a3b8;">'+(p.detail||'')+'</div>'+
+          '</div>'+
+          '<div style="text-align:right;">'+
+            '<div style="font-size:20px;font-weight:800;color:'+(connected?p.color:'#cbd5e1')+';">'+p.score.toLocaleString('fr-FR')+'</div>'+
+            (isTop?'<div style="font-size:10px;color:#16a34a;font-weight:700;">🏆 Canal principal</div>':'<div style="font-size:10px;color:#94a3b8;">'+(connected?'actif':'inactif')+'</div>')+
+          '</div>'+
+        '</div>'+
+        '<div style="background:#f1f5f9;border-radius:99px;height:5px;overflow:hidden;">'+
+          '<div style="width:'+pct+'%;height:100%;background:'+(connected?p.color:'#e2e8f0')+';border-radius:99px;transition:width .6s ease;"></div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }catch(e){
+    if(grid)grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:24px;color:#94a3b8;">⚠️ Erreur : '+e.message+'</div>';
+    console.error('Social stats error:',e);
+  }
+}
 
 function toast(msg,type){
   var el=document.createElement('div');

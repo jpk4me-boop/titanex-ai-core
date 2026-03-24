@@ -189,6 +189,54 @@ router.post('/users/:id/activate', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// ─── Stats réseaux sociaux (données réelles Supabase) ─────────────────────────
+router.get('/stats/social', auth, async (req, res) => {
+  try {
+    // Compte les messages WhatsApp réels depuis la table messages
+    const { count: msgCount } = await supabaseAdmin
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('direction', 'inbound');
+
+    // Compte les conversations uniques
+    const { count: convCount } = await supabaseAdmin
+      .from('conversations')
+      .select('*', { count: 'exact', head: true });
+
+    // Compte les contacts uniques WhatsApp
+    const { data: uniquePhones } = await supabaseAdmin
+      .from('messages')
+      .select('client_phone')
+      .eq('direction', 'inbound');
+    const uniqueContacts = new Set((uniquePhones||[]).map(r => r.client_phone)).size;
+
+    // Toutes les plateformes avec scores réels (0 si pas de données)
+    const platforms = [
+      { label: 'WhatsApp', icon: '💚', color: '#25D366', score: msgCount || 0, detail: `${uniqueContacts} contact(s) unique(s)` },
+      { label: 'Facebook', icon: '📘', color: '#1877F2', score: 0, detail: 'Non connecté' },
+      { label: 'Instagram', icon: '📸', color: '#E1306C', score: 0, detail: 'Non connecté' },
+      { label: 'Messenger', icon: '💬', color: '#0084FF', score: 0, detail: 'Non connecté' },
+      { label: 'Telegram', icon: '✈️', color: '#0088CC', score: 0, detail: 'Non connecté' },
+      { label: 'TikTok', icon: '🎵', color: '#010101', score: 0, detail: 'Non connecté' },
+      { label: 'YouTube', icon: '📺', color: '#FF0000', score: 0, detail: 'Non connecté' },
+      { label: 'LinkedIn', icon: '💼', color: '#0A66C2', score: 0, detail: 'Non connecté' },
+      { label: 'Twitter/X', icon: '🐦', color: '#1DA1F2', score: 0, detail: 'Non connecté' },
+      { label: 'Google', icon: '🔍', color: '#4285F4', score: 0, detail: 'Non connecté' }
+    ];
+
+    res.json({
+      platforms,
+      total: msgCount || 0,
+      conversations: convCount || 0,
+      unique_contacts: uniqueContacts,
+      source: 'supabase_messages',
+      updated_at: new Date().toISOString()
+    });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
 
 
