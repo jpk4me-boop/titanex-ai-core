@@ -87,6 +87,85 @@ router.patch('/tenants/:id/setup', async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// ─── Routes /api/admin/* (superadmin dashboard) ──────────────────────────────
+
+// Stats globales
+router.get('/stats', auth, async (req, res) => {
+  try {
+    const { data: tenants } = await supabaseAdmin.from('tenants').select('id,email,statut,plan');
+    const { data: convs } = await supabaseAdmin.from('conversations').select('id');
+    res.json({
+      users: (tenants||[]).length,
+      points_used: 0,
+      points_total: 0,
+      referrals: 0,
+      visites: (convs||[]).length
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Liste utilisateurs
+router.get('/users', auth, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin.from('tenants').select('id,email,telephone,created_at,nom,statut,plan,role').order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json((data||[]).map(t => ({
+      id: t.id, email: t.email, phone: t.telephone,
+      created_at: t.created_at, last_login: t.created_at,
+      credits: 0, agents: 1,
+      plan: t.plan||'starter',
+      role: t.role === 'admin' ? 'admin' : 'user',
+      statut: t.statut
+    })));
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Suspendre utilisateur
+router.post('/users/:id/suspend', auth, async (req, res) => {
+  try {
+    const { error } = await supabaseAdmin.from('tenants').update({ statut: 'suspendu' }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Ajouter des crédits (statut actif + prolongation date_fin)
+router.post('/users/:id/credits', auth, async (req, res) => {
+  try {
+    const { days } = req.body;
+    const dateFin = new Date(Date.now() + ((Number(days)||30) * 24 * 60 * 60 * 1000));
+    const { error } = await supabaseAdmin.from('tenants').update({ statut: 'actif', date_fin: dateFin.toISOString().split('T')[0] }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true, date_fin: dateFin.toISOString().split('T')[0] });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Codes promos
+router.get('/promo-codes', auth, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin.from('promo_codes').select('*').order('created_at', { ascending: false });
+    res.json(data || []);
+  } catch(e) { res.json([]); }
+});
+
+router.post('/promo-codes', auth, async (req, res) => {
+  try {
+    const { code, reduction, expiration, max } = req.body;
+    if (!code || !reduction) return res.status(400).json({ error: 'code et reduction requis' });
+    const { data, error } = await supabaseAdmin.from('promo_codes').insert({ code: code.toUpperCase(), reduction: Number(reduction), expiration: expiration||null, max: max||null, used: 0 }).select().single();
+    if (error) throw error;
+    res.json({ success: true, promo: data });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.delete('/promo-codes/:id', auth, async (req, res) => {
+  try {
+    const { error } = await supabaseAdmin.from('promo_codes').delete().eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;
 
 

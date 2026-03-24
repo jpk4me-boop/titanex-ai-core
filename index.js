@@ -145,4 +145,42 @@ app.get('/qr/status', async (req, res) => {
 const authRouter = require("./auth");
 app.use("/auth", authRouter);
 app.use("/api/tenant", authRouter);
+
+// ─── Montage /api/admin → adminRouter ────────────────────────────────────────
+app.use("/api/admin", adminRouter);
+
+// ─── Routes /api/conversations ───────────────────────────────────────────────
+app.get('/api/conversations/:phone/messages', async (req, res) => {
+  try {
+    const { phone } = req.params;
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .or(`contact_id.eq.${phone},from.eq.${phone},phone.eq.${phone}`)
+      .order('created_at', { ascending: true })
+      .limit(200);
+    if (error) throw error;
+    res.json(data || []);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── Route /payment/history ───────────────────────────────────────────────────
+app.get('/payment/history', async (req, res) => {
+  try {
+    const tenant_id = req.query.tenant_id;
+    if (!tenant_id) return res.json([]);
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', tenant_id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    res.json(data || []);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── Route /api/health ────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
+
 app.listen(PORT,"0.0.0.0",()=>console.log("Titanex AI actif sur le port "+PORT));
