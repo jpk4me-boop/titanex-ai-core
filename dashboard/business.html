@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Business — Titanex AI</title>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','system-ui','sans-serif'] },
+      colors: { emerald: { 50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857' } }
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Inter',system-ui,sans-serif;box-sizing:border-box}
+  body{margin:0;background:linear-gradient(135deg,#f0fdf4 0%,#f8fafc 50%,#ecfdf5 100%);min-height:100vh;color:#0f172a}
+
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pricePop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+  .fade-in-up{animation:fadeInUp .5s ease both}
+  .price-pop{animation:pricePop .3s ease}
+
+  .feature-item{opacity:0;animation:fadeInUp .4s ease both}
+
+  .pill-toggle{background:#f1f5f9;border-radius:9999px;padding:4px;display:inline-flex;gap:2px}
+  .pill-btn{padding:8px 22px;border-radius:9999px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s;background:transparent;color:#64748b}
+  .pill-btn.active{background:#fff;color:#0f172a;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .pill-btn:hover:not(.active){color:#334155}
+
+  .feature-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid #f1f5f9}
+  .feature-row:last-child{border-bottom:none}
+  .check-circle{width:22px;height:22px;min-width:22px;border-radius:50%;background:#d1fae5;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .check-circle svg{width:12px;height:12px;color:#10b981}
+
+  .currency-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.12);min-width:160px;z-index:100;animation:slideDown .15s ease}
+  .currency-option{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:#334155;display:flex;align-items:center;gap:8px;transition:background .12s}
+  .currency-option:hover{background:#f8fafc}
+  .currency-option.active{color:#10b981;background:#ecfdf5}
+
+  .savings-banner{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:1px solid #6ee7b7;border-radius:14px;padding:10px 16px;text-align:center;font-size:13px;font-weight:700;color:#065f46;animation:fadeIn .3s ease}
+
+  .badge-guarantee{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:9999px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap}
+
+  .compare-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.04);transition:all .2s}
+  .compare-card:hover{box-shadow:0 8px 30px rgba(16,185,129,.12);border-color:#a7f3d0;transform:translateY(-2px)}
+
+  .price-strike{text-decoration:line-through;color:#94a3b8;font-size:16px;font-weight:500}
+  .price-main{font-size:44px;font-weight:900;color:#0f172a;line-height:1;letter-spacing:-1px}
+  .price-currency-sym{font-size:22px;font-weight:700;color:#475569;vertical-align:top;margin-top:6px;display:inline-block}
+  .price-period{font-size:14px;font-weight:500;color:#64748b;margin-top:4px}
+
+  #already-plan-banner{background:linear-gradient(135deg,#d1fae5,#ecfdf5);border:1px solid #6ee7b7;border-radius:16px;padding:14px 20px;display:none;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#065f46;margin-bottom:16px}
+
+  @media(max-width:768px){
+    .two-col{flex-direction:column!important}
+    .price-main{font-size:36px}
+    .col-right{border-left:none!important;border-top:1px solid #f1f5f9;padding-top:24px!important;padding-left:0!important;margin-top:24px}
+    .hide-mobile{display:none!important}
+    .pill-btn{padding:8px 16px;font-size:13px}
+  }
+</style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- HEADER STICKY                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid #f1f5f9;box-shadow:0 1px 6px rgba(0,0,0,.04)">
+  <div style="max-width:1040px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+
+    <!-- Retour -->
+    <button onclick="history.back()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:13px;font-weight:600;color:#475569;cursor:pointer;transition:all .15s;white-space:nowrap" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      <span data-i18n="biz_back">Retour aux plans</span>
+    </button>
+
+    <!-- Logo centré -->
+    <div style="display:flex;align-items:center;gap:8px;position:absolute;left:50%;transform:translateX(-50%)">
+      <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(16,185,129,.3)">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <span style="font-size:17px;font-weight:800;color:#0f172a;letter-spacing:-.3px">Titanex AI</span>
+    </div>
+
+    <!-- Lang toggle -->
+    <button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer">FR</button>
+
+    <!-- Sélecteur devise -->
+    <div style="position:relative">
+      <button onclick="toggleCurrencyMenu()" id="currency-btn" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-size:12px;font-weight:700;color:#334155;cursor:pointer;transition:all .15s;white-space:nowrap" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+        <span id="currency-flag">🌍</span>
+        <span id="currency-label-btn">CM · XAF</span>
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div id="currency-menu" class="currency-dropdown" style="display:none">
+        <div class="currency-option active" onclick="setCurrencyB('XAF')">
+          <span>🇨🇲</span> XAF — Franc CFA
+        </div>
+        <div class="currency-option" onclick="setCurrencyB('EUR')">
+          <span>🇪🇺</span> EUR — Euro
+        </div>
+        <div class="currency-option" onclick="setCurrencyB('USD')">
+          <span>🇺🇸</span> USD — Dollar
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<main style="max-width:1040px;margin:0 auto;padding:40px 20px 80px">
+
+  <!-- TOGGLE MOIS/ANNUEL -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:44px" class="fade-in-up">
+    <div class="pill-toggle">
+      <button id="btn-monthly" class="pill-btn active" onclick="setBillingB('monthly')"><span data-i18n="biz_monthly">Mensuel</span></button>
+      <button id="btn-annual" class="pill-btn" onclick="setBillingB('annual')">
+        <span data-i18n="biz_annual">Annuel</span> <span id="annual-badge" style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:4px">-20%</span>
+      </button>
+    </div>
+    <div id="savings-msg" style="display:none" class="savings-banner">
+      💰 <span data-i18n="biz_savings_prefix">Économisez</span> <span id="savings-amount">118 800 XAF</span> <span data-i18n="biz_savings_suffix">par an avec l'abonnement annuel !</span>
+    </div>
+  </div>
+
+  <!-- Bannière plan actuel -->
+  <div id="already-plan-banner" style="display:none;max-width:760px;margin:0 auto 20px">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="color:#10b981"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <span data-i18n="biz_already">Vous bénéficiez déjà du plan Business. Merci de votre confiance !</span>
+  </div>
+
+  <!-- CARD PRINCIPALE -->
+  <div style="background:#fff;border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.08);border:1px solid #e2e8f0;overflow:hidden;max-width:900px;margin:0 auto" class="fade-in-up" id="main-card">
+
+    <div class="two-col" style="display:flex">
+
+      <!-- ═══ COLONNE GAUCHE — Prix & Plan ═══ -->
+      <div style="flex:1;padding:44px 36px;display:flex;flex-direction:column;justify-content:space-between">
+
+        <!-- Badge plan -->
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:1px solid #6ee7b7;margin-bottom:20px">
+            <svg width="14" height="14" fill="none" stroke="#059669" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
+            <span style="font-size:12px;font-weight:800;color:#065f46;text-transform:uppercase;letter-spacing:.5px" data-i18n="biz_plan_label">Plan Business</span>
+          </div>
+
+          <h1 style="font-size:42px;font-weight:900;color:#0f172a;letter-spacing:-1.5px;margin:0 0 4px">Business</h1>
+          <p style="font-size:15px;color:#64748b;font-weight:500;margin:0 0 28px" data-i18n="biz_subtitle">Pour les agences et marchands ambitieux</p>
+
+          <!-- Prix -->
+          <div style="margin-bottom:8px">
+            <span class="price-strike" id="price-original">99 000</span>
+            <span style="font-size:11px;color:#94a3b8;margin-left:4px" id="currency-code-orig">XAF</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span class="price-currency-sym" id="currency-sym">XAF</span>
+            <span class="price-main" id="price-display">79 000</span>
+            <span style="font-size:15px;font-weight:600;color:#64748b">/ mois</span>
+          </div>
+          <p id="billing-note" style="font-size:12px;color:#94a3b8;margin:6px 0 0;font-weight:500">facturé mensuellement</p>
+        </div>
+
+        <!-- Infos supplémentaires -->
+        <div style="margin-top:28px;padding:16px;background:#f8fafc;border-radius:16px;border:1px solid #f1f5f9">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <svg width="16" height="16" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span style="font-size:13px;font-weight:700;color:#0f172a" data-i18n="biz_everything">Tout ce dont vous avez besoin</span>
+          </div>
+          <p style="font-size:12px;color:#64748b;margin:0;line-height:1.6" data-i18n="biz_everything_desc">Gérez plusieurs boutiques, automatisez vos ventes WhatsApp et offrez une expérience en marque blanche à vos clients.</p>
+        </div>
+      </div>
+
+      <!-- ═══ COLONNE DROITE — Features ═══ -->
+      <div class="col-right" style="flex:1;padding:44px 36px;border-left:1px solid #f1f5f9">
+        <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;margin:0 0 16px" data-i18n="biz_included">Ce qui est inclus :</p>
+        <div id="features-list">
+
+          <div class="feature-row feature-item" style="animation-delay:.05s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_agents">4 agents WhatsApp</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.1s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_accounts">4 comptes WhatsApp connectés</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.15s">
+            <div class="check-circle" style="background:#d1fae5"><svg fill="none" viewBox="0 0 24 24" stroke="#059669" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:700;color:#059669" data-i18n="biz_feat_credits">⚡ 50 000 crédits / mois</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.2s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_chars">🔄 20 000 000 de caractères</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.25s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_orgs">4 organisations</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.3s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_calendar">📅 Gestion du calendrier</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.35s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_appointments">📆 Prise de rendez-vous</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.4s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_domain">🌐 Domaine personnalisé</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.45s">
+            <div class="check-circle" style="background:#fef3c7"><svg fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:600;color:#92400e" data-i18n="biz_feat_vip">👑 Accompagnement VIP pour setup</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.5s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_analytics">📊 Analytics avancées</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.55s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_gpt">🤖 Accès au modèle GPT-5</span>
+          </div>
+
+          <div class="feature-row feature-item" style="animation-delay:.6s">
+            <div class="check-circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>
+            <span style="font-size:13.5px;font-weight:500;color:#1e293b" data-i18n="biz_feat_support">🔧 Support technique prioritaire 24h/7j</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Séparateur -->
+    <div style="border-top:1px solid #f1f5f9;padding:24px 36px 28px">
+
+      <!-- Bouton CTA -->
+      <button id="cta-btn" onclick="gotoPayment()"
+        style="width:100%;padding:18px;border-radius:18px;background:linear-gradient(135deg,#10b981,#059669);border:none;color:#fff;font-size:17px;font-weight:900;cursor:pointer;transition:all .2s;box-shadow:0 8px 24px rgba(16,185,129,.3);letter-spacing:-.2px;display:flex;align-items:center;justify-content:center;gap:8px"
+        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 30px rgba(16,185,129,.4)'"
+        onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px rgba(16,185,129,.3)'">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span data-i18n="biz_cta">S'abonner au plan Business →</span>
+      </button>
+
+      <!-- Prix récap sous le bouton -->
+      <p id="cta-recap" style="text-align:center;font-size:13px;color:#94a3b8;margin:10px 0 16px;font-weight:500">
+        <span id="cta-price-recap">79 000 XAF</span> / mois · Sans engagement
+      </p>
+
+      <!-- Garanties -->
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
+        <span class="badge-guarantee">🔒 <span data-i18n="biz_badge_secure">Paiement sécurisé</span></span>
+        <span class="badge-guarantee">↩️ <span data-i18n="biz_badge_refund">Remboursement sous 7j</span></span>
+        <span class="badge-guarantee">🎯 <span data-i18n="biz_badge_setup">Setup guidé inclus</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- SECTION COMPARAISON                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div style="max-width:900px;margin:48px auto 0">
+    <h2 style="text-align:center;font-size:24px;font-weight:800;color:#0f172a;margin:0 0 28px;letter-spacing:-.5px" data-i18n="biz_why_title">Pourquoi choisir Business ?</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+
+      <div class="compare-card fade-in-up" style="animation-delay:.1s">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+          <span style="font-size:22px">🚀</span>
+        </div>
+        <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 6px" data-i18n="biz_card1_title">10x plus de capacité</h3>
+        <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6" data-i18n="biz_card1_desc">50 000 crédits vs 5 000 sur le plan Pro. Gérez des milliers de conversations simultanément sans jamais être à court.</p>
+      </div>
+
+      <div class="compare-card fade-in-up" style="animation-delay:.2s">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+          <span style="font-size:22px">🏢</span>
+        </div>
+        <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 6px" data-i18n="biz_card2_title">Multi-organisations</h3>
+        <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6" data-i18n="biz_card2_desc">Gérez jusqu'à 4 boutiques distinctes depuis un seul compte. Idéal pour les agences et les entrepreneurs multi-activités.</p>
+      </div>
+
+      <div class="compare-card fade-in-up" style="animation-delay:.3s">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#fef3c7,#fde68a);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+          <span style="font-size:22px">🎨</span>
+        </div>
+        <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 6px" data-i18n="biz_card3_title">Marque blanche totale</h3>
+        <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6" data-i18n="biz_card3_desc">Votre nom, votre domaine, votre image. Proposez la puissance de Titanex AI sous votre propre identité visuelle.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer de confiance -->
+  <div style="text-align:center;margin-top:48px;padding-top:32px;border-top:1px solid #e2e8f0">
+    <p style="font-size:13px;color:#94a3b8;margin:0 0 8px" data-i18n="biz_footer_trust">Rejoignez plus de 500 marchands qui font confiance à Titanex AI</p>
+    <div style="display:flex;justify-content:center;gap:6px">
+      <span style="color:#fbbf24;font-size:18px">★★★★★</span>
+      <span style="font-size:13px;font-weight:600;color:#64748b">4.9/5 · 500+ avis</span>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─── i18n ────────────────────────────────────────────────────────────
+var TRANSLATIONS={
+fr:{
+  biz_back:"Retour aux plans",biz_monthly:"Mensuel",biz_annual:"Annuel",
+  biz_savings_prefix:"Économisez",biz_savings_suffix:"par an avec l'abonnement annuel !",
+  biz_already:"Vous bénéficiez déjà du plan Business. Merci de votre confiance !",
+  biz_plan_label:"Plan Business",biz_subtitle:"Pour les agences et marchands ambitieux",
+  biz_everything:"Tout ce dont vous avez besoin",
+  biz_everything_desc:"Gérez plusieurs boutiques, automatisez vos ventes WhatsApp et offrez une expérience en marque blanche à vos clients.",
+  biz_included:"Ce qui est inclus :",
+  biz_feat_agents:"4 agents WhatsApp",biz_feat_accounts:"4 comptes WhatsApp connectés",
+  biz_feat_credits:"⚡ 50 000 crédits / mois",biz_feat_chars:"🔄 20 000 000 de caractères",
+  biz_feat_orgs:"4 organisations",biz_feat_calendar:"📅 Gestion du calendrier",
+  biz_feat_appointments:"📆 Prise de rendez-vous",biz_feat_domain:"🌐 Domaine personnalisé",
+  biz_feat_vip:"👑 Accompagnement VIP pour setup",biz_feat_analytics:"📊 Analytics avancées",
+  biz_feat_gpt:"🤖 Accès au modèle GPT-5",biz_feat_support:"🔧 Support technique prioritaire 24h/7j",
+  biz_cta:"S'abonner au plan Business →",
+  biz_badge_secure:"Paiement sécurisé",biz_badge_refund:"Remboursement sous 7j",biz_badge_setup:"Setup guidé inclus",
+  biz_why_title:"Pourquoi choisir Business ?",
+  biz_card1_title:"10x plus de capacité",biz_card1_desc:"50 000 crédits vs 5 000 sur le plan Pro. Gérez des milliers de conversations simultanément sans jamais être à court.",
+  biz_card2_title:"Multi-organisations",biz_card2_desc:"Gérez jusqu'à 4 boutiques distinctes depuis un seul compte. Idéal pour les agences et les entrepreneurs multi-activités.",
+  biz_card3_title:"Marque blanche totale",biz_card3_desc:"Votre nom, votre domaine, votre image. Proposez la puissance de Titanex AI sous votre propre identité visuelle.",
+  biz_footer_trust:"Rejoignez plus de 500 marchands qui font confiance à Titanex AI"
+},
+en:{
+  biz_back:"Back to plans",biz_monthly:"Monthly",biz_annual:"Annual",
+  biz_savings_prefix:"Save",biz_savings_suffix:"per year with annual billing!",
+  biz_already:"You already have the Business plan. Thank you for your trust!",
+  biz_plan_label:"Business Plan",biz_subtitle:"For agencies and ambitious merchants",
+  biz_everything:"Everything you need",
+  biz_everything_desc:"Manage multiple stores, automate your WhatsApp sales and offer a white-label experience to your clients.",
+  biz_included:"What's included:",
+  biz_feat_agents:"4 WhatsApp agents",biz_feat_accounts:"4 connected WhatsApp accounts",
+  biz_feat_credits:"⚡ 50,000 credits / month",biz_feat_chars:"🔄 20,000,000 characters",
+  biz_feat_orgs:"4 organizations",biz_feat_calendar:"📅 Calendar management",
+  biz_feat_appointments:"📆 Appointment booking",biz_feat_domain:"🌐 Custom domain",
+  biz_feat_vip:"👑 VIP onboarding support",biz_feat_analytics:"📊 Advanced analytics",
+  biz_feat_gpt:"🤖 GPT-5 model access",biz_feat_support:"🔧 Priority technical support 24/7",
+  biz_cta:"Subscribe to Business plan →",
+  biz_badge_secure:"Secure payment",biz_badge_refund:"7-day refund",biz_badge_setup:"Guided setup included",
+  biz_why_title:"Why choose Business?",
+  biz_card1_title:"10x more capacity",biz_card1_desc:"50,000 credits vs 5,000 on the Pro plan. Handle thousands of simultaneous conversations without ever running out.",
+  biz_card2_title:"Multi-organizations",biz_card2_desc:"Manage up to 4 separate stores from a single account. Ideal for agencies and multi-activity entrepreneurs.",
+  biz_card3_title:"Full white label",biz_card3_desc:"Your name, your domain, your brand. Offer the power of Titanex AI under your own visual identity.",
+  biz_footer_trust:"Join 500+ merchants who trust Titanex AI"
+}
+};
+var LANG=localStorage.getItem('titanex_lang')||'fr';
+function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
+function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');var val=t(key);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else{el.textContent=val;}
+  });
+}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
+
+var ANNUAL_B = false;
+var CURRENCY_B = 'XAF';
+var RATES_B = { XAF: 1, EUR: 0.00140, USD: 0.00152 };
+var PRICES_B = { monthly: 79000, annual: 63200 };
+var ORIGINAL_B = { monthly: 99000, annual: 79000 };
+var CURRENCY_SYMBOLS = { XAF: 'XAF', EUR: '€', USD: '$' };
+var CURRENCY_FLAGS = { XAF: '🇨🇲', EUR: '🇪🇺', USD: '🇺🇸' };
+var CURRENCY_NAMES = { XAF: 'CM · XAF', EUR: 'EU · EUR', USD: 'US · USD' };
+
+function formatPrice(amount, currency) {
+  var converted = Math.round(amount * RATES_B[currency]);
+  if (currency === 'XAF') {
+    return converted.toLocaleString('fr-FR') + ' XAF';
+  } else if (currency === 'EUR') {
+    return '€' + converted.toLocaleString('fr-FR', {minimumFractionDigits:0});
+  } else {
+    return '$' + converted.toLocaleString('en-US', {minimumFractionDigits:0});
+  }
+}
+
+function formatPriceNum(amount, currency) {
+  var converted = Math.round(amount * RATES_B[currency]);
+  if (currency === 'XAF') return converted.toLocaleString('fr-FR');
+  if (currency === 'EUR') return converted.toLocaleString('fr-FR', {minimumFractionDigits:0});
+  return converted.toLocaleString('en-US', {minimumFractionDigits:0});
+}
+
+function updatePriceB() {
+  var price = ANNUAL_B ? PRICES_B.annual : PRICES_B.monthly;
+  var orig = ANNUAL_B ? ORIGINAL_B.annual : ORIGINAL_B.monthly;
+  var sym = CURRENCY_SYMBOLS[CURRENCY_B];
+
+  // Main price display
+  var priceEl = document.getElementById('price-display');
+  if (priceEl) {
+    priceEl.textContent = formatPriceNum(price, CURRENCY_B);
+    priceEl.classList.add('price-pop');
+    setTimeout(function() { priceEl.classList.remove('price-pop'); }, 300);
+  }
+
+  // Currency symbol
+  var symEl = document.getElementById('currency-sym');
+  if (symEl) symEl.textContent = CURRENCY_B === 'XAF' ? '' : sym;
+
+  // Original/strikethrough price
+  var origEl = document.getElementById('price-original');
+  if (origEl) origEl.textContent = formatPriceNum(orig, CURRENCY_B);
+  var origCode = document.getElementById('currency-code-orig');
+  if (origCode) origCode.textContent = CURRENCY_B;
+
+  // Billing note
+  var noteEl = document.getElementById('billing-note');
+  if (noteEl) noteEl.textContent = ANNUAL_B
+    ? 'prix mensuel équivalent, facturé annuellement'
+    : 'facturé mensuellement';
+
+  // CTA recap
+  var recapEl = document.getElementById('cta-recap');
+  if (recapEl) recapEl.innerHTML = '<span id="cta-price-recap">' + formatPrice(price, CURRENCY_B) + '</span> / mois · Sans engagement';
+
+  // Savings banner
+  var savings = (PRICES_B.monthly - PRICES_B.annual) * 12;
+  var savingsEl = document.getElementById('savings-amount');
+  if (savingsEl) savingsEl.textContent = formatPrice(savings, CURRENCY_B);
+  var msgEl = document.getElementById('savings-msg');
+  if (msgEl) msgEl.style.display = ANNUAL_B ? 'block' : 'none';
+}
+
+function setBillingB(mode) {
+  ANNUAL_B = (mode === 'annual');
+  var btnM = document.getElementById('btn-monthly');
+  var btnA = document.getElementById('btn-annual');
+  if (ANNUAL_B) {
+    btnM.classList.remove('active'); btnA.classList.add('active');
+  } else {
+    btnA.classList.remove('active'); btnM.classList.add('active');
+  }
+  updatePriceB();
+}
+
+function setCurrencyB(c) {
+  CURRENCY_B = c;
+  // Update currency menu active state
+  document.querySelectorAll('.currency-option').forEach(function(el) {
+    el.classList.remove('active');
+    if (el.textContent.indexOf(c) !== -1) el.classList.add('active');
+  });
+  // Update header button
+  var flagEl = document.getElementById('currency-flag');
+  if (flagEl) flagEl.textContent = CURRENCY_FLAGS[c];
+  var labelEl = document.getElementById('currency-label-btn');
+  if (labelEl) labelEl.textContent = CURRENCY_NAMES[c];
+  closeCurrencyMenu();
+  updatePriceB();
+}
+
+function toggleCurrencyMenu() {
+  var menu = document.getElementById('currency-menu');
+  if (!menu) return;
+  var isOpen = menu.style.display === 'block';
+  menu.style.display = isOpen ? 'none' : 'block';
+}
+
+function closeCurrencyMenu() {
+  var menu = document.getElementById('currency-menu');
+  if (menu) menu.style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest || !e.target.closest('#currency-btn') && !e.target.closest('#currency-menu')) {
+    closeCurrencyMenu();
+  }
+});
+
+function gotoPayment() {
+  var price = ANNUAL_B ? PRICES_B.annual : PRICES_B.monthly;
+  var billing = ANNUAL_B ? 'annual' : 'monthly';
+  window.location.href = '/dashboard/paiement.html?plan=business&prix=' + price + '&billing=' + billing + '&currency=' + CURRENCY_B;
+}
+
+window.onload = function() {
+  // Check if user already has this plan
+  var session = {};
+  try { session = JSON.parse(localStorage.getItem('titanex_session') || '{}'); } catch(e) {}
+  if (session.plan && session.plan.toLowerCase() === 'business') {
+    var banner = document.getElementById('already-plan-banner');
+    if (banner) banner.style.display = 'flex';
+    var btn = document.getElementById('cta-btn');
+    if (btn) {
+      btn.innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Plan actuel — déjà actif';
+      btn.disabled = true;
+      btn.style.background = '#6ee7b7';
+      btn.style.cursor = 'not-allowed';
+      btn.style.boxShadow = 'none';
+      btn.onmouseover = null;
+      btn.onmouseout = null;
+    }
+  }
+  // Init price display
+  updatePriceB();
+};
+</script>
+</body>
+</html>

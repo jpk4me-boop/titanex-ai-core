@@ -4,303 +4,551 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Titanex AI — Paiement</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{brand:'#22c55e','brand-dark':'#16a34a'},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--g2:#16a34a;--r:#ef4444;--a:#f59e0b;--b:#3b82f6;--t:#f0f0f0;--t2:#888;--t3:#444}
-body{background:var(--bg);color:var(--t);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+body{font-family:'Inter',system-ui,sans-serif}
+/* Light mode */
+body.light-mode{background:#f8fafc!important;color:#0f172a!important}
+body.light-mode .bg-\[\#0a0a0a\]{background:#f8fafc!important}
+body.light-mode .text-white{color:#0f172a!important}
+body.light-mode .bg-zinc-900,body.light-mode .bg-zinc-900\/80,body.light-mode .bg-zinc-900\/60{background:#ffffff!important;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+body.light-mode .bg-zinc-950{background:#f8fafc!important}
+body.light-mode .border-zinc-800,body.light-mode .border-zinc-700{border-color:#e2e8f0!important}
+body.light-mode .text-zinc-400{color:#475569!important}
+body.light-mode .text-zinc-500{color:#64748b!important}
+body.light-mode .text-zinc-600{color:#94a3b8!important}
+body.light-mode input{background:#f8fafc!important;color:#0f172a!important;border-color:#e2e8f0!important}
+body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!important}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-
-.card{background:var(--s);border:1px solid var(--br);border-radius:16px;padding:2rem;width:100%;max-width:420px;animation:fadeUp .4s ease}
-.logo{text-align:center;margin-bottom:1.5rem}
-.logo-txt{font-size:1.2rem;font-weight:800}
-.logo-txt em{color:var(--g);font-style:normal}
-.logo-sub{font-size:.75rem;color:var(--t2);margin-top:3px}
-
-/* Statut tenant */
-.tenant-info{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:1rem;margin-bottom:1.5rem}
-.tenant-name{font-size:.95rem;font-weight:700;margin-bottom:.3rem}
-.tenant-meta{font-size:.75rem;color:var(--t2);display:flex;gap:10px;flex-wrap:wrap}
-.badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:.2rem .6rem;font-size:.7rem;font-weight:600}
-.badge-essai{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--a)}
-.badge-actif{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--g)}
-.badge-expire{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--r)}
-
-/* Plans */
-.section-title{font-size:.75rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
-.plans{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
-.plan{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;position:relative}
-.plan:hover{border-color:rgba(34,197,94,.3)}
-.plan.on{border-color:var(--g);background:rgba(34,197,94,.04)}
-.plan.featured{border-color:rgba(245,158,11,.25)}
-.plan-pop{position:absolute;top:-8px;right:10px;background:var(--a);color:#000;border-radius:20px;padding:.12rem .55rem;font-size:.64rem;font-weight:700}
-.plan-row{display:flex;align-items:center;justify-content:space-between}
-.plan-left{display:flex;align-items:center;gap:8px}
-.plan-radio{width:15px;height:15px;border-radius:50%;border:2px solid var(--br);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
-.plan.on .plan-radio{border-color:var(--g);background:var(--g)}
-.plan.on .plan-radio::after{content:"";width:5px;height:5px;background:#000;border-radius:50%}
-.plan-name{font-size:.84rem;font-weight:700}
-.plan-price{font-size:.9rem;font-weight:800;color:var(--g)}
-.plan-price small{font-size:.68rem;color:var(--t2);font-weight:400}
-.plan-feats{font-size:.72rem;color:var(--t2);margin-top:.4rem;padding-left:23px}
-
-/* Champ téléphone */
-.field{margin-bottom:1rem}
-.field label{display:block;font-size:.73rem;color:var(--t2);margin-bottom:.3rem;font-weight:500}
-.field input{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:.65rem .9rem;color:var(--t);font-size:.85rem;outline:none;font-family:inherit;transition:border-color .2s}
-.field input:focus{border-color:var(--g)}
-.field .hint{font-size:.69rem;color:var(--t3);margin-top:.25rem}
-
-/* Bouton paiement */
-.pay-btn{width:100%;background:var(--g);color:#000;border:none;border-radius:10px;padding:.9rem;font-weight:800;cursor:pointer;font-size:.92rem;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:.8rem}
-.pay-btn:hover{background:var(--g2);transform:translateY(-1px)}
-.pay-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-.trust-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
-.trust-item{font-size:.7rem;color:var(--t3);display:flex;align-items:center;gap:3px}
-
-/* USSD box */
-.ussd-box{display:none;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;text-align:center}
-.ussd-title{font-size:.8rem;font-weight:700;color:var(--g);margin-bottom:.6rem}
-.ussd-code{font-size:1.6rem;font-weight:800;letter-spacing:.08em;color:var(--t);background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:.6rem 1rem;display:inline-block;margin-bottom:.75rem;cursor:pointer;transition:all .2s}
-.ussd-code:hover{border-color:var(--g)}
-.ussd-steps{text-align:left;font-size:.75rem;color:var(--t2);line-height:1.8}
-.ussd-steps li{display:flex;gap:6px;align-items:flex-start}
-.ussd-steps li::before{content:"→";color:var(--g);flex-shrink:0}
-.ussd-ref{font-size:.69rem;color:var(--t3);margin-top:.6rem}
-
-/* Vérification */
-.verify-area{display:none;text-align:center;padding:.5rem 0}
-.spinner{width:28px;height:28px;border:3px solid var(--br);border-top-color:var(--g);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto .75rem}
-.verify-txt{font-size:.82rem;color:var(--t2)}
-
-/* Succès */
-.success-box{display:none;text-align:center;padding:1rem 0}
-.success-ic{font-size:2.5rem;margin-bottom:.75rem}
-.success-title{font-size:1rem;font-weight:700;margin-bottom:.4rem}
-.success-sub{font-size:.8rem;color:var(--t2);line-height:1.6;margin-bottom:1.2rem}
-.success-btn{background:var(--g);color:#000;border:none;border-radius:8px;padding:.65rem 1.4rem;font-weight:700;cursor:pointer;font-size:.85rem;font-family:inherit}
-
-.toast{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:.6rem .9rem;font-size:.78rem;display:none;z-index:999;max-width:280px}
-.divider{height:1px;background:var(--br);margin:1.2rem 0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes progressBar{from{width:0}to{width:100%}}
+@keyframes checkPop{0%{transform:scale(0) rotate(-45deg);opacity:0}50%{transform:scale(1.2) rotate(0deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(60px) rotate(360deg);opacity:0}}
+.fade-in{animation:fadeIn .5s ease forwards;opacity:0}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}.delay-4{animation-delay:.4s}
+.check-pop{animation:checkPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
 </style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
-<body>
+<body class="bg-[#0a0a0a] text-white min-h-screen flex flex-col items-center px-4 py-8">
 
-<div class="card">
-  <div class="logo">
-    <div class="logo-txt">Titanex <em>AI</em></div>
-    <div class="logo-sub">Activation de votre abonnement</div>
+<!-- HEADER -->
+<div class="text-center mb-8 fade-in">
+  <div class="flex items-center justify-center gap-2 mb-3">
+    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-green-600 flex items-center justify-center text-sm font-bold shadow-lg shadow-emerald-500/30">T</div>
+    <span class="text-xl font-bold">Titanex <span class="text-emerald-400">AI</span></span>
+    <button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px">FR</button>
   </div>
+  <h1 class="text-2xl font-bold mb-1" data-i18n="pay_title">Choisissez votre plan</h1>
+  <p class="text-zinc-400 text-sm" data-i18n="pay_subtitle">7 jours gratuits, aucune carte bancaire</p>
+</div>
 
-  <!-- Info tenant -->
-  <div class="tenant-info" id="tenant-info">
-    <div style="font-size:.8rem;color:var(--t2)">Chargement...</div>
-  </div>
+<!-- MAIN CARD -->
+<div class="w-full max-w-[480px]">
 
-  <!-- Sélection plan -->
-  <div id="plan-section">
-    <div class="section-title">Choisir votre plan</div>
-    <div class="plans">
-      <div class="plan" id="plan-starter" onclick="selectPlan('starter',9900)">
-        <div class="plan-row">
-          <div class="plan-left"><div class="plan-radio"></div><div class="plan-name">Starter</div></div>
-          <div class="plan-price">9 900 FCFA <small>/mois</small></div>
+  <!-- ═══ STEP 1: Plans + Form ═══ -->
+  <div id="step-plan" class="space-y-5">
+
+    <!-- Plans -->
+    <div class="space-y-3 fade-in delay-1">
+
+      <!-- Starter -->
+      <div onclick="selectPlan('starter',9900)" id="plan-starter" class="relative rounded-2xl border-2 border-zinc-800 bg-zinc-900/80 p-5 cursor-pointer transition-all duration-200 hover:border-zinc-600">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm font-semibold">Starter</span>
+            </div>
+            <div class="flex items-baseline gap-1 mb-3">
+              <span class="text-2xl font-bold text-white">9 900</span>
+              <span class="text-xs text-zinc-400">XAF / mois</span>
+            </div>
+            <ul class="space-y-1.5">
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>1 agent WhatsApp</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>3 000 credits/mois</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Catalogue illimite</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Reponses 24h/24</li>
+            </ul>
+          </div>
+          <div id="check-starter" class="w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all"></div>
         </div>
-        <div class="plan-feats">1 agent · Catalogue illimité · Réponses 24h/24</div>
       </div>
-      <div class="plan featured on" id="plan-pro" onclick="selectPlan('pro',24900)">
-        <div class="plan-pop">⭐ Recommandé</div>
-        <div class="plan-row">
-          <div class="plan-left"><div class="plan-radio"></div><div class="plan-name">Pro</div></div>
-          <div class="plan-price">24 900 FCFA <small>/mois</small></div>
+
+      <!-- Pro -->
+      <div onclick="selectPlan('pro',24900)" id="plan-pro" class="relative rounded-2xl border-2 border-emerald-500/50 bg-emerald-500/[.03] p-5 cursor-pointer transition-all duration-200 hover:border-emerald-400">
+        <span class="absolute -top-2.5 left-5 bg-emerald-500 text-black text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wide">Populaire</span>
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm font-semibold">Pro</span>
+            </div>
+            <div class="flex items-baseline gap-1 mb-3">
+              <span class="text-2xl font-bold text-emerald-400">24 900</span>
+              <span class="text-xs text-zinc-400">XAF / mois</span>
+            </div>
+            <ul class="space-y-1.5">
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>2 agents WhatsApp</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>10 000 credits/mois</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Analyses & rapports</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Support prioritaire</li>
+            </ul>
+          </div>
+          <div id="check-pro" class="w-6 h-6 rounded-full border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all">
+            <i data-lucide="check" class="w-3.5 h-3.5 text-black"></i>
+          </div>
         </div>
-        <div class="plan-feats">3 agents · Analytics · Formation · Support prioritaire</div>
       </div>
-      <div class="plan" id="plan-business" onclick="selectPlan('business',49900)">
-        <div class="plan-row">
-          <div class="plan-left"><div class="plan-radio"></div><div class="plan-name">Business</div></div>
-          <div class="plan-price">49 900 FCFA <small>/mois</small></div>
+
+      <!-- Business -->
+      <div onclick="selectPlan('business',49900)" id="plan-business" class="relative rounded-2xl border-2 border-zinc-800 bg-zinc-900/80 p-5 cursor-pointer transition-all duration-200 hover:border-zinc-600">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm font-semibold">Business</span>
+            </div>
+            <div class="flex items-baseline gap-1 mb-3">
+              <span class="text-2xl font-bold text-white">49 900</span>
+              <span class="text-xs text-zinc-400">XAF / mois</span>
+            </div>
+            <ul class="space-y-1.5">
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>4 agents WhatsApp</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>50 000 credits/mois</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Marque blanche</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Accompagnement VIP</li>
+            </ul>
+          </div>
+          <div id="check-business" class="w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all"></div>
         </div>
-        <div class="plan-feats">5 agents · White label · SLA garanti · Onboarding dédié</div>
       </div>
     </div>
 
-    <div class="field">
-      <label>Numéro MTN / Orange pour le paiement *</label>
-      <input id="pay-phone" placeholder="237672482763" type="tel">
-      <div class="hint">📱 Vous recevrez une invite de paiement sur ce numéro</div>
+    <!-- Telephone + Operator -->
+    <div class="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 space-y-4 fade-in delay-2">
+      <!-- Phone -->
+      <div>
+        <label class="block text-xs font-medium text-zinc-400 mb-1.5" data-i18n="pay_phone">Numero de paiement *</label>
+        <div class="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2.5 focus-within:border-emerald-500/50 transition-colors">
+          <span class="text-sm text-zinc-400 flex items-center gap-1.5 flex-shrink-0">
+            <span class="text-base">🇨🇲</span> +237
+          </span>
+          <input id="pay-phone" type="tel" maxlength="9" placeholder="6XXXXXXXX" class="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-zinc-600 font-medium tracking-wide" oninput="detectOperator()">
+        </div>
+        <p id="phone-error" class="text-xs text-red-400 mt-1 hidden">Le numero doit commencer par 6 et contenir 9 chiffres</p>
+      </div>
+
+      <!-- Operator -->
+      <div>
+        <label class="block text-xs font-medium text-zinc-400 mb-1.5" data-i18n="pay_operator">Operateur</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="selectOp('mtn')" id="op-mtn" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-yellow-500/40 bg-yellow-500/10 text-sm font-semibold text-yellow-400 transition-all">
+            <span class="text-base">📱</span> MTN MoMo
+          </button>
+          <button onclick="selectOp('orange')" id="op-orange" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-zinc-700 bg-zinc-900 text-sm font-medium text-zinc-400 transition-all hover:border-zinc-600">
+            <span class="text-base">📱</span> Orange Money
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="rounded-xl bg-zinc-950 border border-zinc-800 px-4 py-3">
+        <div class="flex items-center justify-between text-xs text-zinc-400 mb-1">
+          <span>Plan selectionne</span>
+          <span id="sum-plan" class="font-semibold text-white">Pro</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-zinc-400">Total a payer</span>
+          <span id="sum-price" class="text-lg font-bold text-emerald-400">24 900 XAF</span>
+        </div>
+        <div class="text-[10px] text-zinc-500 mt-1" id="sum-op">via MTN MoMo</div>
+      </div>
     </div>
 
-    <button class="pay-btn" id="pay-btn" onclick="initierPaiement()">
-      <span>💳</span><span id="pay-btn-txt">Payer maintenant</span>
+    <!-- Pay Button -->
+    <button onclick="initierPaiement()" id="pay-btn" class="w-full py-3.5 rounded-2xl bg-emerald-500 text-black text-sm font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 fade-in delay-3 disabled:opacity-50 disabled:cursor-not-allowed">
+      <span id="pay-btn-txt" data-i18n="pay_pay_btn">Payer maintenant</span>
+      <span>💳</span>
     </button>
 
-    <div class="trust-row">
-      <div class="trust-item">🔒 Sécurisé Campay</div>
-      <div class="trust-item">📱 MTN MoMo</div>
-      <div class="trust-item">🟠 Orange Money</div>
+    <!-- Trust -->
+    <div class="flex items-center justify-center gap-4 text-[11px] text-zinc-500 fade-in delay-4">
+      <span class="flex items-center gap-1">🔒 <span data-i18n="pay_secure">Securise</span></span>
+      <span class="flex items-center gap-1">✅ <span data-i18n="pay_no_commit">Sans engagement</span></span>
+      <span class="flex items-center gap-1">📱 <span data-i18n="pay_mobile">Mobile Money</span></span>
     </div>
   </div>
 
-  <!-- USSD Code -->
-  <div class="ussd-box" id="ussd-box">
-    <div class="ussd-title">📲 Composez ce code USSD pour confirmer</div>
-    <div class="ussd-code" id="ussd-code" onclick="copyUssd()" title="Cliquer pour copier">*126#</div>
-    <ul class="ussd-steps">
-      <li>Composez le code sur votre téléphone</li>
-      <li>Suivez les instructions MTN / Orange</li>
-      <li>Confirmez le paiement de <strong id="ussd-amount"></strong></li>
-      <li>Votre agent sera activé automatiquement</li>
-    </ul>
-    <div class="ussd-ref" id="ussd-ref"></div>
-    <div class="divider"></div>
-    <button class="pay-btn" onclick="verifierPaiement()" style="margin-bottom:0">
-      ✅ J'ai confirmé le paiement
-    </button>
+  <!-- ═══ STEP 2: USSD Confirmation ═══ -->
+  <div id="step-ussd" class="hidden">
+    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[.03] p-6 text-center space-y-5 fade-in">
+      <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto">
+        <i data-lucide="smartphone" class="w-7 h-7 text-emerald-400"></i>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold mb-1" data-i18n="pay_confirm_title">Confirmez sur votre telephone</h2>
+        <p class="text-sm text-zinc-400" data-i18n="pay_confirm_sub">Composez ce code USSD pour valider le paiement</p>
+      </div>
+      <div id="ussd-code" onclick="copyUssd()" class="inline-block px-8 py-3 rounded-xl bg-zinc-900 border border-zinc-700 text-2xl font-bold tracking-widest cursor-pointer hover:border-emerald-500/50 transition-colors" title="Cliquer pour copier">
+        *126#
+      </div>
+      <div class="text-left space-y-2 px-2">
+        <div class="flex items-start gap-3 text-sm text-zinc-400">
+          <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+          Composez le code USSD sur votre telephone
+        </div>
+        <div class="flex items-start gap-3 text-sm text-zinc-400">
+          <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+          Suivez les instructions <span id="ussd-op-name" class="font-semibold text-white">MTN</span>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-zinc-400">
+          <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+          Confirmez le paiement de <span id="ussd-amount" class="font-semibold text-emerald-400">24 900 XAF</span>
+        </div>
+      </div>
+      <div class="text-xs text-zinc-500" id="ussd-ref">Reference: —</div>
+
+      <!-- Progress bar -->
+      <div class="space-y-2">
+        <div class="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+          <div id="progress-bar" class="h-full rounded-full bg-emerald-500 transition-all duration-1000" style="width:0%"></div>
+        </div>
+        <div class="flex items-center justify-center gap-2 text-xs text-zinc-400">
+          <div class="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full" style="animation:spin 1s linear infinite"></div>
+          <span id="verify-txt">En attente de confirmation...</span>
+        </div>
+      </div>
+
+      <button onclick="retryPayment()" class="text-xs text-zinc-500 hover:text-white transition-colors underline" data-i18n="pay_retry">Recommencer le paiement</button>
+    </div>
   </div>
 
-  <!-- Vérification -->
-  <div class="verify-area" id="verify-area">
-    <div class="spinner"></div>
-    <div class="verify-txt">Vérification du paiement en cours...<br>Cela peut prendre 30 secondes.</div>
-  </div>
-
-  <!-- Succès -->
-  <div class="success-box" id="success-box">
-    <div class="success-ic">🎉</div>
-    <div class="success-title">Paiement confirmé !</div>
-    <div class="success-sub">Votre agent WhatsApp est maintenant <strong style="color:var(--g)">actif</strong>.<br>Valide 30 jours. Vous recevrez une notification WhatsApp de confirmation.</div>
-    <button class="success-btn" onclick="location.href='/dashboard/'">🏠 Accéder au Dashboard</button>
+  <!-- ═══ STEP 3: Success ═══ -->
+  <div id="step-success" class="hidden">
+    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[.03] p-8 text-center space-y-5 fade-in">
+      <!-- Confetti -->
+      <div class="relative h-8 overflow-hidden">
+        <div id="confetti" class="absolute inset-x-0 flex justify-center gap-2"></div>
+      </div>
+      <!-- Check -->
+      <div class="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center mx-auto check-pop">
+        <i data-lucide="check" class="w-8 h-8 text-black"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold mb-1" data-i18n="pay_success_title">Paiement confirme ! 🎉</h2>
+        <p class="text-sm text-zinc-400" data-i18n="pay_success_sub">Votre agent WhatsApp est maintenant actif</p>
+      </div>
+      <div class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-sm">
+        <div class="flex justify-between text-zinc-400 mb-1"><span>Plan</span><span id="success-plan" class="text-white font-semibold">Pro</span></div>
+        <div class="flex justify-between text-zinc-400"><span>Valide</span><span class="text-white font-semibold">30 jours</span></div>
+      </div>
+      <p class="text-xs text-zinc-500">Redirection vers le dashboard dans <span id="countdown">3</span>s...</p>
+      <button onclick="location.href='/dashboard/'" class="w-full py-3 rounded-xl bg-emerald-500 text-black text-sm font-bold hover:bg-emerald-600 transition-all">
+        <span data-i18n="pay_go_dashboard">Acceder au Dashboard</span>
+      </button>
+    </div>
   </div>
 
 </div>
 
-<div class="toast" id="tk"></div>
+<!-- FOOTER -->
+<div class="mt-8 text-center space-y-2 fade-in delay-4">
+  <div class="flex items-center justify-center gap-1.5 text-xs text-zinc-500">
+    <i data-lucide="lock" class="w-3 h-3"></i>
+    <span data-i18n="pay_footer_secure">Paiement securise via Campay</span>
+  </div>
+  <div class="flex items-center justify-center gap-3 text-[11px] text-zinc-600">
+    <span class="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 font-semibold">MTN MoMo</span>
+    <span class="px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 font-semibold">Orange Money</span>
+  </div>
+  <a href="https://wa.me/237672482763" class="text-[11px] text-zinc-500 hover:text-emerald-400 transition-colors" data-i18n="pay_help">Besoin d'aide ? WhatsApp : +237 672 482 763</a>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg z-50 hidden transition-all"></div>
 
 <script>
-var API = window.location.protocol + '//' + window.location.hostname;
-var params = new URLSearchParams(window.location.search);
-var TENANT_ID = params.get('tenant_id') || params.get('id') || '';
-var SEL = { plan: 'pro', prix: 24900 };
+// ─── i18n ────────────────────────────────────────────────────────────
+var TRANSLATIONS={
+fr:{
+  pay_title:"Choisissez votre plan",pay_subtitle:"7 jours gratuits, aucune carte bancaire",
+  pay_monthly:"Mensuel",pay_annual:"Annuel",
+  pay_popular:"82% choisissent ce plan",pay_start_now:"Commencer maintenant",
+  pay_start_free:"Commencer gratuitement",pay_phone:"Numero de paiement *",
+  pay_operator:"Operateur",pay_pay_btn:"Payer maintenant 💳",
+  pay_trial:"7 jours gratuits",pay_secure:"Securise",
+  pay_back:"Retour",pay_no_commit:"Sans engagement",pay_mobile:"Mobile Money",
+  pay_confirm_title:"Confirmez sur votre telephone",
+  pay_confirm_sub:"Composez ce code USSD pour valider le paiement",
+  pay_success_title:"Paiement confirme ! 🎉",
+  pay_success_sub:"Votre agent WhatsApp est maintenant actif",
+  pay_retry:"Recommencer le paiement",
+  pay_go_dashboard:"Acceder au Dashboard",
+  pay_footer_secure:"Paiement securise via Campay",
+  pay_help:"Besoin d'aide ? WhatsApp : +237 672 482 763"
+},
+en:{
+  pay_title:"Choose your plan",pay_subtitle:"7 days free, no credit card",
+  pay_monthly:"Monthly",pay_annual:"Annual",
+  pay_popular:"82% choose this plan",pay_start_now:"Get started",
+  pay_start_free:"Start for free",pay_phone:"Payment number *",
+  pay_operator:"Operator",pay_pay_btn:"Pay now 💳",
+  pay_trial:"7 days free",pay_secure:"Secure",
+  pay_back:"Back",pay_no_commit:"No commitment",pay_mobile:"Mobile Money",
+  pay_confirm_title:"Confirm on your phone",
+  pay_confirm_sub:"Dial this USSD code to validate the payment",
+  pay_success_title:"Payment confirmed! 🎉",
+  pay_success_sub:"Your WhatsApp agent is now active",
+  pay_retry:"Retry payment",
+  pay_go_dashboard:"Go to Dashboard",
+  pay_footer_secure:"Secure payment via Campay",
+  pay_help:"Need help? WhatsApp: +237 672 482 763"
+}
+};
+var LANG=localStorage.getItem('titanex_lang')||'fr';
+function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
+function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');var val=t(key);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else{el.textContent=val;}
+  });
+}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
+
+// ─── Config ─────────────────────────────────────────────────────────────────
+var API = window.location.origin;
+var SESSION = JSON.parse(localStorage.getItem('titanex_session') || 'null');
+var TENANT_ID = '';
+var SEL = { plan:'pro', prix:24900, name:'Pro' };
+var OP = 'mtn';
 var REF = '';
 var pollTimer = null;
+var pollCount = 0;
 
-// Charger les infos du tenant
-async function loadTenant() {
-  if (!TENANT_ID) {
-    document.getElementById('tenant-info').innerHTML = '<div style="font-size:.8rem;color:var(--r)">❌ Paramètre tenant_id manquant dans l\'URL</div>';
-    return;
+// ─── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  try { lucide.createIcons(); } catch(e){}
+  // Auto-apply theme
+  var t=localStorage.getItem('titanex_theme');
+  if(t!=='dark')document.body.classList.add('light-mode');
+
+  // Get tenant_id from URL or session
+  var params = new URLSearchParams(window.location.search);
+  TENANT_ID = params.get('tenant_id') || params.get('id') || '';
+  if (!TENANT_ID && SESSION) TENANT_ID = SESSION.id || '';
+  if (!TENANT_ID && !SESSION) { location.href = '/dashboard/login.html'; return; }
+
+  // Pre-select plan from URL
+  var urlPlan = params.get('plan');
+  if (urlPlan && {starter:9900,pro:24900,business:49900}[urlPlan]) {
+    selectPlan(urlPlan, {starter:9900,pro:24900,business:49900}[urlPlan]);
   }
-  try {
-    const r = await fetch(API + '/admin/tenant/' + TENANT_ID);
-    const d = await r.json();
-    if (!d || d.error) throw new Error(d.error || 'Introuvable');
-    const badge = d.statut === 'actif' ? 'badge-actif' :
-                  d.statut === 'expire' ? 'badge-expire' : 'badge-essai';
-    const badgeLabel = d.statut === 'actif' ? '✅ Actif' :
-                       d.statut === 'expire' ? '⛔ Expiré' : '⏳ Essai';
-    document.getElementById('tenant-info').innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
-        <div class="tenant-name">${d.nom}</div>
-        <span class="badge ${badge}">${badgeLabel}</span>
-      </div>
-      <div class="tenant-meta">
-        <span>📱 ${d.telephone || '-'}</span>
-        <span>🤖 ${d.instance_name || '-'}</span>
-        ${d.date_fin ? '<span>📅 Expire: ' + new Date(d.date_fin).toLocaleDateString('fr-FR') + '</span>' : ''}
-      </div>
-    `;
-    // Pré-remplir le téléphone
-    if (d.telephone) document.getElementById('pay-phone').value = d.telephone;
-    // Pré-sélectionner le plan
-    if (d.plan) selectPlan(d.plan, {starter:9900,pro:24900,business:49900}[d.plan] || 24900);
-  } catch(e) {
-    document.getElementById('tenant-info').innerHTML = '<div style="font-size:.8rem;color:var(--r)">❌ Client introuvable</div>';
+
+  // Pre-fill phone from session
+  if (SESSION && SESSION.telephone) {
+    var ph = SESSION.telephone.replace(/^237/,'');
+    document.getElementById('pay-phone').value = ph;
+    detectOperator();
+  }
+});
+
+// ─── Plan selection ─────────────────────────────────────────────────────────
+function selectPlan(plan, prix) {
+  var names = {starter:'Starter', pro:'Pro', business:'Business'};
+  SEL = { plan:plan, prix:prix, name:names[plan] || plan };
+
+  ['starter','pro','business'].forEach(function(p){
+    var card = document.getElementById('plan-'+p);
+    var check = document.getElementById('check-'+p);
+    if (p === plan) {
+      card.className = card.className.replace(/border-zinc-800|border-zinc-600/g, 'border-emerald-500/50').replace('bg-zinc-900/80','bg-emerald-500/[.03]');
+      check.className = 'w-6 h-6 rounded-full border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all';
+      check.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else {
+      card.className = card.className.replace(/border-emerald-500\/50|border-emerald-400/g, 'border-zinc-800').replace('bg-emerald-500/[.03]','bg-zinc-900/80');
+      check.className = 'w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all';
+      check.innerHTML = '';
+    }
+  });
+
+  // Update summary
+  document.getElementById('sum-plan').textContent = SEL.name;
+  document.getElementById('sum-price').textContent = prix.toLocaleString('fr-FR') + ' XAF';
+
+  // Keep Pro card special border
+  var proCard = document.getElementById('plan-pro');
+  if (plan === 'pro') {
+    proCard.className = proCard.className.replace('border-zinc-800','border-emerald-500/50');
   }
 }
 
-function selectPlan(p, prix) {
-  SEL = { plan: p, prix: prix };
-  document.querySelectorAll('.plan').forEach(x => x.classList.remove('on'));
-  var el = document.getElementById('plan-' + p);
-  if (el) el.classList.add('on');
+// ─── Operator detection ─────────────────────────────────────────────────────
+function detectOperator() {
+  var phone = document.getElementById('pay-phone').value.trim();
+  if (phone.length >= 2) {
+    var prefix = phone.substring(0,2);
+    if (['65','67','68','80'].indexOf(prefix) > -1) selectOp('mtn');
+    else if (['69','65','55','59'].indexOf(prefix) > -1) selectOp('orange');
+  }
+  validatePhone();
 }
 
+function selectOp(op) {
+  OP = op;
+  var mtn = document.getElementById('op-mtn');
+  var orange = document.getElementById('op-orange');
+  if (op === 'mtn') {
+    mtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-yellow-500/40 bg-yellow-500/10 text-sm font-semibold text-yellow-400 transition-all';
+    orange.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-zinc-700 bg-zinc-900 text-sm font-medium text-zinc-400 transition-all hover:border-zinc-600';
+    document.getElementById('sum-op').textContent = 'via MTN MoMo';
+  } else {
+    orange.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-orange-500/40 bg-orange-500/10 text-sm font-semibold text-orange-400 transition-all';
+    mtn.className = 'flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-zinc-700 bg-zinc-900 text-sm font-medium text-zinc-400 transition-all hover:border-zinc-600';
+    document.getElementById('sum-op').textContent = 'via Orange Money';
+  }
+}
+
+function validatePhone() {
+  var phone = document.getElementById('pay-phone').value.trim();
+  var err = document.getElementById('phone-error');
+  if (phone.length > 0 && (phone[0] !== '6' || phone.length !== 9 || !/^\d+$/.test(phone))) {
+    err.classList.remove('hidden');
+    return false;
+  }
+  err.classList.add('hidden');
+  return phone.length === 9;
+}
+
+// ─── Payment initiation ─────────────────────────────────────────────────────
 async function initierPaiement() {
-  const phone = document.getElementById('pay-phone').value.trim();
-  if (!phone) { toast('Entrez votre numéro de paiement', 'r'); return; }
-  if (!TENANT_ID) { toast('tenant_id manquant', 'r'); return; }
-  const btn = document.getElementById('pay-btn');
+  var phone = document.getElementById('pay-phone').value.trim();
+  if (!validatePhone() || phone.length !== 9) { toast('Entrez un numero valide (9 chiffres)', 'error'); return; }
+  if (!TENANT_ID) { toast('Session introuvable, reconnectez-vous', 'error'); return; }
+
+  var fullPhone = '237' + phone;
+  var btn = document.getElementById('pay-btn');
   btn.disabled = true;
   document.getElementById('pay-btn-txt').textContent = 'Initialisation...';
+
   try {
-    const r = await fetch(API + '/payment/initiate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tenant_id: TENANT_ID, phone: phone, plan: SEL.plan })
+    var r = await fetch(API + '/payment/initiate', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ tenant_id:TENANT_ID, phone:fullPhone, plan:SEL.plan })
     });
-    const d = await r.json();
+    var d = await r.json();
     if (d.error) throw new Error(d.error);
+
     REF = d.reference;
-    // Afficher USSD
-    document.getElementById('plan-section').style.display = 'none';
-    const ub = document.getElementById('ussd-box');
-    ub.style.display = 'block';
-    if (d.ussd_code) document.getElementById('ussd-code').textContent = d.ussd_code;
-    document.getElementById('ussd-amount').textContent = SEL.prix.toLocaleString('fr-FR') + ' FCFA';
-    document.getElementById('ussd-ref').textContent = 'Référence: ' + REF;
+    showUssdStep(d.ussd_code || '*126#');
   } catch(e) {
     btn.disabled = false;
     document.getElementById('pay-btn-txt').textContent = 'Payer maintenant';
-    toast(e.message || 'Erreur de paiement', 'r');
+    toast(e.message || 'Erreur de paiement', 'error');
   }
 }
 
-async function verifierPaiement() {
-  document.getElementById('ussd-box').style.display = 'none';
-  document.getElementById('verify-area').style.display = 'block';
-  let attempts = 0;
-  pollTimer = setInterval(async () => {
-    attempts++;
-    try {
-      const r = await fetch(API + '/payment/status/' + REF);
-      const d = await r.json();
-      if (d.status === 'SUCCESSFUL') {
-        clearInterval(pollTimer);
-        showSuccess();
-      } else if (attempts >= 20) {
-        clearInterval(pollTimer);
-        document.getElementById('verify-area').style.display = 'none';
-        document.getElementById('ussd-box').style.display = 'block';
-        toast('Paiement non confirmé. Avez-vous bien validé le USSD ?', 'r');
-      }
-    } catch(e) {
-      if (attempts >= 20) clearInterval(pollTimer);
+// ─── USSD step ──────────────────────────────────────────────────────────────
+function showUssdStep(ussdCode) {
+  document.getElementById('step-plan').classList.add('hidden');
+  document.getElementById('step-ussd').classList.remove('hidden');
+  document.getElementById('ussd-code').textContent = ussdCode;
+  document.getElementById('ussd-amount').textContent = SEL.prix.toLocaleString('fr-FR') + ' XAF';
+  document.getElementById('ussd-op-name').textContent = OP === 'mtn' ? 'MTN MoMo' : 'Orange Money';
+  document.getElementById('ussd-ref').textContent = 'Reference: ' + REF;
+  try { lucide.createIcons(); } catch(e){}
+
+  // Start polling
+  pollCount = 0;
+  pollTimer = setInterval(pollStatus, 3000);
+  updateProgress();
+}
+
+function updateProgress() {
+  var pct = Math.min((pollCount / 20) * 100, 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  if (pollCount >= 5) document.getElementById('verify-txt').textContent = 'Verification en cours...';
+  if (pollCount >= 12) document.getElementById('verify-txt').textContent = 'Presque... patientez';
+}
+
+async function pollStatus() {
+  pollCount++;
+  updateProgress();
+  if (pollCount > 20) {
+    clearInterval(pollTimer);
+    document.getElementById('verify-txt').textContent = 'Delai depasse. Reessayez ou verifiez votre telephone.';
+    return;
+  }
+  try {
+    var r = await fetch(API + '/payment/status/' + REF);
+    var d = await r.json();
+    if (d.status === 'SUCCESSFUL') {
+      clearInterval(pollTimer);
+      document.getElementById('progress-bar').style.width = '100%';
+      setTimeout(showSuccess, 500);
+    } else if (d.status === 'FAILED') {
+      clearInterval(pollTimer);
+      document.getElementById('verify-txt').textContent = 'Paiement echoue. Reessayez.';
     }
-  }, 3000);
+  } catch(e) {}
 }
 
+// ─── Success ────────────────────────────────────────────────────────────────
 function showSuccess() {
-  document.getElementById('verify-area').style.display = 'none';
-  document.getElementById('success-box').style.display = 'block';
+  document.getElementById('step-ussd').classList.add('hidden');
+  document.getElementById('step-success').classList.remove('hidden');
+  document.getElementById('success-plan').textContent = SEL.name;
+  try { lucide.createIcons(); } catch(e){}
+
+  // Confetti
+  var cc = document.getElementById('confetti');
+  var colors = ['#22c55e','#facc15','#f97316','#3b82f6','#a855f7'];
+  for (var i = 0; i < 20; i++) {
+    var dot = document.createElement('div');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;position:absolute;left:'+Math.random()*100+'%;background:'+colors[i%5]+';animation:confettiFall '+(0.8+Math.random()*1.2)+'s ease '+(Math.random()*0.5)+'s forwards';
+    cc.appendChild(dot);
+  }
+
+  // Countdown redirect
+  var c = 3;
+  document.getElementById('countdown').textContent = c;
+  var ci = setInterval(function(){
+    c--;
+    document.getElementById('countdown').textContent = c;
+    if (c <= 0) { clearInterval(ci); location.href = '/dashboard/'; }
+  }, 1000);
 }
 
+// ─── Retry ──────────────────────────────────────────────────────────────────
+function retryPayment() {
+  clearInterval(pollTimer);
+  document.getElementById('step-ussd').classList.add('hidden');
+  document.getElementById('step-plan').classList.remove('hidden');
+  var btn = document.getElementById('pay-btn');
+  btn.disabled = false;
+  document.getElementById('pay-btn-txt').textContent = 'Payer maintenant';
+}
+
+// ─── Utils ──────────────────────────────────────────────────────────────────
 function copyUssd() {
-  const code = document.getElementById('ussd-code').textContent;
-  navigator.clipboard.writeText(code).then(() => toast('Code copié !', 'g'));
+  var code = document.getElementById('ussd-code').textContent;
+  navigator.clipboard.writeText(code).then(function(){ toast('Code copie !', 'ok'); });
 }
 
-function toast(m, c) {
-  const t = document.getElementById('tk');
-  t.textContent = m;
-  t.style.color = c === 'g' ? '#22c55e' : '#ef4444';
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 3500);
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg z-50 transition-all ' +
+    (type === 'error' ? 'bg-red-500/10 border border-red-500/30 text-red-400' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400');
+  t.classList.remove('hidden');
+  setTimeout(function(){ t.classList.add('hidden'); }, 3500);
 }
-
-loadTenant();
 </script>
 </body>
 </html>
