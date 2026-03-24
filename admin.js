@@ -107,15 +107,25 @@ router.get('/stats', auth, async (req, res) => {
 // Liste utilisateurs
 router.get('/users', auth, async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin.from('tenants').select('id,email,telephone,created_at,nom,statut,plan,role').order('created_at', { ascending: false });
+    const { data, error } = await supabaseAdmin.from('tenants').select('id,email,telephone,created_at,updated_at,nom,statut,plan,role,instance_name,date_debut,date_fin,prix_mensuel,moyen_paiement').order('created_at', { ascending: false });
     if (error) throw error;
     res.json((data||[]).map(t => ({
-      id: t.id, email: t.email, phone: t.telephone,
-      created_at: t.created_at, last_login: t.created_at,
-      credits: 0, agents: 1,
-      plan: t.plan||'starter',
+      id: t.id,
+      email: t.email,
+      phone: t.telephone,
+      nom: t.nom || '',
+      created_at: t.created_at,
+      last_login: t.updated_at || t.created_at,
+      credits: 0,
+      agents: 1,
+      plan: t.plan || 'starter',
       role: t.role === 'admin' ? 'admin' : 'user',
-      statut: t.statut
+      statut: t.statut,
+      instance_name: t.instance_name,
+      date_debut: t.date_debut,
+      date_fin: t.date_fin,
+      prix_mensuel: t.prix_mensuel,
+      moyen_paiement: t.moyen_paiement || '—'
     })));
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
@@ -163,6 +173,19 @@ router.delete('/promo-codes/:id', auth, async (req, res) => {
     const { error } = await supabaseAdmin.from('promo_codes').delete().eq('id', req.params.id);
     if (error) throw error;
     res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Activer un tenant (statut actif + date_fin +30j)
+router.post('/users/:id/activate', auth, async (req, res) => {
+  try {
+    const dateFin = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const { error } = await supabaseAdmin.from('tenants').update({
+      statut: 'actif',
+      date_fin: dateFin.toISOString().split('T')[0]
+    }).eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true, statut: 'actif', date_fin: dateFin.toISOString().split('T')[0] });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 

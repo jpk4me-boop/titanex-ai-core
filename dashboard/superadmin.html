@@ -216,8 +216,8 @@ tr:hover td{background:#f8fafc;}
     <div class="sb"><input type="text" id="su-search" placeholder="Rechercher un utilisateur..." oninput="filterU(this.value)"/></div>
     <div style="overflow-x:auto;">
       <table>
-        <thead><tr><th>Email</th><th>Telephone</th><th>Inscrit le</th><th>Derniere connexion</th><th>Points</th><th>Agents</th><th>Role</th><th>Actions</th></tr></thead>
-        <tbody id="utb"><tr><td colspan="8" class="empty">Chargement...</td></tr></tbody>
+        <thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Plan</th><th>Statut</th><th>Date fin</th><th>Inscrit le</th><th>Rôle</th><th>Actions</th></tr></thead>
+        <tbody id="utb"><tr><td colspan="9" class="empty">Chargement...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -386,18 +386,26 @@ async function loadUsers(){
 
 function renderUsers(list){
   var tb=document.getElementById('utb');
-  if(!list.length){tb.innerHTML='<tr><td colspan="8" class="empty">Aucun utilisateur</td></tr>';return;}
+  if(!list.length){tb.innerHTML='<tr><td colspan="9" class="empty">Aucun utilisateur</td></tr>';return;}
   tb.innerHTML=list.map(function(u){
     var isA=u.role==='admin';
+    var sc = u.statut==='actif'?['#d1fae5','#065f46'] : u.statut==='essai'?['#fef3c7','#92400e'] : u.statut==='suspendu'?['#fee2e2','#991b1b'] : ['#f1f5f9','#64748b'];
+    var pc = u.plan==='business'?['#ede9fe','#6d28d9'] : u.plan==='pro'?['#dbeafe','#1d4ed8'] : ['#f1f5f9','#475569'];
+    var expired = u.date_fin && new Date(u.date_fin) < new Date();
     return '<tr>'+
-      '<td style="font-weight:500;">'+(u.email||'&mdash;')+'</td>'+
-      '<td>'+(u.phone?'<span style="color:#22c55e;font-weight:500;">&#128222; '+u.phone+'</span>':'<span style="color:#cbd5e1;">&mdash;</span>')+'</td>'+
-      '<td>'+fd(u.created_at)+'</td>'+
-      '<td>'+fd(u.last_login)+'</td>'+
-      '<td><strong style="color:'+(u.credits>100?'#6366f1':'#374151')+'">'+(u.credits||0).toLocaleString('fr-FR')+'</strong></td>'+
-      '<td>'+(u.agents||0)+'</td>'+
+      '<td style="font-weight:600;color:#1e293b;">'+(u.nom||'&mdash;')+'</td>'+
+      '<td style="font-size:12.5px;">'+(u.email||'&mdash;')+'</td>'+
+      '<td>'+(u.phone?'<span style="color:#22c55e;font-weight:500;">'+u.phone+'</span>':'<span style="color:#cbd5e1;">&mdash;</span>')+'</td>'+
+      '<td><span style="background:'+pc[0]+';color:'+pc[1]+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;text-transform:capitalize;">'+(u.plan||'starter')+'</span></td>'+
+      '<td><span style="background:'+sc[0]+';color:'+sc[1]+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;text-transform:capitalize;">'+(u.statut||'&mdash;')+'</span></td>'+
+      '<td style="font-size:12.5px;color:'+(expired?'#ef4444':'#374151')+';font-weight:'+(expired?'700':'400')+'">'+(u.date_fin?fd(u.date_fin):'&mdash;')+'</td>'+
+      '<td style="font-size:12.5px;">'+fd(u.created_at)+'</td>'+
       '<td><span class="badge" style="background:'+(isA?'#eef2ff':'#f1f5f9')+';color:'+(isA?'#6366f1':'#64748b')+'">'+(isA?'Admin':'User')+'</span></td>'+
-      '<td style="display:flex;gap:6px;"><button class="btn-r" onclick="suspU(\''+u.id+'\')">&#128683; Suspendre</button><button class="btn-i" onclick="addPts(\''+u.id+'\',5000)">+5000 pts</button></td>'+
+      '<td style="display:flex;gap:5px;flex-wrap:wrap;">'+
+        '<button class="btn-r" onclick="suspU(\''+u.id+'\')">🚫</button>'+
+        '<button class="btn-i" onclick="activateU(\''+u.id+'\')">✅ Activer</button>'+
+        '<button class="btn-i" style="background:#d1fae5;color:#065f46;" onclick="extendU(\''+u.id+'\',30)">+30j</button>'+
+      '</td>'+
     '</tr>';
   }).join('');
 }
@@ -412,9 +420,15 @@ async function suspU(id){
   toast('Utilisateur suspendu');loadUsers();
 }
 
-async function addPts(id,pts){
-  try{await fetch('/api/admin/users/'+id+'/credits',{method:'POST',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({credits:pts})});}catch(e){}
-  toast(pts.toLocaleString('fr-FR')+' points ajoutes !');loadUsers();
+async function activateU(id){
+  if(!confirm('Activer ce compte (30 jours) ?'))return;
+  try{await fetch('/api/admin/users/'+id+'/activate',{method:'POST',headers:AH()});}catch(e){}
+  toast('Compte activé !');loadUsers();
+}
+
+async function extendU(id,days){
+  try{await fetch('/api/admin/users/'+id+'/credits',{method:'POST',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({days:days})});}catch(e){}
+  toast(days+' jours ajoutés !');loadUsers();
 }
 
 function retirer(){
