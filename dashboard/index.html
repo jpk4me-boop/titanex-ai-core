@@ -65,7 +65,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;b
 /* ─── Cards ─── */
 .card-hover{transition:all .2s ease}.card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 28px -5px rgba(0,0,0,.12)}
 /* ─── Universal button styles ─── */
-.btn-primary{background:linear-gradient(135deg,#22c55e,#059669)!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important;box-shadow:0 4px 14px rgba(34,197,94,.25)!important}
+.btn-primary{background:linear-gradient(135deg,#22c55e,#16A34A)!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important;box-shadow:0 4px 14px rgba(34,197,94,.25)!important}
 .btn-primary:hover{transform:translateY(-1px)!important;box-shadow:0 6px 20px rgba(34,197,94,.35)!important}
 .btn-danger{background:#ef4444!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important}
 .btn-danger:hover{background:#dc2626!important;transform:translateY(-1px)!important;box-shadow:0 4px 14px rgba(239,68,68,.3)!important}
@@ -183,7 +183,7 @@ input:focus,select:focus,textarea:focus{border-color:#22c55e!important;box-shado
 :root {
   --bg:#ffffff; --bg-2:#f8fafc; --bg-3:#f1f5f9;
   --card:#ffffff; --text:#0f172a; --text-2:#334155; --text-3:#64748b;
-  --border:#e2e8f0; --accent:#22c55e; --accent-2:#059669;
+  --border:#e2e8f0; --accent:#22c55e; --accent-2:#16A34A;
   --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
   --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.04);
   --shadow-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -2px rgba(0,0,0,.03);
@@ -198,7 +198,7 @@ body.light-mode .bg-\[\#09090b\]\/80{background:rgba(249,250,251,.92)!important}
 body.light-mode header{background:rgba(255,255,255,.85)!important;border-color:#e5e7eb!important;box-shadow:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
 body.light-mode .nav-item{color:#6b7280;font-weight:500;border-radius:12px;padding:10px 16px!important;margin:2px 8px!important}
 body.light-mode .nav-item:hover{background:#f3f4f6!important;color:#111827!important}
-body.light-mode .nav-item.active{background:rgba(34,197,94,.08)!important;color:#059669!important;font-weight:700;border-left:3px solid #22c55e!important;box-shadow:inset 0 0 0 1px rgba(34,197,94,.1)}
+body.light-mode .nav-item.active{background:rgba(34,197,94,.08)!important;color:#16A34A!important;font-weight:700;border-left:3px solid #22c55e!important;box-shadow:inset 0 0 0 1px rgba(34,197,94,.1)}
 body.light-mode #sidebar .border-t{border-color:#e5e7eb!important}
 body.light-mode #sidebar .border-b{border-color:#e5e7eb!important}
 body.light-mode #sidebar a span{color:#111827!important}
@@ -227,8 +227,8 @@ body.light-mode #page-home h1,body.light-mode #page-home h2,body.light-mode #pag
 body.light-mode .progress-bar{background:#e2e8f0}
 body.light-mode .glass{background:rgba(255,255,255,.9)!important;border:1px solid #e2e8f0!important}
 body.light-mode #header-credits{background:#f0fdf4!important;border-color:#a7f3d0!important}
-body.light-mode #header-credits span{color:#059669!important}
-body.light-mode #user-avatar{background:#f0fdf4!important;color:#059669!important}
+body.light-mode #header-credits span{color:#16A34A!important}
+body.light-mode #user-avatar{background:#f0fdf4!important;color:#16A34A!important}
 /* Light mode nav sub-items */
 body.light-mode .nav-item.text-xs{color:#94a3b8!important;font-size:13px}
 /* Typography improvements */
@@ -891,7 +891,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
           <h1 style="font-size:20px;font-weight:800;color:#0f172a;margin:0">Produits et services</h1>
           <span id="cat-count" style="font-size:13px;font-weight:600;color:#94a3b8;background:#f1f5f9;padding:4px 12px;border-radius:20px">0 produits</span>
-          <button onclick="openProductWizard()" style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:14px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.25);transition:all .2s;font-family:inherit" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#22c55e'"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un produit ou service</button>
+          <button onclick="openProductWizard()" style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:14px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.25);transition:all .2s;font-family:inherit" onmouseover="this.style.background='#16A34A'" onmouseout="this.style.background='#22c55e'"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un produit ou service</button>
         </div>
         <!-- Filters -->
         <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
@@ -1053,7 +1053,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               <span id="cr-bar-label" class="text-xs font-bold" style="color:#0f172a">2 539 / 3 000</span>
             </div>
             <div class="h-2 rounded-full overflow-hidden" style="background:#e2e8f0">
-              <div id="cr-bar" class="h-full rounded-full transition-all" style="background:linear-gradient(90deg,#22c55e,#059669);width:84.6%"></div>
+              <div id="cr-bar" class="h-full rounded-full transition-all" style="background:linear-gradient(90deg,#22c55e,#16A34A);width:84.6%"></div>
             </div>
           </div>
         </div>
@@ -1252,7 +1252,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <button onclick="showPage('prompt')" class="conn-htab whitespace-nowrap px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all flex items-center gap-1.5">
             <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Prompt
           </button>
-          <button id="conn-htab-connections" class="conn-htab whitespace-nowrap px-4 py-3.5 text-sm font-semibold border-b-2 transition-all flex items-center gap-1.5" style="color:#059669;border-bottom-color:#22c55e">
+          <button id="conn-htab-connections" class="conn-htab whitespace-nowrap px-4 py-3.5 text-sm font-semibold border-b-2 transition-all flex items-center gap-1.5" style="color:#16A34A;border-bottom-color:#22c55e">
             <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Connexions
           </button>
           <button onclick="showPage('prompt');setTimeout(()=>switchPromptTab('knowledge'),50)" class="conn-htab whitespace-nowrap px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all flex items-center gap-1.5">
@@ -1285,10 +1285,10 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
             <!-- Suggestion pills -->
             <div class="flex flex-wrap justify-center gap-2">
-              <button onclick="connSuggest('Salut')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#059669'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">Salut 👋</button>
-              <button onclick="connSuggest('J\'aimerais configurer mon agent')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#059669'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">J'aimerais configurer mon agent</button>
-              <button onclick="connSuggest('Comment configurer mon agent')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#059669'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">Comment configurer mon agent</button>
-              <button onclick="connSuggest('Changer le nom de mon agent')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#059669'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">Changer le nom de mon agent</button>
+              <button onclick="connSuggest('Salut')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#16A34A'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">Salut 👋</button>
+              <button onclick="connSuggest('J\'aimerais configurer mon agent')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#16A34A'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">J'aimerais configurer mon agent</button>
+              <button onclick="connSuggest('Comment configurer mon agent')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#16A34A'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">Comment configurer mon agent</button>
+              <button onclick="connSuggest('Changer le nom de mon agent')" style="padding:7px 14px;border-radius:99px;font-size:14px;font-weight:500;color:#334155;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#22c55e';this.style.color='#16A34A'" onmouseout="this.style.background='#f1f5f9';this.style.borderColor='#e2e8f0';this.style.color='#334155'">Changer le nom de mon agent</button>
             </div>
             <!-- Mini chat messages -->
             <div id="conn-chat-msgs" class="hidden w-full max-w-lg space-y-2 text-left mt-2"></div>
@@ -1297,7 +1297,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="border-t px-4 py-3 flex items-center gap-3" style="border-color:#e2e8f0;background:#f8fafc">
             <input id="conn-chat-input" type="text" placeholder="Écrivez votre message ou posez une question..." onkeydown="if(event.key==='Enter')connSendMsg()"
               style="flex:1;background:transparent;font-size:15px;color:#334155;outline:none;border:none" class="placeholder:text-slate-400"/>
-            <button onclick="connSendMsg()" class="w-9 h-9 rounded-xl flex items-center justify-center transition-all shrink-0" style="background:#22c55e" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#22c55e'">
+            <button onclick="connSendMsg()" class="w-9 h-9 rounded-xl flex items-center justify-center transition-all shrink-0" style="background:#22c55e" onmouseover="this.style.background='#16A34A'" onmouseout="this.style.background='#22c55e'">
               <i data-lucide="send" class="w-4 h-4 text-white"></i>
             </button>
           </div>
@@ -1397,7 +1397,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
           </div>
           <div class="px-6 py-4 flex flex-wrap gap-3">
-            <button onclick="connWATest()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#059669;background:#fff;border:1.5px solid #a7f3d0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='#fff'">
+            <button onclick="connWATest()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#16A34A;background:#fff;border:1.5px solid #a7f3d0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='#fff'">
               <i data-lucide="send" class="w-4 h-4 inline mr-1"></i> Tester le réseau
             </button>
             <button onclick="connWARescan()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#2563eb;background:#fff;border:1.5px solid #bfdbfe;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#fff'">
@@ -1446,7 +1446,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             <span id="qr-timer" style="font-weight:700;color:#334155">120s</span>
           </div>
           <!-- Bouton régénérer -->
-          <button onclick="generateWAQR()" style="width:100%;padding:12px 20px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;font-size:15px;font-weight:600;color:#475569;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#22c55e';this.style.color='#059669'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#475569'">
+          <button onclick="generateWAQR()" style="width:100%;padding:12px 20px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;font-size:15px;font-weight:600;color:#475569;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#22c55e';this.style.color='#16A34A'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#475569'">
             🔄 Régénérer le QR
           </button>
         </div>
@@ -2021,7 +2021,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <p style="font-size:14px;color:#64748b;margin:0">Enrichissez votre agent IA avec vos produits et documents</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button onclick="openKBAddModal()" style="display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:12px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.25);font-family:inherit;transition:all .2s" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#22c55e'"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un produit</button>
+          <button onclick="openKBAddModal()" style="display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:12px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.25);font-family:inherit;transition:all .2s" onmouseover="this.style.background='#16A34A'" onmouseout="this.style.background='#22c55e'"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un produit</button>
           <button onclick="openKBImportModal()" style="display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:12px;border:2px solid #c4b5fd;background:#fff;color:#16a34a;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.borderColor='#22c55e';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#c4b5fd';this.style.background='#fff'"><i data-lucide="external-link" class="w-4 h-4"></i> Importer depuis une URL</button>
         </div>
       </div>
@@ -2157,7 +2157,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <!-- Header -->
           <div class="flex flex-col items-center text-center mb-8">
             <div class="w-20 h-20 rounded-2xl flex items-center justify-center mb-5"
-              style="background:linear-gradient(135deg,#22c55e,#059669);animation:ppPulse 3s ease-in-out infinite;box-shadow:0 8px 24px rgba(34,197,94,.3)">
+              style="background:linear-gradient(135deg,#22c55e,#16A34A);animation:ppPulse 3s ease-in-out infinite;box-shadow:0 8px 24px rgba(34,197,94,.3)">
               <i data-lucide="globe" class="w-9 h-9 text-white"></i>
             </div>
             <h2 class="text-2xl font-bold mb-3 leading-snug" style="color:#0f172a">
@@ -2921,7 +2921,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
           <h1 style="font-size:20px;font-weight:800;color:#0f172a;margin:0">Galerie de medias</h1>
           <span id="gallery-count" style="font-size:13px;font-weight:600;color:#94a3b8;background:#f1f5f9;padding:4px 12px;border-radius:20px">0 medias</span>
-          <button onclick="document.getElementById('gallery-file-input').click()" style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:14px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.25);transition:all .2s;font-family:inherit" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#22c55e'"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter des medias</button>
+          <button onclick="document.getElementById('gallery-file-input').click()" style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:14px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.25);transition:all .2s;font-family:inherit" onmouseover="this.style.background='#16A34A'" onmouseout="this.style.background='#22c55e'"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter des medias</button>
         </div>
         <input type="file" id="gallery-file-input" accept="image/*" multiple style="display:none" onchange="addToGallery(this.files)">
         <!-- Upload zone -->
@@ -5920,14 +5920,14 @@ function renderCatalogue() {
           <div style="padding:16px;display:flex;flex-direction:column;gap:6px">
             <h3 style="font-size:14px;font-weight:800;color:#0f172a;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(p.nom)}</h3>
             ${p.description?`<p style="font-size:12px;color:#64748b;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(p.description)}</p>`:''}
-            <p style="font-size:18px;font-weight:900;color:#059669;margin:4px 0 0">${priceTxt}</p>
+            <p style="font-size:18px;font-weight:900;color:#16A34A;margin:4px 0 0">${priceTxt}</p>
             <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
               <span style="font-size:11px;color:#64748b;background:#f1f5f9;padding:2px 8px;border-radius:20px">Stock: ${stockTxt}</span>
               ${p.category?`<span style="font-size:11px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:20px">${escapeHtml(p.category)}</span>`:''}
             </div>
           </div>
           <div style="display:flex;gap:6px;padding:0 16px 16px;margin-top:4px">
-            <button onclick="event.stopPropagation();editProduct('${p.id}')" style="flex:1;padding:8px 0;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit" onmouseover="this.style.borderColor='#22c55e';this.style.color='#059669';this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">✏️ Modifier</button>
+            <button onclick="event.stopPropagation();editProduct('${p.id}')" style="flex:1;padding:8px 0;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit" onmouseover="this.style.borderColor='#22c55e';this.style.color='#16A34A';this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">✏️ Modifier</button>
             <button onclick="event.stopPropagation();duplicateProduct('${p.id}')" style="flex:1;padding:8px 0;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#1d4ed8';this.style.background='#eff6ff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151';this.style.background='#fff'">📋 Dupliquer</button>
             <button onclick="event.stopPropagation();deleteProduct('${p.id}')" style="padding:8px 10px;border-radius:10px;border:1.5px solid #fecaca;background:#fff;color:#ef4444;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:inherit" onmouseover="this.style.background='#fef2f2';this.style.borderColor='#ef4444'" onmouseout="this.style.background='#fff';this.style.borderColor='#fecaca'">🗑️</button>
           </div>`;
@@ -6006,7 +6006,7 @@ function renderProdStep(n){
     h+='<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;cursor:pointer" onclick="wizToggleSection(\'cat-section\')"><i data-lucide="chevron-right" id="cat-chevron" class="w-4 h-4" style="color:#64748b;transition:transform .2s;transform:rotate(90deg)"></i><span style="font-size:14px;font-weight:700;color:#334155">Categorie</span></div><div id="cat-section" style="display:flex;gap:8px"><select id="pw-category" style="flex:1;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;background:#fff;font-size:15px;color:#0f172a;outline:none;cursor:pointer;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor=\'#4ade80\'" onblur="this.style.borderColor=\'#e2e8f0\'"><option value="Autre">Autre</option><option value="Mode">Mode</option><option value="Chaussures">Chaussures</option><option value="Électronique">Electronique</option><option value="Alimentation">Alimentation</option><option value="Cosmétiques">Cosmetiques</option><option value="Services">Services</option><option value="Beauté">Beaute</option></select><button onclick="wizAddCategory()" style="padding:12px 16px;border-radius:12px;border:2px solid #0f172a;background:#0f172a;color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit" onmouseover="this.style.background=\'#1e293b\'" onmouseout="this.style.background=\'#0f172a\'">Nouvelle categorie</button></div></div>';
     h+='<div style="margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;cursor:pointer" onclick="wizToggleSection(\'variant-section\')"><i data-lucide="chevron-right" id="variant-chevron" class="w-4 h-4" style="color:#64748b;transition:transform .2s;transform:rotate(90deg)"></i><span style="font-size:14px;font-weight:700;color:#334155">Variante</span></div><div id="variant-section"><div id="pw-variants-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">';
     if(prodData.variants&&prodData.variants.length>0){prodData.variants.forEach(function(v,i){h+='<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0"><span style="font-size:13px;font-weight:600;color:#334155">'+escapeHtml(v.type)+':</span><span style="font-size:13px;color:#64748b;flex:1">'+escapeHtml(v.values)+'</span><button onclick="wizRemoveVariant('+i+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;padding:0">×</button></div>';});}
-    h+='</div><button onclick="wizAddVariant()" style="width:100%;padding:12px 16px;border-radius:12px;border:2px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#059669\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.color=\'#64748b\'">Nouvelle variante</button></div></div>';
+    h+='</div><button onclick="wizAddVariant()" style="width:100%;padding:12px 16px;border-radius:12px;border:2px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#16A34A\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.color=\'#64748b\'">Nouvelle variante</button></div></div>';
     footer.innerHTML='<button onclick="prevProdStep()" style="padding:12px 28px;border-radius:14px;border:none;background:#0f172a;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Precedent</button><button onclick="nextProdStep()" style="padding:12px 28px;border-radius:14px;border:2px solid #cbd5e1;background:#fff;color:#0f172a;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.borderColor=\'#22c55e\'" onmouseout="this.style.borderColor=\'#cbd5e1\'">Suivant →</button>';
   } else if(n===3){
     if(prodType==='gratuit'){
@@ -6035,7 +6035,7 @@ function renderProdStep(n){
       h+='<p style="font-size:12px;color:#94a3b8;margin:0">JPG, PNG, WebP — max 20MB par image</p></div>';
       h+='<input type="file" id="pw-file" accept="image/*" multiple style="display:none" onchange="wizPreviewImage(this)">';
       h+='<div style="display:flex;gap:8px;margin-bottom:16px">';
-      h+='<button onclick="document.getElementById(\'pw-file\').click()" style="flex:1;padding:10px 0;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#059669\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">📁 Depuis l\'appareil</button>';
+      h+='<button onclick="document.getElementById(\'pw-file\').click()" style="flex:1;padding:10px 0;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#16A34A\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">📁 Depuis l\'appareil</button>';
       h+='<button onclick="wizToggleUrlInput()" style="flex:1;padding:10px 0;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#3b82f6\';this.style.color=\'#1d4ed8\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">🔗 Coller une URL</button>';
       h+='<button onclick="wizToggleDriveInput()" style="flex:1;padding:10px 0;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#ea4335\';this.style.color=\'#ea4335\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">☁️ Lien Drive</button>';
       h+='<button onclick="wizPickFromGallery()" style="flex:1;padding:10px 0;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#16a34a\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">🖼️ Galerie</button>';
@@ -6052,13 +6052,13 @@ function renderProdStep(n){
         h+='<div style="width:100%;aspect-ratio:1;border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;overflow:hidden;display:flex;align-items:center;justify-content:center">';
         h+='<img src="'+src+'" style="max-width:100%;max-height:100%;object-fit:contain;display:block">';
         h+='</div><div style="display:flex;gap:4px">';
-        h+='<button onclick="wizCropImage('+i+')" style="flex:1;padding:5px 0;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#374151;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#059669\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">✂️ Recadrer</button>';
+        h+='<button onclick="wizCropImage('+i+')" style="flex:1;padding:5px 0;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#374151;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit" onmouseover="this.style.borderColor=\'#22c55e\';this.style.color=\'#16A34A\'" onmouseout="this.style.borderColor=\'#e2e8f0\';this.style.color=\'#374151\'">✂️ Recadrer</button>';
         h+='<button onclick="wizRemoveImage('+i+')" style="padding:5px 8px;border-radius:8px;border:1px solid #fecaca;background:#fff;color:#ef4444;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit" onmouseover="this.style.background=\'#fef2f2\'" onmouseout="this.style.background=\'#fff\'">🗑️</button>';
         h+='</div></div>';
       });
       h+='</div>';
     }
-    footer.innerHTML='<button onclick="prevProdStep()" style="padding:12px 28px;border-radius:14px;border:none;background:#0f172a;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Precedent</button><button onclick="submitProduct()" style="padding:12px 28px;border-radius:14px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(34,197,94,.25);transition:all .2s" onmouseover="this.style.background=\'#059669\'" onmouseout="this.style.background=\'#22c55e\'">Terminer ✓</button>';
+    footer.innerHTML='<button onclick="prevProdStep()" style="padding:12px 28px;border-radius:14px;border:none;background:#0f172a;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Precedent</button><button onclick="submitProduct()" style="padding:12px 28px;border-radius:14px;border:none;background:#22c55e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(34,197,94,.25);transition:all .2s" onmouseover="this.style.background=\'#16A34A\'" onmouseout="this.style.background=\'#22c55e\'">Terminer ✓</button>';
   }
   body.innerHTML=h;
   lucide.createIcons();
@@ -8358,7 +8358,7 @@ async function loadOnboardingQR() {
       container.innerHTML = '<img src="' + data.base64 + '" style="width:240px;height:240px;border-radius:8px">';
       document.getElementById('ob-qr-status').textContent = 'Scannez ce QR code avec WhatsApp';
     } else {
-      container.innerHTML = '<div style="text-align:center"><span style="font-size:28px">✅</span><p style="font-size:14px;font-weight:600;color:#059669;margin:8px 0 0">WhatsApp connecte !</p></div>';
+      container.innerHTML = '<div style="text-align:center"><span style="font-size:28px">✅</span><p style="font-size:14px;font-weight:600;color:#16A34A;margin:8px 0 0">WhatsApp connecte !</p></div>';
       document.getElementById('ob-qr-status').textContent = 'Votre WhatsApp est deja connecte';
     }
   } catch(e) {
