@@ -35,6 +35,7 @@ tailwind.config = {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:#09090b;color:#fafafa}
@@ -43,29 +44,65 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;b
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.btn-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .fade-in{animation:fadeIn .45s ease forwards}
 .scale-in{animation:scaleIn .25s ease forwards}
 .animate-spin{animation:spin 1s linear infinite}
 .animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
 .delay-1{animation-delay:.06s}.delay-2{animation-delay:.12s}.delay-3{animation-delay:.18s}
 .delay-4{animation-delay:.24s}.delay-5{animation-delay:.3s}.delay-6{animation-delay:.36s}
-.nav-item{transition:all .15s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* ─── Skeleton loader ─── */
+.skeleton{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px}
+/* ─── Nav items ─── */
+.nav-item{transition:all .2s ease;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px!important}
 .nav-item:hover{background:#1a1a1e}
 .nav-item:active{transform:scale(.97);opacity:.8}
-.nav-item.active{background:rgba(34,197,94,.1);color:#22c55e}
-.card-hover{transition:all .2s}.card-hover:hover{transform:translateY(-2px);box-shadow:0 8px 25px -5px rgba(0,0,0,.2)}
+.nav-item.active{background:rgba(34,197,94,.1);color:#22c55e;border-left:3px solid #10b981}
+/* ─── Cards ─── */
+.card-hover{transition:all .2s ease}.card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 28px -5px rgba(0,0,0,.12)}
+/* ─── Universal button styles ─── */
+.btn-primary{background:linear-gradient(135deg,#10b981,#059669)!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important;box-shadow:0 4px 14px rgba(16,185,129,.25)!important}
+.btn-primary:hover{transform:translateY(-1px)!important;box-shadow:0 6px 20px rgba(16,185,129,.35)!important}
+.btn-danger{background:#ef4444!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important}
+.btn-danger:hover{background:#dc2626!important;transform:translateY(-1px)!important;box-shadow:0 4px 14px rgba(239,68,68,.3)!important}
+.btn-secondary{background:#fff!important;color:#374151!important;border:1.5px solid #e2e8f0!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important}
+.btn-secondary:hover{border-color:#10b981!important;color:#10b981!important;background:#f0fdf4!important;transform:translateY(-1px)!important}
+/* ─── Universal table ─── */
+.titan-table{width:100%;border-collapse:separate;border-spacing:0}
+.titan-table th{text-align:left;padding:14px 16px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid #f1f5f9;background:#f8fafc}
+.titan-table td{padding:14px 16px;font-size:14px;color:#374151;border-bottom:1px solid #f8fafc;transition:background .15s}
+.titan-table tbody tr:nth-child(even) td{background:#fafbfc}
+.titan-table tbody tr:hover td{background:#f0fdf4!important}
+/* ─── Badges / Pills ─── */
+.badge-success{background:#d1fae5;color:#065f46;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
+.badge-danger{background:#fee2e2;color:#991b1b;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
+.badge-warning{background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
+.badge-info{background:#dbeafe;color:#1e40af;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
+/* ─── Inputs / Filters ─── */
+input[type="text"],input[type="search"],input[type="email"],input[type="tel"],input[type="number"],input[type="url"],select,textarea{
+  border-radius:10px!important;transition:border-color .2s ease,box-shadow .2s ease!important;font-family:inherit!important}
+input:focus,select:focus,textarea:focus{border-color:#10b981!important;box-shadow:0 0 0 3px rgba(16,185,129,.12)!important;outline:none!important}
 .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .glass{background:rgba(24,24,27,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-/* Modal backdrop */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem}
-/* Progress bar */
+/* ─── Modal backdrop ─── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-backdrop>div{animation:modalIn .25s ease forwards;box-shadow:0 25px 60px -12px rgba(0,0,0,.25)!important;border-radius:20px!important}
+/* ─── Progress bar ─── */
 .progress-bar{height:8px;border-radius:4px;background:#27272a;overflow:hidden}
-.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#22c55e,#4ade80);transition:width .6s ease}
-/* Score circle */
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#10b981,#34d399);transition:width .6s ease}
+/* ─── Score circle ─── */
 .score-circle{position:relative;width:52px;height:52px}
 .score-circle svg{transform:rotate(-90deg)}
+/* ─── Pagination ─── */
+.titan-pagination button{min-width:36px;height:36px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease;font-family:inherit}
+.titan-pagination button:hover:not(:disabled){background:#f0fdf4;border-color:#10b981;color:#10b981;transform:translateY(-1px)}
+.titan-pagination button:disabled{opacity:.4;cursor:not-allowed}
+.titan-pagination button.active{background:#10b981;color:#fff;border-color:#10b981;box-shadow:0 2px 8px rgba(16,185,129,.3)}
 @media(max-width:1024px){
   .sidebar-wrapper{transform:translateX(-100%);position:fixed;z-index:50;transition:transform .3s}
   .sidebar-wrapper.open{transform:translateX(0)}
@@ -82,6 +119,37 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;b
   .main-content{margin-left:256px}
   .mobile-overlay{display:none!important}
   .mobile-menu-btn{display:none!important}
+}
+/* ─── Mobile responsive (≤768px) ─── */
+@media(max-width:768px){
+  /* Conversations: full-width columns, toggle left/right */
+  #page-conversations .flex.h-full{flex-direction:column}
+  #cv-left{width:100%!important;min-width:0!important;max-width:100%!important;border-right:none!important}
+  #cv-right{display:none;border-left:none!important}
+  #cv-right.cv-mobile-open{display:flex!important;position:fixed;inset:0;top:0;z-index:60;background:#f8fafc}
+  /* Buttons: min 44px touch target */
+  button,a,.nav-item,[onclick]{min-height:44px}
+  .cvtab{min-height:36px;font-size:13px!important;padding:6px 12px!important}
+  .cv-mode-btn{min-height:36px!important;font-size:12px!important}
+  /* Text: minimum 14px */
+  body{font-size:14px}
+  .cv-contact-item span[style*="font-size:13px"]{font-size:14px!important}
+  .cv-contact-item div[style*="font-size:12px"]{font-size:13px!important}
+  #cv-search{font-size:14px!important;padding:10px 10px 10px 36px!important}
+  #cv-reply-input{font-size:14px!important}
+  /* Tables: horizontal scroll */
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  thead,tbody,tr{min-width:600px}
+  /* Header compact */
+  header h1{font-size:16px!important}
+  #header-credits{padding:6px 10px!important}
+  /* Stats cards smaller */
+  #page-home .grid{grid-template-columns:repeat(2,1fr)!important}
+}
+@media(max-width:375px){
+  #cv-left .px-3{padding-left:8px!important;padding-right:8px!important}
+  .cvtab{font-size:12px!important;padding:5px 8px!important}
+  #page-home .grid{grid-template-columns:1fr!important}
 }
 /* ─── Connections page tabs ─── */
 .conn-htab{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s}
@@ -121,19 +189,19 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;b
   --shadow-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -2px rgba(0,0,0,.03);
 }
 /* ─── Light mode ─── */
-body.light-mode{background:#f8fafc;color:#0f172a;font-size:15px;line-height:1.65}
-body.light-mode .sidebar-wrapper,body.light-mode #sidebar{background:#ffffff!important;border-color:#e2e8f0!important}
-body.light-mode .border-\[\#1f1f23\]{border-color:#e2e8f0!important}
+body.light-mode{background:#f9fafb;color:#111827;font-size:15px;line-height:1.65}
+body.light-mode .sidebar-wrapper,body.light-mode #sidebar{background:#ffffff!important;border-color:#e5e7eb!important;box-shadow:1px 0 3px rgba(0,0,0,.04)!important}
+body.light-mode .border-\[\#1f1f23\]{border-color:#e5e7eb!important}
 body.light-mode .bg-\[\#0a0a0a\]{background:#ffffff!important}
-body.light-mode .bg-\[\#09090b\]{background:#f8fafc!important}
-body.light-mode .bg-\[\#09090b\]\/80{background:rgba(248,250,252,.9)!important}
-body.light-mode header{background:rgba(248,250,252,.95)!important;border-color:#e2e8f0!important;box-shadow:0 1px 3px rgba(0,0,0,.06)!important}
-body.light-mode .nav-item{color:#64748b;font-weight:500}
-body.light-mode .nav-item:hover{background:#f1f5f9!important;color:#0f172a!important}
-body.light-mode .nav-item.active{background:#ecfdf5!important;color:#059669!important;font-weight:600;border-left:2px solid #10b981}
-body.light-mode #sidebar .border-t{border-color:#e2e8f0!important}
-body.light-mode #sidebar .border-b{border-color:#e2e8f0!important}
-body.light-mode #sidebar a span{color:#0f172a!important}
+body.light-mode .bg-\[\#09090b\]{background:#f9fafb!important}
+body.light-mode .bg-\[\#09090b\]\/80{background:rgba(249,250,251,.92)!important}
+body.light-mode header{background:rgba(255,255,255,.85)!important;border-color:#e5e7eb!important;box-shadow:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+body.light-mode .nav-item{color:#6b7280;font-weight:500;border-radius:12px;padding:10px 16px!important;margin:2px 8px!important}
+body.light-mode .nav-item:hover{background:#f3f4f6!important;color:#111827!important}
+body.light-mode .nav-item.active{background:rgba(16,185,129,.08)!important;color:#059669!important;font-weight:700;border-left:3px solid #10b981!important;box-shadow:inset 0 0 0 1px rgba(16,185,129,.1)}
+body.light-mode #sidebar .border-t{border-color:#e5e7eb!important}
+body.light-mode #sidebar .border-b{border-color:#e5e7eb!important}
+body.light-mode #sidebar a span{color:#111827!important}
 body.light-mode .text-white{color:#0f172a}
 body.light-mode .text-zinc-400{color:#64748b}
 body.light-mode .text-zinc-500{color:#64748b}
@@ -201,13 +269,13 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
       <i data-lucide="receipt" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_payments">Paiements</span>
     </button>
     <button onclick="showPage('transactions')" id="nav-transactions" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
-      <i data-lucide="receipt" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Mes Transactions</span>
+      <i data-lucide="receipt" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_transactions">Mes Transactions</span>
     </button>
     <button onclick="showPage('agents')" id="nav-agents" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
       <i data-lucide="bot" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_agents">Agents IA</span>
     </button>
     <button onclick="showPage('prompt')" id="nav-prompt" class="nav-item w-full flex items-center gap-3 pl-9 pr-4 py-2 rounded-xl text-xs font-medium text-zinc-500 transition-all">
-      <i data-lucide="edit-3" class="w-[14px] h-[14px]"></i><span class="flex-1 text-left">Configuration agent</span>
+      <i data-lucide="edit-3" class="w-[14px] h-[14px]"></i><span class="flex-1 text-left" data-i18n="dash_agent_config">Configuration agent</span>
     </button>
     <button onclick="showPage('connexions')" id="nav-connexions" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-green-400 bg-green-500/5 border border-green-500/10 transition-all">
       <i data-lucide="unplug" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_connexions">Connexions</span>
@@ -216,7 +284,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
       <i data-lucide="package" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_products">Produits et services</span>
     </button>
     <button onclick="showPage('categories')" id="nav-categories" class="nav-item w-full flex items-center gap-3 pl-9 pr-4 py-2 rounded-xl text-xs font-medium text-zinc-500 transition-all">
-      <i data-lucide="tag" class="w-[14px] h-[14px]"></i><span class="flex-1 text-left">Categories/Statuts</span>
+      <i data-lucide="tag" class="w-[14px] h-[14px]"></i><span class="flex-1 text-left" data-i18n="dash_categories">Categories/Statuts</span>
     </button>
     <button onclick="showPage('knowledge')" id="nav-knowledge" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
       <i data-lucide="book-open" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_knowledge">Base de connaissances</span>
@@ -232,29 +300,32 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
       <span id="badge-conv" class="ml-auto inline-flex items-center rounded-full bg-emerald-600/20 px-2 py-0.5 text-[11px] font-bold text-emerald-400 hidden">0</span>
     </button>
     <button onclick="showPage('widgets')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
-      <i data-lucide="puzzle" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Widgets</span>
+      <i data-lucide="puzzle" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_widgets">Widgets</span>
     </button>
     <button onclick="showPage('calendrier')" id="nav-calendrier" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
-      <i data-lucide="calendar-days" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Calendrier</span>
+      <i data-lucide="calendar-days" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_calendar">Calendrier</span>
     </button>
     <button onclick="showPage('ambassadeurs')" id="nav-ambassadeurs" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
-      <i data-lucide="crown" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Ambassadeurs</span>
+      <i data-lucide="crown" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_ambassadors">Ambassadeurs</span>
     </button>
     <button onclick="showPage('gallery')" id="nav-gallery" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
-      <i data-lucide="image" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Galerie medias</span>
+      <i data-lucide="image" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_media">Galerie medias</span>
+    </button>
+    <button onclick="showPage('boutique')" id="nav-boutique" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
+      <i data-lucide="store" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_shop">Ma Boutique</span>
     </button>
     <button onclick="showPage('settings')" id="nav-settings" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
       <i data-lucide="settings" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_settings">Parametres</span>
     </button>
     <button onclick="showPage('domain')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
-      <i data-lucide="globe" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Domaine perso</span>
+      <i data-lucide="globe" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left" data-i18n="dash_domain">Domaine perso</span>
     </button>
     <button onclick="showPage('academy')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
       <i data-lucide="graduation-cap" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Academy</span>
     </button>
-    <a href="/dashboard/superadmin.html" id="superadmin-link" style="display:none;" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 mt-2">
+    <a href="/dashboard/superadmin.html" id="superadmin-link" style="display:flex;" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 mt-2">
       <span style="font-size:16px;">&#128737;&#65039;</span>
-      <span>Command Center</span>
+      <span data-i18n="misc_command_center">Command Center</span>
       <span style="background:#6366f1;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto;">ADMIN</span>
     </a>
   </nav>
@@ -288,6 +359,13 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
       <h1 id="page-title" class="text-lg sm:text-xl font-bold text-white truncate" data-i18n="dash_home">Tableau de bord</h1>
     </div>
     <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Agent IA Toggle -->
+      <button onclick="toggleGlobalAgent()" id="agent-global-toggle" class="flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold transition-all cursor-pointer border" style="background:#064e3b;border-color:rgba(16,185,129,.4);color:#6ee7b7">
+        <span style="font-size:14px">&#129302;</span>
+        <span id="agent-global-label" class="hidden sm:inline" data-i18n="dash_agent_ia">Agent IA</span>
+        <span id="agent-global-status" class="font-bold" data-i18n="status_active">Actif</span>
+        <span id="agent-global-dot" style="width:7px;height:7px;border-radius:50%;background:#34d399;display:inline-block;animation:pulse-dot 2s infinite"></span>
+      </button>
       <!-- Credits counter -->
       <button onclick="openCreditModal()" id="header-credits" class="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-xs font-bold hover:bg-emerald-500/10 transition-all group">
         <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i>
@@ -332,12 +410,12 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="fade-in delay-1 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 relative overflow-hidden cursor-pointer hover:border-emerald-500/30 transition-colors card-hover" onclick="showPage('agents')">
             <div class="flex items-center gap-2 mb-3">
               <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-emerald-400"></i></div>
-              <h3 class="text-sm font-bold text-white">Total des agents</h3>
+              <h3 class="text-sm font-bold text-white" data-i18n="dash_total_agents">Total des agents</h3>
             </div>
             <p class="text-4xl font-bold text-white" id="stat-agents-total">0</p>
             <div class="flex items-center gap-2 mt-2">
               <i data-lucide="timer" class="w-3 h-3 text-zinc-400"></i>
-              <span class="text-xs text-zinc-400">En ligne: <span id="stat-agents-active">0</span></span>
+              <span class="text-xs text-zinc-400"><span data-i18n="dash_online">En ligne:</span> <span id="stat-agents-active">0</span></span>
             </div>
           </div>
 
@@ -345,9 +423,9 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="fade-in delay-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 relative overflow-hidden cursor-pointer hover:border-emerald-500/30 transition-colors card-hover" onclick="showPage('agents')">
             <div class="flex items-center gap-2 mb-3">
               <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center"><i data-lucide="star" class="w-4 h-4 text-white"></i></div>
-              <h3 class="text-sm font-bold text-white">Agent le plus recent</h3>
+              <h3 class="text-sm font-bold text-white" data-i18n="dash_recent_agent">Agent le plus recent</h3>
             </div>
-            <p class="text-lg font-bold text-white truncate" id="stat-agent-recent-name">Aucun agent cree</p>
+            <p class="text-lg font-bold text-white truncate" id="stat-agent-recent-name" data-i18n="msg_no_agent">Aucun agent cree</p>
             <p class="text-xs text-zinc-400 mt-1" id="stat-agent-recent-date"></p>
             <div class="mt-2" id="stat-agent-recent-status"></div>
           </div>
@@ -356,7 +434,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="fade-in delay-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 relative overflow-hidden cursor-pointer hover:border-emerald-500/30 transition-colors card-hover" onclick="showPage('agents')">
             <div class="flex items-center gap-2 mb-3">
               <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center"><i data-lucide="timer" class="w-4 h-4 text-white"></i></div>
-              <h3 class="text-sm font-bold text-white">Second plus recent</h3>
+              <h3 class="text-sm font-bold text-white" data-i18n="dash_second_agent">Second plus recent</h3>
             </div>
             <p class="text-lg font-bold text-white truncate" id="stat-agent-second-name">—</p>
             <p class="text-xs text-zinc-400 mt-1" id="stat-agent-second-date"></p>
@@ -366,7 +444,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
         <!-- Leads Analysis -->
         <div class="fade-in delay-4">
-          <h2 class="text-xl font-bold text-white mb-4">Analyse des leads</h2>
+          <h2 class="text-xl font-bold text-white mb-4" data-i18n="dash_lead_analysis">Analyse des leads</h2>
           <div class="flex flex-wrap items-center gap-2 mb-4">
             <button onclick="setPeriod('7d')" id="period-7d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-all">7 derniers jours</button>
             <button onclick="setPeriod('30d')" id="period-30d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 transition-all">30 derniers jours</button>
@@ -378,7 +456,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
               <div class="flex items-center gap-2 mb-3">
                 <i data-lucide="users" class="w-4 h-4 text-zinc-400"></i>
-                <h3 class="text-sm font-bold text-white">Nombre total de leads</h3>
+                <h3 class="text-sm font-bold text-white" data-i18n="dash_total_leads">Nombre total de leads</h3>
               </div>
               <p class="text-4xl font-bold text-white" id="stat-leads-total">0</p>
               <div class="flex items-center gap-2 mt-3">
@@ -394,7 +472,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <i data-lucide="trending-up" class="w-4 h-4 text-zinc-400"></i>
-                  <h3 class="text-sm font-bold text-white">Leads generes</h3>
+                  <h3 class="text-sm font-bold text-white" data-i18n="dash_leads_generated">Leads generes</h3>
                 </div>
               </div>
               <div class="flex items-center gap-3 mb-3">
@@ -422,7 +500,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                <h3 class="text-sm font-bold text-white">Credits disponibles</h3>
+                <h3 class="text-sm font-bold text-white" data-i18n="dash_credits_available">Credits disponibles</h3>
               </div>
               <span class="text-xs font-semibold text-zinc-400" id="credits-pct">0%</span>
             </div>
@@ -431,7 +509,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               <span class="text-sm text-zinc-400">/ <span id="credits-total">3,000</span></span>
             </div>
             <div class="progress-bar mb-3"><div class="progress-fill" id="credits-bar" style="width:0%"></div></div>
-            <div id="credits-warning" class="hidden text-xs text-red-400 font-medium mb-3">Credits presque epuises</div>
+            <div id="credits-warning" class="hidden text-xs text-red-400 font-medium mb-3" data-i18n="msg_credits_low">Credits presque epuises</div>
             <button onclick="openCreditModal()" class="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2">
               <i data-lucide="zap" class="w-3.5 h-3.5"></i> Recharger
             </button>
@@ -441,7 +519,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
             <div class="flex items-center gap-2 mb-3">
               <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
-              <h3 class="text-sm font-bold text-white">Programme de Parrainage</h3>
+              <h3 class="text-sm font-bold text-white" data-i18n="dash_referral">Programme de Parrainage</h3>
             </div>
             <div class="flex items-center gap-2 mb-3">
               <i data-lucide="coins" class="w-4 h-4 text-emerald-400"></i>
@@ -464,12 +542,55 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
           <div class="flex items-center gap-2 mb-4">
             <i data-lucide="clock" class="w-[15px] h-[15px] text-emerald-400"></i>
-            <h3 class="text-sm font-bold text-white">Dernieres Actions de l'Agent</h3>
+            <h3 class="text-sm font-bold text-white" data-i18n="dash_recent_actions">Dernieres Actions de l'Agent</h3>
           </div>
           <div id="activity-feed" class="space-y-1">
-            <p class="text-sm text-zinc-400 text-center py-6">Aucune action recente</p>
+            <p class="text-sm text-zinc-400 text-center py-6" data-i18n="msg_no_recent_action">Aucune action recente</p>
           </div>
         </div>
+
+        <!-- ═══ SALES STATISTICS SECTION ═══ -->
+        <div id="dashboard-stats-section" class="hidden space-y-5 fade-in delay-6">
+          <h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:0">Statistiques de vente</h2>
+          <!-- Stat cards row -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
+              <div style="width:42px;height:42px;border-radius:12px;background:#d1fae5;display:flex;align-items:center;justify-content:center;font-size:18px">💰</div>
+              <div><p id="stat-total-revenue" style="font-size:20px;font-weight:800;color:#0f172a;margin:0">0 FCFA</p><p style="font-size:11px;color:#94a3b8;margin:0">Revenus (30j)</p></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
+              <div style="width:42px;height:42px;border-radius:12px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:18px">📦</div>
+              <div><p id="stat-total-orders" style="font-size:20px;font-weight:800;color:#0f172a;margin:0">0</p><p style="font-size:11px;color:#94a3b8;margin:0">Commandes</p></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
+              <div style="width:42px;height:42px;border-radius:12px;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:18px">📊</div>
+              <div><p id="stat-conversion-rate" style="font-size:20px;font-weight:800;color:#0f172a;margin:0">0%</p><p style="font-size:11px;color:#94a3b8;margin:0">Taux conversion</p></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
+              <div style="width:42px;height:42px;border-radius:12px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:18px">🏆</div>
+              <div><p id="stat-best-day" style="font-size:14px;font-weight:700;color:#0f172a;margin:0">—</p><p style="font-size:11px;color:#94a3b8;margin:0">Meilleur jour</p></div>
+            </div>
+          </div>
+          <!-- Charts row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px">
+              <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 14px;display:flex;align-items:center;gap:6px">📈 Ventes — 7 derniers jours</h3>
+              <canvas id="chart-sales-7d" height="180"></canvas>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px">
+              <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 14px;display:flex;align-items:center;gap:6px">💬 Conversations par jour</h3>
+              <canvas id="chart-convs-7d" height="180"></canvas>
+            </div>
+          </div>
+          <!-- Top products -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px">
+            <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 14px;display:flex;align-items:center;gap:6px">🔥 Top 3 produits les plus demandes</h3>
+            <div id="stat-top-products" style="display:flex;flex-direction:column;gap:8px">
+              <p style="font-size:13px;color:#94a3b8">Chargement...</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -488,7 +609,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <!-- Page header -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3 flex-wrap">
-            <h1 class="text-2xl font-bold text-white">Agents IA</h1>
+            <h1 class="text-2xl font-bold text-white" data-i18n="dash_agents">Agents IA</h1>
             <span id="agents-count-badge" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
               <i data-lucide="bot" class="w-[13px] h-[13px]"></i>
               <span id="agents-count">0/1 agents</span>
@@ -517,28 +638,28 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-4">
             <i data-lucide="bot" class="w-8 h-8 text-zinc-700"></i>
           </div>
-          <p class="text-sm font-semibold text-zinc-400">Aucun agent créé</p>
-          <p class="text-xs text-zinc-600 mt-1">Créez votre premier agent IA WhatsApp</p>
+          <p class="text-sm font-semibold text-zinc-400" data-i18n="msg_no_agent">Aucun agent créé</p>
+          <p class="text-xs text-zinc-600 mt-1" data-i18n="msg_create_first_agent">Créez votre premier agent IA WhatsApp</p>
         </div>
 
         <!-- Stats row -->
         <div class="pt-4 border-t border-zinc-800">
-          <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Performances</p>
+          <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3" data-i18n="dash_performances">Performances</p>
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-              <p class="text-xs text-zinc-500 mb-1">Messages traités</p>
+              <p class="text-xs text-zinc-500 mb-1" data-i18n="dash_messages_processed">Messages traités</p>
               <p class="text-2xl font-bold text-white" id="stat-msg-total">—</p>
             </div>
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-              <p class="text-xs text-zinc-500 mb-1">Taux de réponse</p>
+              <p class="text-xs text-zinc-500 mb-1" data-i18n="dash_response_rate">Taux de réponse</p>
               <p class="text-2xl font-bold text-emerald-400" id="stat-reply-rate">—</p>
             </div>
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-              <p class="text-xs text-zinc-500 mb-1">Temps moy. réponse</p>
+              <p class="text-xs text-zinc-500 mb-1" data-i18n="dash_avg_response">Temps moy. réponse</p>
               <p class="text-2xl font-bold text-white" id="stat-reply-time">—</p>
             </div>
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-              <p class="text-xs text-zinc-500 mb-1">Ventes générées</p>
+              <p class="text-xs text-zinc-500 mb-1" data-i18n="dash_sales_generated">Ventes générées</p>
               <p class="text-2xl font-bold text-amber-400" id="stat-sales">—</p>
             </div>
           </div>
@@ -797,6 +918,79 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px">Aucun produit pour le moment</h3>
           <p style="font-size:14px;color:#64748b;margin:0 0 24px;max-width:400px;margin-left:auto;margin-right:auto">Ajoutez votre premier produit pour demarrer et laisser l'IA vendre pour vous.</p>
           <button onclick="openProductWizard()" style="display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border-radius:14px;border:none;background:#10b981;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un produit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE: MA BOUTIQUE (Store Config) -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="page-boutique" class="page-content hidden">
+      <div style="max-width:720px;margin:0 auto">
+        <div style="margin-bottom:24px">
+          <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 6px">Ma Boutique</h1>
+          <p style="font-size:14px;color:#64748b;margin:0">Configurez les informations de votre boutique. L'agent IA utilisera ces donnees automatiquement.</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:20px">
+          <!-- Logo -->
+          <div style="display:flex;align-items:center;gap:16px">
+            <div id="store-logo-preview" style="width:80px;height:80px;border-radius:16px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px dashed #e2e8f0;flex-shrink:0">
+              <i data-lucide="image" class="w-8 h-8" style="color:#cbd5e1"></i>
+            </div>
+            <div>
+              <label style="font-size:14px;font-weight:700;color:#334155;display:block;margin-bottom:6px">Logo de la boutique</label>
+              <input type="file" id="store-logo-input" accept="image/*" onchange="handleStoreLogo(this)" style="font-size:13px;color:#64748b">
+            </div>
+          </div>
+          <!-- Shop Name -->
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Nom de la boutique</label>
+            <input type="text" id="store-shop-name" placeholder="Ex: Ma Super Boutique" style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:15px;color:#0f172a;outline:none;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='#e2e8f0'">
+          </div>
+          <!-- Description -->
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Description courte</label>
+            <textarea id="store-description" rows="3" placeholder="Decrivez votre boutique en quelques mots..." style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:15px;color:#0f172a;outline:none;font-family:inherit;box-sizing:border-box;resize:vertical" onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
+          </div>
+          <!-- Payment -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <label style="font-size:13px;font-weight:600;color:#334155;display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:16px">🟠</span> Numero Orange Money</label>
+              <input type="tel" id="store-orange" placeholder="Ex: 6XXXXXXXX" style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:15px;color:#0f172a;outline:none;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:600;color:#334155;display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:16px">🟡</span> Numero MTN MoMo</label>
+              <input type="tel" id="store-mtn" placeholder="Ex: 6XXXXXXXX" style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:15px;color:#0f172a;outline:none;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor='#eab308'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+          </div>
+          <!-- Timezone & Language -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Fuseau horaire</label>
+              <select id="store-timezone" style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:14px;color:#0f172a;outline:none;font-family:inherit;cursor:pointer;box-sizing:border-box;background:#fff">
+                <option value="Africa/Douala">Africa/Douala (UTC+1)</option>
+                <option value="Africa/Lagos">Africa/Lagos (UTC+1)</option>
+                <option value="Africa/Abidjan">Africa/Abidjan (UTC+0)</option>
+                <option value="Africa/Dakar">Africa/Dakar (UTC+0)</option>
+                <option value="Africa/Kinshasa">Africa/Kinshasa (UTC+1)</option>
+                <option value="Africa/Johannesburg">Africa/Johannesburg (UTC+2)</option>
+                <option value="Africa/Nairobi">Africa/Nairobi (UTC+3)</option>
+                <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
+                <option value="Europe/London">Europe/London (UTC+0)</option>
+                <option value="America/New_York">America/New_York (UTC-5)</option>
+                <option value="America/Montreal">America/Montreal (UTC-5)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Langue par defaut</label>
+              <select id="store-lang" style="width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:14px;color:#0f172a;outline:none;font-family:inherit;cursor:pointer;box-sizing:border-box;background:#fff">
+                <option value="fr">Francais</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+          <!-- Save Button -->
+          <button onclick="saveStoreConfig()" id="store-save-btn" style="padding:8px 20px;border-radius:8px;border:none;background:#10b981;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;float:right">Sauvegarder</button>
         </div>
       </div>
     </div>
@@ -1129,7 +1323,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 </div>
                 <p id="conn-wa-phone" style="font-size:13px;color:#64748b;margin:4px 0 0;display:none"></p>
               </div>
-              <button id="conn-wa-btn" onclick="generateWAQR()" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#fff;background:#25d366;border:none;cursor:pointer;transition:all .2s" onmouseover="this.style.background='#16a34a'" onmouseout="this.style.background='#25d366'">
+              <button id="conn-wa-btn" onclick="connWAAction()" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#fff;background:#25d366;border:none;cursor:pointer;transition:all .2s" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                 Connecter
               </button>
             </div>
@@ -1143,7 +1337,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 <p style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 6px">Telegram</p>
                 <span style="display:inline-flex;align-items:center;padding:4px 12px;border-radius:99px;font-size:13px;font-weight:600;color:#d97706;background:#fef3c7;border:1px solid #fde68a">Bientôt disponible</span>
               </div>
-              <button disabled style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1.5px solid #e2e8f0;cursor:not-allowed">Connecter</button>
+              <button onclick="connWaitlist(this.closest('div').querySelector('p[style*=font-size\\:18]')?.textContent||'Platform')" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1.5px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#f59e0b';this.style.color='#d97706'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#94a3b8'">Connecter</button>
             </div>
 
             <!-- Instagram -->
@@ -1155,7 +1349,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 <p style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 6px">Instagram</p>
                 <span style="display:inline-flex;align-items:center;padding:4px 12px;border-radius:99px;font-size:13px;font-weight:600;color:#d97706;background:#fef3c7;border:1px solid #fde68a">Bientôt disponible</span>
               </div>
-              <button disabled style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1.5px solid #e2e8f0;cursor:not-allowed">Connecter</button>
+              <button onclick="connWaitlist(this.closest('div').querySelector('p[style*=font-size\\:18]')?.textContent||'Platform')" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1.5px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#f59e0b';this.style.color='#d97706'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#94a3b8'">Connecter</button>
             </div>
 
             <!-- Messenger -->
@@ -1167,7 +1361,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 <p style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 6px">Messenger</p>
                 <span style="display:inline-flex;align-items:center;padding:4px 12px;border-radius:99px;font-size:13px;font-weight:600;color:#d97706;background:#fef3c7;border:1px solid #fde68a">Bientôt disponible</span>
               </div>
-              <button disabled style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1.5px solid #e2e8f0;cursor:not-allowed">Connecter</button>
+              <button onclick="connWaitlist(this.closest('div').querySelector('p[style*=font-size\\:18]')?.textContent||'Platform')" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:600;color:#94a3b8;background:#f1f5f9;border:1.5px solid #e2e8f0;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#f59e0b';this.style.color='#d97706'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#94a3b8'">Connecter</button>
             </div>
 
           </div>
@@ -1203,11 +1397,14 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
           </div>
           <div class="px-6 py-4 flex flex-wrap gap-3">
-            <button onclick="connWADisconnect()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#dc2626;background:#fff;border:1.5px solid #fca5a5;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
-              <i data-lucide="log-out" class="w-4 h-4 inline mr-1"></i> Déconnecter
+            <button onclick="connWATest()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#059669;background:#fff;border:1.5px solid #a7f3d0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#ecfdf5'" onmouseout="this.style.background='#fff'">
+              <i data-lucide="send" class="w-4 h-4 inline mr-1"></i> Tester le réseau
             </button>
             <button onclick="connWARescan()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#2563eb;background:#fff;border:1.5px solid #bfdbfe;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#fff'">
               <i data-lucide="qr-code" class="w-4 h-4 inline mr-1"></i> Scanner nouveau QR
+            </button>
+            <button onclick="connWADisconnect()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#dc2626;background:#fff;border:1.5px solid #fca5a5;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
+              <i data-lucide="log-out" class="w-4 h-4 inline mr-1"></i> Déconnecter
             </button>
           </div>
         </div><!-- /wa detail connected -->
@@ -1458,9 +1655,9 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
 
             <!-- Save Button -->
-            <button onclick="saveSettings()" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-              <i data-lucide="save" class="w-4 h-4"></i> Sauvegarder les modifications
-            </button>
+            <div style="display:flex;justify-content:flex-end;margin-top:8px">
+              <button onclick="saveSettings()" id="settings-save-btn" style="padding:8px 20px;border-radius:8px;border:none;background:#10b981;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s">Sauvegarder</button>
+            </div>
           </div>
 
           <!-- ── TAB: ORGANISATION ── -->
@@ -1663,30 +1860,157 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- GENERIC PLACEHOLDER PAGES -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="page-paiements" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
-        <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#eff6ff,#dbeafe);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(59,130,246,.15)">
-          <i data-lucide="receipt" style="width:36px;height:36px;color:#3b82f6"></i>
-        </div>
+    <div id="page-paiements" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:1.5rem;margin:-1rem -1.5rem">
+      <!-- Header -->
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px">
         <div>
-          <h2 style="font-size:1.5rem;font-weight:900;color:#0f172a;margin-bottom:.5rem">Paiements</h2>
-          <p style="font-size:1rem;color:#64748b;margin-bottom:.25rem">Cette section arrive bientôt 🚀</p>
-          <p style="font-size:.9rem;color:#94a3b8">Historique et suivi de vos paiements en cours de développement.</p>
+          <h2 style="font-size:1.5rem;font-weight:900;color:#0f172a;margin:0 0 4px" data-i18n="page_payments">Paiements</h2>
+          <p style="font-size:14px;color:#64748b;margin:0" data-i18n="page_payments_desc">Historique et suivi de vos transactions</p>
         </div>
-        <button onclick="showPage('home')" style="padding:.75rem 2rem;border-radius:12px;background:#10b981;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3)">← Retour au tableau de bord</button>
+        <div style="display:flex;gap:8px">
+          <button onclick="loadTransactions()" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px" id="pay-refresh-btn"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser</button>
+          <button onclick="exportTransCSV()" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;background:#6366f1;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px"><i data-lucide="download" class="w-4 h-4"></i> Export CSV</button>
+        </div>
+      </div>
+      <!-- Stats cards -->
+      <div id="pay-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #22c55e">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_total_collected">Total encaissé</div>
+          <div id="pay-total" style="font-size:24px;font-weight:800;color:#0f172a">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #3b82f6">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_this_month">Ce mois</div>
+          <div id="pay-month" style="font-size:24px;font-weight:800;color:#0f172a">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #a855f7">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_transactions">Transactions</div>
+          <div id="pay-count" style="font-size:24px;font-weight:800;color:#0f172a">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #f59e0b">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_success_rate">Taux de succès</div>
+          <div id="pay-rate" style="font-size:24px;font-weight:800;color:#0f172a">—</div>
+        </div>
+      </div>
+      <!-- Filters -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:4px;background:#f1f5f9;padding:4px;border-radius:10px">
+          <button onclick="payFilter('all')" id="payfilt-all" class="payfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:#6366f1;color:#fff;min-height:36px" data-i18n="filter_all">Tous</button>
+          <button onclick="payFilter('SUCCESSFUL')" id="payfilt-SUCCESSFUL" class="payfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;min-height:36px" data-i18n="filter_successful">Réussi</button>
+          <button onclick="payFilter('FAILED')" id="payfilt-FAILED" class="payfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;min-height:36px" data-i18n="filter_failed">Échoué</button>
+          <button onclick="payFilter('pending')" id="payfilt-pending" class="payfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;min-height:36px" data-i18n="filter_pending">En attente</button>
+        </div>
+        <select id="pay-period" onchange="payRender()" style="padding:8px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;font-size:13px;color:#1e293b;cursor:pointer;font-family:inherit;min-height:36px">
+          <option value="all" data-i18n="filter_all_period">Toute période</option>
+          <option value="today" data-i18n="filter_today">Aujourd'hui</option>
+          <option value="week" data-i18n="filter_week">Cette semaine</option>
+          <option value="month" selected data-i18n="filter_month">Ce mois</option>
+        </select>
+        <div style="position:relative;flex:1;min-width:180px">
+          <i data-lucide="search" class="w-3.5 h-3.5" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8"></i>
+          <input id="pay-search" type="text" data-i18n="btn_search" placeholder="Rechercher..." oninput="payRender()" style="width:100%;padding:8px 12px 8px 34px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;font-size:13px;color:#1e293b;outline:none;font-family:inherit;min-height:36px;box-sizing:border-box" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+      </div>
+      <!-- Table -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden">
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+          <table style="width:100%;border-collapse:collapse;min-width:700px">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Date</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Client</th>
+                <th style="text-align:right;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Montant</th>
+                <th style="text-align:center;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Statut</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Référence</th>
+              </tr>
+            </thead>
+            <tbody id="pay-tbody"></tbody>
+          </table>
+        </div>
+        <div id="pay-empty" class="hidden" style="padding:48px 20px;text-align:center">
+          <i data-lucide="receipt" class="w-10 h-10" style="color:#cbd5e1;margin:0 auto 12px;display:block"></i>
+          <p style="font-size:14px;color:#94a3b8">Aucune transaction trouvée</p>
+        </div>
+        <!-- Pagination -->
+        <div id="pay-pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid #f1f5f9">
+          <span id="pay-showing" style="font-size:12px;color:#94a3b8">—</span>
+          <div style="display:flex;gap:4px">
+            <button onclick="payPage(-1)" id="pay-prev" style="padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:36px">← Préc</button>
+            <button onclick="payPage(1)" id="pay-next" style="padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:36px">Suiv →</button>
+          </div>
+        </div>
       </div>
     </div>
-    <div id="page-transactions" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
-        <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#fdf4ff,#fae8ff);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(168,85,247,.15)">
-          <i data-lucide="arrow-left-right" style="width:36px;height:36px;color:#a855f7"></i>
-        </div>
+    <div id="page-transactions" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:1.5rem;margin:-1rem -1.5rem">
+      <!-- Header -->
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px">
         <div>
-          <h2 style="font-size:1.5rem;font-weight:900;color:#0f172a;margin-bottom:.5rem">Mes Transactions</h2>
-          <p style="font-size:1rem;color:#64748b;margin-bottom:.25rem">Cette section arrive bientôt 🚀</p>
-          <p style="font-size:.9rem;color:#94a3b8">Suivi détaillé de toutes vos transactions en cours de développement.</p>
+          <h2 style="font-size:1.5rem;font-weight:900;color:#0f172a;margin:0 0 4px" data-i18n="page_my_tx">Mes Transactions</h2>
+          <p style="font-size:14px;color:#64748b;margin:0" data-i18n="page_my_tx_desc">Historique de vos paiements</p>
         </div>
-        <button onclick="showPage('home')" style="padding:.75rem 2rem;border-radius:12px;background:#10b981;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3)">← Retour au tableau de bord</button>
+        <div style="display:flex;gap:8px">
+          <button onclick="loadMyTransactions()" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:44px"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Actualiser</button>
+          <button onclick="location.href='/dashboard/paiement.html'" style="display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;background:#22c55e;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px;box-shadow:0 4px 14px rgba(34,197,94,.25)"><i data-lucide="credit-card" class="w-4 h-4"></i> Renouveler</button>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px" id="mytx-stats">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #22c55e">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_total_paid">Total payé</div>
+          <div id="mytx-total" style="font-size:22px;font-weight:800;color:#0f172a">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #3b82f6">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_last_tx">Dernière transaction</div>
+          <div id="mytx-last" style="font-size:16px;font-weight:700;color:#0f172a">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #a855f7">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_active_until">Abonnement actif jusqu'au</div>
+          <div id="mytx-expire" style="font-size:16px;font-weight:700;color:#0f172a">—</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;border-left:4px solid #f59e0b">
+          <div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px" data-i18n="stat_renewal">Prochain renouvellement</div>
+          <div id="mytx-renew" style="font-size:22px;font-weight:800;color:#0f172a">—</div>
+        </div>
+      </div>
+      <!-- Filters -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:4px;background:#f1f5f9;padding:4px;border-radius:10px">
+          <button onclick="mytxFilter('all')" id="mytxfilt-all" class="mytxfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:#6366f1;color:#fff;min-height:36px" data-i18n="filter_all">Tous</button>
+          <button onclick="mytxFilter('SUCCESSFUL')" id="mytxfilt-SUCCESSFUL" class="mytxfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;min-height:36px" data-i18n="filter_successful">Réussi</button>
+          <button onclick="mytxFilter('FAILED')" id="mytxfilt-FAILED" class="mytxfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;min-height:36px" data-i18n="filter_failed">Échoué</button>
+          <button onclick="mytxFilter('pending')" id="mytxfilt-pending" class="mytxfilt-btn" style="padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#64748b;min-height:36px" data-i18n="filter_pending">En attente</button>
+        </div>
+        <select id="mytx-period" onchange="mytxRender()" style="padding:8px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;font-size:13px;color:#1e293b;cursor:pointer;font-family:inherit;min-height:36px">
+          <option value="all" data-i18n="filter_all_period">Toute période</option>
+          <option value="month" data-i18n="filter_month">Ce mois</option>
+          <option value="3months" data-i18n="filter_3months">3 derniers mois</option>
+        </select>
+      </div>
+      <!-- Table -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden">
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+          <table style="width:100%;border-collapse:collapse;min-width:600px">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Date</th>
+                <th style="text-align:right;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Montant</th>
+                <th style="text-align:center;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Statut</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #f1f5f9">Référence</th>
+              </tr>
+            </thead>
+            <tbody id="mytx-tbody"></tbody>
+          </table>
+        </div>
+        <div id="mytx-empty" class="hidden" style="padding:48px 20px;text-align:center">
+          <i data-lucide="arrow-left-right" class="w-10 h-10" style="color:#cbd5e1;margin:0 auto 12px;display:block"></i>
+          <p style="font-size:14px;color:#94a3b8">Aucune transaction</p>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid #f1f5f9">
+          <span id="mytx-showing" style="font-size:12px;color:#94a3b8">—</span>
+          <div style="display:flex;gap:4px">
+            <button onclick="mytxPage(-1)" id="mytx-prev" style="padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:36px">← Préc</button>
+            <button onclick="mytxPage(1)" id="mytx-next" style="padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:36px">Suiv →</button>
+          </div>
+        </div>
       </div>
     </div>
     <div id="page-knowledge" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
@@ -2021,15 +2345,9 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               style="background:#6366f1;color:#fff;border-radius:10px;border:none;box-shadow:0 2px 8px rgba(99,102,241,.25)">
               <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Conversations
             </button>
-            <button id="cv-tab-queue" onclick="cvSetViewMode('queue')"
-              class="flex-1 py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
-              style="background:transparent;color:#64748b;border-radius:10px;border:none;">
-              <i data-lucide="inbox" class="w-3.5 h-3.5"></i> File d'attente
-            </button>
+
           </div>
-          <button onclick="downloadAllConversations()" title="Tout exporter" style="display:inline-flex;align-items:center;gap:5px;padding:7px 12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i> Exporter
-          </button>
+
         </div>
 
         <!-- Search -->
@@ -2163,8 +2481,8 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
           <!-- Header -->
           <div class="px-4 py-3 border-b border-slate-200 flex items-center gap-3 shrink-0" style="background:#fff">
-            <button onclick="cvGoBack()" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all md:hidden" style="color:#64748b;background:#f1f5f9;border:1px solid #e2e8f0">
-              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <button onclick="cvGoBack()" class="w-10 h-10 rounded-lg flex items-center justify-center transition-all md:hidden" style="color:#64748b;background:#f1f5f9;border:1px solid #e2e8f0;min-width:44px;min-height:44px">
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </button>
             <div id="cv-conv-avatar" class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0">?</div>
             <div class="flex-1 min-w-0">
@@ -2419,7 +2737,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                   <p class="text-xs text-slate-500" id="pp-wa-status">Vérification...</p>
                 </div>
               </div>
-              <a href="/dashboard/qr.html" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-green-500/10 border border-green-500/25 text-green-400 text-xs font-semibold hover:bg-green-500/20 transition-all">
+              <a href="/dashboard/qr-connect.html" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-green-500/10 border border-green-500/25 text-green-400 text-xs font-semibold hover:bg-green-500/20 transition-all">
                 <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> Scanner QR
               </a>
             </div>
@@ -2869,35 +3187,209 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 // ─── i18n ────────────────────────────────────────────────────────────
 var TRANSLATIONS={
   fr:{
+    // Sidebar
     dash_home:"Tableau de bord",dash_credits:"Crédits",dash_payments:"Paiements",
+    dash_transactions:"Mes Transactions",
     dash_agents:"Agents IA",dash_connexions:"Connexions",dash_products:"Produits et services",
     dash_knowledge:"Base de connaissances",dash_orders:"Commandes",dash_leads:"Leads",
     dash_conversations:"Conversations",dash_settings:"Paramètres",dash_logout:"Déconnexion",
     dash_dark:"Mode Sombre",dash_light:"Mode Clair",dash_copy:"Copier le lien",
     dash_welcome:"Bienvenue",dash_trial:"Essai gratuit",dash_plan:"Plan actuel",
-    dash_stats_conv:"Conversations",dash_stats_orders:"Commandes",dash_stats_revenue:"Revenu",dash_stats_clients:"Clients"
+    // Stats
+    dash_stats_conv:"Conversations",dash_stats_orders:"Commandes",dash_stats_revenue:"Revenu",dash_stats_clients:"Clients",
+    stat_total_collected:"Total encaissé",stat_this_month:"Ce mois",stat_transactions:"Transactions",stat_success_rate:"Taux de succès",
+    stat_total_paid:"Total payé",stat_last_tx:"Dernière transaction",stat_active_until:"Abonnement actif jusqu'au",stat_renewal:"Prochain renouvellement",
+    // Filters
+    filter_all:"Tous",filter_successful:"Réussi",filter_failed:"Échoué",filter_pending:"En attente",
+    filter_today:"Aujourd'hui",filter_week:"Cette semaine",filter_month:"Ce mois",filter_3months:"3 derniers mois",filter_all_period:"Toute période",
+    // Buttons
+    btn_refresh:"Actualiser",btn_export:"Exporter",btn_export_csv:"Export CSV",btn_search:"Rechercher",
+    btn_activate:"Activer",btn_suspend:"Suspendre",btn_block:"Bloquer",btn_ban:"Bannir",
+    btn_cancel:"Annuler",btn_confirm:"Confirmer",btn_save:"Enregistrer",btn_delete:"Supprimer",
+    btn_renew:"Renouveler",btn_add:"Ajouter",btn_edit:"Modifier",btn_close:"Fermer",
+    btn_prev:"Préc",btn_next:"Suiv",btn_back:"Retour",
+    // Table headers
+    th_date:"Date",th_client:"Client",th_amount:"Montant",th_status:"Statut",th_reference:"Référence",
+    th_name:"Nom",th_email:"Email",th_phone:"Téléphone",th_plan:"Plan",th_actions:"Actions",
+    // Status
+    status_active:"Actif",status_trial:"Essai",status_suspended:"Suspendu",status_blocked:"Bloqué",status_banned:"Banni",
+    status_successful:"Réussi",status_failed:"Échoué",status_pending:"En attente",
+    // Messages
+    msg_loading:"Chargement...",msg_no_results:"Aucun résultat",msg_error:"Erreur",msg_success:"Succès",
+    msg_no_conv:"Aucune conversation pour le moment.",msg_no_tx:"Aucune transaction",msg_no_tx_found:"Aucune transaction trouvée",
+    msg_contacts:"contacts",msg_updated:"Conversations actualisées",
+    // Pages
+    page_payments:"Paiements",page_payments_desc:"Historique et suivi de vos transactions",
+    page_my_tx:"Mes Transactions",page_my_tx_desc:"Historique de vos paiements",
+    page_conversations:"Conversations",page_knowledge:"Base de Connaissances",
+    page_products:"Produits et services",
+    // Conversations
+    conv_all:"Tous",conv_auto:"Auto",conv_manual:"Manuel",conv_blocked:"Bloqués",
+    conv_search:"Rechercher un contact ou un nom...",conv_reply:"Répondre au client...",
+    conv_export_all:"Exporter",conv_queue:"File d'attente",
+    // Misc
+    misc_expired:"Expiré",misc_days:"j",misc_on:"sur",misc_none:"Aucune",
+    misc_command_center:"Command Center",
+    // Sidebar extras
+    dash_agent_config:"Configuration agent",dash_categories:"Categories/Statuts",dash_widgets:"Widgets",
+    dash_calendar:"Calendrier",dash_ambassadors:"Ambassadeurs",dash_media:"Galerie medias",
+    dash_shop:"Ma Boutique",dash_domain:"Domaine perso",dash_agent_ia:"Agent IA",
+    // Home page
+    dash_total_agents:"Total des agents",dash_online:"En ligne:",dash_recent_agent:"Agent le plus recent",
+    msg_no_agent:"Aucun agent cree",dash_second_agent:"Second plus recent",dash_lead_analysis:"Analyse des leads",
+    dash_total_leads:"Nombre total de leads",dash_leads_generated:"Leads generes",
+    dash_credits_available:"Credits disponibles",msg_credits_low:"Credits presque epuises",
+    dash_referral:"Programme de Parrainage",dash_recent_actions:"Dernieres Actions de l'Agent",
+    msg_no_recent_action:"Aucune action recente",
+    // Agents page
+    msg_create_first_agent:"Creez votre premier agent IA WhatsApp",dash_performances:"Performances",
+    dash_messages_processed:"Messages traites",dash_response_rate:"Taux de reponse",
+    dash_avg_response:"Temps moy. reponse",dash_sales_generated:"Ventes generees",
+    dash_system_prompt:"Personnalite / Prompt systeme",dash_response_style:"Style de reponse",
+    btn_deploy:"Deployer",msg_advanced_soon:"Parametres avances — bientot disponibles.",
+    msg_test_agent:"Envoyez un message pour tester votre agent",
+    dash_agent_config_sub:"Configuration de l'agent IA",tab_prompt:"Prompt",tab_tools:"Outils",tab_params:"Parametres",
+    dash_agent_tone:"Ton de l'agent",tone_formal:"Formel",tone_formal_desc:"Professionnel et courtois",
+    tone_friendly:"Amical",tone_friendly_desc:"Direct et chaleureux",tone_expert:"Expert",
+    tone_expert_desc:"Conseiller specialise",dash_variables:"Variables disponibles :",
+    dash_tools_desc:"Activez les outils disponibles pour cet agent.",dash_agent_lang:"Langue de l'agent",
+    // JS messages
+    msg_in_progress:"En cours...",msg_done:"Effectue",msg_agent_activated:"Agent IA active !",
+    msg_agent_deactivated:"Agent IA desactive",msg_network_error:"Erreur reseau",msg_offline:"Hors ligne",
+    msg_error_load_conv:"Erreur chargement conversations",msg_no_messages:"Aucun message dans cette conversation",
+    msg_sent:"Message envoye !",msg_manual_mode:"Mode manuel active",msg_ai_reactivated:"IA reactivee",
+    msg_transferred_human:"Transfere au conseiller humain",msg_transferred_ai:"Transfere a l'IA",
+    msg_contact_blocked:"Contact bloque",msg_contact_unblocked:"Contact debloque",
+    msg_mode:"Mode",msg_human:"Humain",msg_activated:"active",
+    msg_conv_downloaded:"Conversation telechargee !",msg_no_conv_export:"Aucune conversation a exporter",
+    msg_all_conv_exported:"Toutes les conversations exportees !",
+    confirm_delete_conv:"Supprimer cette conversation ? Action irreversible.",
+    msg_conv_deleted:"Conversation supprimee",msg_queue_soon:"File d'attente — bientot disponible",
+    msg_sound_on:"Son active",msg_sound_off:"Son desactive",
+    msg_read_hidden:"Conversations lues masquees",msg_all_shown:"Toutes conversations affichees",
+    msg_error_load_tx:"Erreur chargement transactions",msg_no_tx_export:"Aucune transaction a exporter",
+    msg_csv_exported:"Export CSV telecharge !",msg_enter_subdomain:"Entrez un sous-domaine a verifier",
+    msg_invalid_subdomain:"Sous-domaine invalide (lettres minuscules, chiffres et tirets uniquement)",
+    msg_checking:"Verification en cours...",msg_copied:"Copie",msg_copy_failed:"Impossible de copier automatiquement",
+    msg_config_saved:"Configuration sauvegardee !",msg_folder_created:"Dossier \"{name}\" cree !",
+    confirm_delete_folder:"Supprimer le dossier \"{name}\" et tous ses fichiers ?",
+    msg_folder_deleted:"Dossier supprime",msg_file_deleted:"Fichier supprime",
+    msg_format_unsupported:"Format non supporte",msg_file_exists:"Fichier deja present",
+    msg_files_imported:"{n} fichier(s) importe(s) !",msg_folder_saved:"Dossier sauvegarde !",
+    btn_finish:"Terminer",msg_crop_image:"Recadrer l'image",msg_ratio:"Ratio",msg_free:"Libre",
+    msg_apply_crop:"Appliquer le recadrage",msg_generating:"Generation...",msg_regenerate_qr:"Regenerer le QR",
+    btn_retry:"Reessayer",status_connected:"Connecte"
   },
   en:{
+    // Sidebar
     dash_home:"Dashboard",dash_credits:"Credits",dash_payments:"Payments",
-    dash_agents:"AI Agents",dash_connexions:"Connections",dash_products:"Products & services",
-    dash_knowledge:"Knowledge base",dash_orders:"Orders",dash_leads:"Leads",
+    dash_transactions:"My Transactions",
+    dash_agents:"AI Agents",dash_connexions:"Connections",dash_products:"Products & Services",
+    dash_knowledge:"Knowledge Base",dash_orders:"Orders",dash_leads:"Leads",
     dash_conversations:"Conversations",dash_settings:"Settings",dash_logout:"Sign out",
-    dash_dark:"Dark mode",dash_light:"Light mode",dash_copy:"Copy link",
+    dash_dark:"Dark Mode",dash_light:"Light Mode",dash_copy:"Copy Link",
     dash_welcome:"Welcome",dash_trial:"Free trial",dash_plan:"Current plan",
-    dash_stats_conv:"Conversations",dash_stats_orders:"Orders",dash_stats_revenue:"Revenue",dash_stats_clients:"Clients"
+    // Stats
+    dash_stats_conv:"Conversations",dash_stats_orders:"Orders",dash_stats_revenue:"Revenue",dash_stats_clients:"Clients",
+    stat_total_collected:"Total Collected",stat_this_month:"This Month",stat_transactions:"Transactions",stat_success_rate:"Success Rate",
+    stat_total_paid:"Total Paid",stat_last_tx:"Last Transaction",stat_active_until:"Active Until",stat_renewal:"Next Renewal",
+    // Filters
+    filter_all:"All",filter_successful:"Successful",filter_failed:"Failed",filter_pending:"Pending",
+    filter_today:"Today",filter_week:"This Week",filter_month:"This Month",filter_3months:"Last 3 Months",filter_all_period:"All Time",
+    // Buttons
+    btn_refresh:"Refresh",btn_export:"Export",btn_export_csv:"Export CSV",btn_search:"Search",
+    btn_activate:"Activate",btn_suspend:"Suspend",btn_block:"Block",btn_ban:"Ban",
+    btn_cancel:"Cancel",btn_confirm:"Confirm",btn_save:"Save",btn_delete:"Delete",
+    btn_renew:"Renew",btn_add:"Add",btn_edit:"Edit",btn_close:"Close",
+    btn_prev:"Prev",btn_next:"Next",btn_back:"Back",
+    // Table headers
+    th_date:"Date",th_client:"Client",th_amount:"Amount",th_status:"Status",th_reference:"Reference",
+    th_name:"Name",th_email:"Email",th_phone:"Phone",th_plan:"Plan",th_actions:"Actions",
+    // Status
+    status_active:"Active",status_trial:"Trial",status_suspended:"Suspended",status_blocked:"Blocked",status_banned:"Banned",
+    status_successful:"Successful",status_failed:"Failed",status_pending:"Pending",
+    // Messages
+    msg_loading:"Loading...",msg_no_results:"No results",msg_error:"Error",msg_success:"Success",
+    msg_no_conv:"No conversations yet.",msg_no_tx:"No transactions",msg_no_tx_found:"No transactions found",
+    msg_contacts:"contacts",msg_updated:"Conversations refreshed",
+    // Pages
+    page_payments:"Payments",page_payments_desc:"Transaction history and tracking",
+    page_my_tx:"My Transactions",page_my_tx_desc:"Your payment history",
+    page_conversations:"Conversations",page_knowledge:"Knowledge Base",
+    page_products:"Products & Services",
+    // Conversations
+    conv_all:"All",conv_auto:"Auto",conv_manual:"Manual",conv_blocked:"Blocked",
+    conv_search:"Search a contact or name...",conv_reply:"Reply to client...",
+    conv_export_all:"Export",conv_queue:"Queue",
+    // Misc
+    misc_expired:"Expired",misc_days:"d",misc_on:"of",misc_none:"None",
+    misc_command_center:"Command Center",
+    // Sidebar extras
+    dash_agent_config:"Agent Configuration",dash_categories:"Categories/Statuses",dash_widgets:"Widgets",
+    dash_calendar:"Calendar",dash_ambassadors:"Ambassadors",dash_media:"Media Gallery",
+    dash_shop:"My Store",dash_domain:"Custom Domain",dash_agent_ia:"AI Agent",
+    // Home page
+    dash_total_agents:"Total agents",dash_online:"Online:",dash_recent_agent:"Most recent agent",
+    msg_no_agent:"No agent created",dash_second_agent:"Second most recent",dash_lead_analysis:"Lead Analysis",
+    dash_total_leads:"Total leads",dash_leads_generated:"Leads generated",
+    dash_credits_available:"Available credits",msg_credits_low:"Credits almost depleted",
+    dash_referral:"Referral Program",dash_recent_actions:"Latest Agent Actions",
+    msg_no_recent_action:"No recent action",
+    // Agents page
+    msg_create_first_agent:"Create your first WhatsApp AI agent",dash_performances:"Performance",
+    dash_messages_processed:"Messages processed",dash_response_rate:"Response rate",
+    dash_avg_response:"Avg. response time",dash_sales_generated:"Sales generated",
+    dash_system_prompt:"Personality / System prompt",dash_response_style:"Response style",
+    btn_deploy:"Deploy",msg_advanced_soon:"Advanced settings — coming soon.",
+    msg_test_agent:"Send a message to test your agent",
+    dash_agent_config_sub:"AI agent configuration",tab_prompt:"Prompt",tab_tools:"Tools",tab_params:"Settings",
+    dash_agent_tone:"Agent tone",tone_formal:"Formal",tone_formal_desc:"Professional and courteous",
+    tone_friendly:"Friendly",tone_friendly_desc:"Direct and warm",tone_expert:"Expert",
+    tone_expert_desc:"Specialized advisor",dash_variables:"Available variables:",
+    dash_tools_desc:"Enable available tools for this agent.",dash_agent_lang:"Agent language",
+    // JS messages
+    msg_in_progress:"In progress...",msg_done:"Done",msg_agent_activated:"AI Agent activated!",
+    msg_agent_deactivated:"AI Agent deactivated",msg_network_error:"Network error",msg_offline:"Offline",
+    msg_error_load_conv:"Error loading conversations",msg_no_messages:"No messages in this conversation",
+    msg_sent:"Message sent!",msg_manual_mode:"Manual mode enabled",msg_ai_reactivated:"AI reactivated",
+    msg_transferred_human:"Transferred to human advisor",msg_transferred_ai:"Transferred to AI",
+    msg_contact_blocked:"Contact blocked",msg_contact_unblocked:"Contact unblocked",
+    msg_mode:"Mode",msg_human:"Human",msg_activated:"enabled",
+    msg_conv_downloaded:"Conversation downloaded!",msg_no_conv_export:"No conversation to export",
+    msg_all_conv_exported:"All conversations exported!",
+    confirm_delete_conv:"Delete this conversation? This action is irreversible.",
+    msg_conv_deleted:"Conversation deleted",msg_queue_soon:"Queue — coming soon",
+    msg_sound_on:"Sound enabled",msg_sound_off:"Sound disabled",
+    msg_read_hidden:"Read conversations hidden",msg_all_shown:"All conversations shown",
+    msg_error_load_tx:"Error loading transactions",msg_no_tx_export:"No transaction to export",
+    msg_csv_exported:"CSV export downloaded!",msg_enter_subdomain:"Enter a subdomain to check",
+    msg_invalid_subdomain:"Invalid subdomain (lowercase letters, numbers and hyphens only)",
+    msg_checking:"Checking...",msg_copied:"Copied",msg_copy_failed:"Unable to copy automatically",
+    msg_config_saved:"Configuration saved!",msg_folder_created:"Folder \"{name}\" created!",
+    confirm_delete_folder:"Delete folder \"{name}\" and all its files?",
+    msg_folder_deleted:"Folder deleted",msg_file_deleted:"File deleted",
+    msg_format_unsupported:"Unsupported format",msg_file_exists:"File already exists",
+    msg_files_imported:"{n} file(s) imported!",msg_folder_saved:"Folder saved!",
+    btn_finish:"Finish",msg_crop_image:"Crop image",msg_ratio:"Ratio",msg_free:"Free",
+    msg_apply_crop:"Apply crop",msg_generating:"Generating...",msg_regenerate_qr:"Regenerate QR",
+    btn_retry:"Retry",status_connected:"Connected"
   }
 };
-var LANG=localStorage.getItem('titanex_lang')||'fr';
+// Auto-detect browser language on first visit
+var _storedLang = localStorage.getItem('titanex_lang');
+var LANG = _storedLang || (navigator.language && navigator.language.startsWith('en') ? 'en' : 'fr');
+if (!_storedLang) localStorage.setItem('titanex_lang', LANG);
 function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
 function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
 function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var key=el.getAttribute('data-i18n');var val=t(key);
     if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else if(el.tagName==='OPTION'){el.textContent=val;}
     else{el.textContent=val;}
   });
 }
-function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn){btn.innerHTML=LANG==='fr'?'🇬🇧 EN':'🇫🇷 FR';}}
 
 // ─── Config ────────────────────────────────────────────────────────────────────
 const API = window.location.origin;
@@ -2912,9 +3404,120 @@ let allConversations = [];
 let allAgents = [];
 let allProducts = [];
 let allClients = [];
+let allTransactions = [];
+let _payFilter = 'all';
+let _payPageNum = 0;
+const PAY_PER_PAGE = 20;
 let selectedAgentObj = null;
 let selectedConvPhone = null;
 const _rendered = {}; // tracks which pages have been rendered
+
+// ─── Button State Utilities ───────────────────────────────────────────────────
+function btnLoading(btn, loadingText) {
+  if (!btn) return;
+  btn.disabled = true;
+  btn._originalHTML = btn._originalHTML || btn.innerHTML;
+  btn._originalStyle = btn._originalStyle || btn.getAttribute('style') || '';
+  btn.innerHTML = '<span class="btn-spinner"></span> ' + (loadingText || 'En cours...');
+  btn.style.opacity = '0.7';
+  btn.style.cursor = 'not-allowed';
+}
+
+function btnSuccess(btn, successText) {
+  if (!btn) return;
+  btn.disabled = true;
+  if (!btn._originalHTML) btn._originalHTML = btn.innerHTML;
+  if (!btn._originalStyle) btn._originalStyle = btn.getAttribute('style') || '';
+  btn.innerHTML = '✓ ' + (successText || 'Effectué');
+  btn.style.background = '#9ca3af';
+  btn.style.color = '#fff';
+  btn.style.borderColor = '#9ca3af';
+  btn.style.opacity = '1';
+  btn.style.cursor = 'default';
+}
+
+function btnError(btn, errorText) {
+  if (!btn) return;
+  if (!btn._originalHTML) btn._originalHTML = btn.innerHTML;
+  if (!btn._originalStyle) btn._originalStyle = btn.getAttribute('style') || '';
+  btn.innerHTML = '✗ ' + (errorText || 'Erreur');
+  btn.style.background = '#ef4444';
+  btn.style.color = '#fff';
+  btn.style.borderColor = '#ef4444';
+  btn.disabled = false;
+  setTimeout(function() { btnReset(btn); }, 3000);
+}
+
+function btnReset(btn) {
+  if (!btn) return;
+  btn.disabled = false;
+  if (btn._originalHTML) btn.innerHTML = btn._originalHTML;
+  if (btn._originalStyle) btn.setAttribute('style', btn._originalStyle);
+  else btn.removeAttribute('style');
+}
+
+// ─── Agent IA Global Toggle ──────────────────────────────────────────────────
+function syncAgentModeUI(mode) {
+  const btn = document.getElementById('agent-global-toggle');
+  const status = document.getElementById('agent-global-status');
+  const dot = document.getElementById('agent-global-dot');
+  if (!btn || !status || !dot) return;
+  if (mode === 'inactif') {
+    btn.style.background = '#7f1d1d';
+    btn.style.borderColor = 'rgba(239,68,68,.4)';
+    btn.style.color = '#fca5a5';
+    status.textContent = 'Inactif';
+    dot.style.background = '#ef4444';
+    dot.style.animation = 'none';
+  } else {
+    btn.style.background = '#064e3b';
+    btn.style.borderColor = 'rgba(16,185,129,.4)';
+    btn.style.color = '#6ee7b7';
+    status.textContent = 'Actif';
+    dot.style.background = '#34d399';
+    dot.style.animation = 'pulse-dot 2s infinite';
+  }
+}
+
+function toggleGlobalAgent() {
+  const status = document.getElementById('agent-global-status');
+  if (!status) return;
+  const isActif = status.textContent === 'Actif';
+  const msg = isActif
+    ? 'Désactiver l\'agent IA ? Il ne répondra plus automatiquement aux messages WhatsApp.'
+    : 'Réactiver l\'agent IA ? Il répondra automatiquement aux messages.';
+  if (!confirm(msg)) return;
+  const newMode = isActif ? 'inactif' : 'actif';
+  syncAgentModeUI(newMode);
+  localStorage.setItem('titanex_agent_mode', newMode);
+  const tok = SESSION?.token || SESSION?.access_token || '';
+  fetch('/api/tenant/agent-mode', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+    body: JSON.stringify({ agent_mode: newMode })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      showToast(newMode === 'actif' ? '🤖 '+t('msg_agent_activated') : '⏸️ '+t('msg_agent_deactivated'));
+    } else {
+      showToast(t('msg_error')+': ' + (d.error || ''), 'error');
+    }
+  }).catch(function() { showToast(t('msg_network_error'), 'error'); });
+}
+
+function loadAgentMode() {
+  const cached = localStorage.getItem('titanex_agent_mode');
+  if (cached) syncAgentModeUI(cached);
+  const tok = SESSION?.token || SESSION?.access_token || '';
+  if (!tok) return;
+  fetch('/api/tenant/profile', {
+    headers: { 'Authorization': 'Bearer ' + tok }
+  }).then(function(r) { return r.ok ? r.json() : null; }).then(function(d) {
+    if (d && d.agent_mode) {
+      syncAgentModeUI(d.agent_mode);
+      localStorage.setItem('titanex_agent_mode', d.agent_mode);
+    }
+  }).catch(function() {});
+}
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -2930,11 +3533,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('greeting-name').textContent = SESSION.nom || SESSION.email?.split('@')[0] || 'utilisateur';
     document.getElementById('user-avatar').textContent = (SESSION.nom || SESSION.email || '?')[0].toUpperCase();
   } catch(e) { console.warn('Init UI error:', e); }
-  if (SESSION && (SESSION.role === 'admin' || SESSION.is_admin === true || SESSION.email && SESSION.email.length > 0 && SESSION.role === 'admin')) {
-    var lnk = document.getElementById('superadmin-link');
-    if (lnk) lnk.style.display = 'flex';
-  }
+  // Command Center toujours visible
+  var lnk = document.getElementById('superadmin-link');
+  if (lnk) lnk.style.display = 'flex';
   loadDashboard();
+  loadAgentMode();
+  // Check onboarding
+  setTimeout(function() { checkOnboarding(); }, 1500);
+  // Load tenant stats for charts
+  setTimeout(function() { loadTenantStats(); }, 2000);
+
+  // Apply translations
+  applyTranslations();
+  updateLangBtn();
+
+  // Re-enable save buttons when form inputs change
+  ['store-shop-name','store-description','store-orange','store-mtn','store-timezone','store-lang'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function() {
+      var btn = document.getElementById('store-save-btn');
+      if (btn && btn.disabled) btnReset(btn);
+    });
+  });
+  var agentPrompt = document.getElementById('agent-prompt');
+  if (agentPrompt) agentPrompt.addEventListener('input', function() {
+    var btn = document.getElementById('agent-save-btn');
+    if (btn && btn.disabled) btnReset(btn);
+  });
+
+  // Open page from URL param ?page=catalogue
+  const urlPage = new URLSearchParams(window.location.search).get('page');
+  if (urlPage) setTimeout(() => showPage(urlPage), 300);
 
   // Event delegation for sidebar nav — ensures buttons always work
   document.querySelector('#sidebar nav').addEventListener('click', function(e) {
@@ -2980,7 +3609,8 @@ const PAGE_TITLES = {
   orders:'Commandes', commandes:'Commandes',
   widgets:'Widgets', calendar:'Calendrier', calendrier:'Calendrier',
   ambassador:'Ambassadeurs', ambassadeurs:'Ambassadeurs',
-  domain:'Domaine perso', academy:'Academy', gallery:'Galerie medias',categories:'Categories et statuts'
+  domain:'Domaine perso', academy:'Academy', gallery:'Galerie medias',categories:'Categories et statuts',
+  boutique:'Ma Boutique'
 };
 
 function showPage(page) {
@@ -3053,6 +3683,15 @@ function showPage(page) {
       break;
     case 'knowledge':
       if (!_rendered.knowledge) { _rendered.knowledge = true; loadKnowledgeBase(); loadKnowledgePage(); }
+      break;
+    case 'paiements':
+      if (!_rendered.paiements) { _rendered.paiements = true; loadTransactions(); }
+      break;
+    case 'transactions':
+      if (!_rendered.transactions) { _rendered.transactions = true; loadMyTransactions(); }
+      break;
+    case 'boutique':
+      if (!_rendered.boutique) { _rendered.boutique = true; loadStoreConfig(); }
       break;
   }
 }
@@ -3284,6 +3923,17 @@ function cvSaveMode(phone, mode) {
   const m = JSON.parse(localStorage.getItem('titanex_conv_modes_'+inst)||'{}');
   m[phone] = mode;
   localStorage.setItem('titanex_conv_modes_'+inst, JSON.stringify(m));
+  // Persister côté serveur pour que l'agent IA respecte le mode
+  const backendMode = (mode === 'manual') ? 'manuel' : 'auto';
+  const SESSION_loc = JSON.parse(localStorage.getItem('titanex_session')||'null');
+  const tok = SESSION_loc && (SESSION_loc.token||SESSION_loc.access_token||'');
+  const heads = {'Content-Type':'application/json'};
+  if (tok) heads['Authorization'] = 'Bearer ' + tok;
+  heads['x-admin-key'] = 'titanex-admin-2026';
+  fetch('/api/conversations/' + encodeURIComponent(phone) + '/mode', {
+    method: 'PATCH', headers: heads,
+    body: JSON.stringify({ mode: backendMode })
+  }).catch(function(){});
 }
 function cvIsBlocked(phone) {
   const inst = (JSON.parse(localStorage.getItem('titanex_session')||'{}')).instance_name||'';
@@ -3297,30 +3947,50 @@ function cvSetBlocked(phone, blocked) {
   localStorage.setItem('titanex_blocked_'+inst, JSON.stringify(list));
 }
 
-function cvBuildGroups(messages) {
+function cvBuildGroups(conversations) {
+  // Each row in Supabase = one contact thread with phone + messages[] array
   const map = {};
-  for (const m of messages) {
-    const raw = m.phone || m.remoteJid || m.from || '';
+  for (const row of conversations) {
+    const raw = row.phone || row.from || row.remoteJid || '';
     const phone = raw.replace(/@s\.whatsapp\.net$/i,'').replace(/\D/g,'');
     if (!phone) continue;
-    if (!map[phone]) map[phone] = { phone, name: null, messages: [], lastAt: '' };
-    map[phone].messages.push(m);
-    const at = m.created_at || m.timestamp || '';
+    if (!map[phone]) map[phone] = { phone, name: null, messages: [], lastAt: '', rawRow: row };
+    // Messages can be in row.messages (JSON array) or row itself (flat fields)
+    if (Array.isArray(row.messages) && row.messages.length > 0) {
+      map[phone].messages = row.messages; // [{role,content}, ...]
+    } else if (row.user_message || row.ai_reply) {
+      map[phone].messages.push({ role:'user', content: row.user_message || '' });
+      if (row.ai_reply) map[phone].messages.push({ role:'assistant', content: row.ai_reply });
+    }
+    const at = row.updated_at || row.created_at || row.timestamp || '';
     if (at > map[phone].lastAt) map[phone].lastAt = at;
-    if (m.pushName || m.name) map[phone].name = m.pushName || m.name;
+    if (row.pushName || row.name) map[phone].name = row.pushName || row.name;
   }
   return Object.values(map).sort((a,b) => b.lastAt > a.lastAt ? 1 : -1);
 }
 
 async function loadConversations() {
+  const loading = document.getElementById('cv-list-loading');
+  const connBar = document.getElementById('cv-conn-bar');
+  if (loading) loading.classList.remove('hidden');
+  if (connBar) connBar.style.display = 'none';
   try {
     const data = await api('/admin/conversations/' + INSTANCE);
     allConversations = data || [];
-    cvRenderList();
+    // Sync modes from DB to localStorage
+    const inst = (JSON.parse(localStorage.getItem('titanex_session')||'{}')).instance_name||'';
+    const m = JSON.parse(localStorage.getItem('titanex_conv_modes_'+inst)||'{}');
+    (data || []).forEach(function(c) {
+      if (c.phone && c.conv_mode === 'manuel') m[c.phone] = 'manual';
+      else if (c.phone && c.conv_mode === 'auto' && m[c.phone] === 'manual') delete m[c.phone];
+    });
+    localStorage.setItem('titanex_conv_modes_'+inst, JSON.stringify(m));
   } catch(e) {
-    showToast('Erreur chargement conversations','error');
-    cvRenderList();
+    console.error('loadConversations error:', e);
+    showToast(t('msg_error_load_conv'),'error');
   }
+  if (loading) loading.classList.add('hidden');
+  cvRenderList();
 }
 
 function renderConversations() { cvRenderList(); }
@@ -3378,12 +4048,13 @@ function cvRenderList() {
 
   items.innerHTML = '';
   for (const g of filtered) {
-    const msgs = [...g.messages].sort((a,b) => (b.created_at||'') > (a.created_at||'') ? 1 : -1);
-    const last = msgs[0];
-    const lastContent = last?.ai_reply || last?.content || last?.message || last?.user_message || '...';
+    const msgs = g.messages || [];
+    // Get last message content — messages are {role,content} objects
+    const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+    const lastContent = lastMsg?.content || lastMsg?.user_message || lastMsg?.ai_reply || '...';
     const mode = cvGetMode(g.phone);
     const isSelected = _cvSelectedPhone === g.phone;
-    const incomingCount = msgs.filter(m => m.direction === 'incoming' || (!m.direction && !m.ai_reply && m.user_message)).length;
+    const incomingCount = msgs.filter(m => m.role === 'user' || m.direction === 'incoming').length;
     const initials = cvInitials(g.name, g.phone);
     const bg = cvAvatarBg(g.phone);
     const el = document.createElement('div');
@@ -3422,7 +4093,7 @@ function cvRenderList() {
   cvCheckConnection();
 }
 
-function cvOpenConversation(phone) {
+async function cvOpenConversation(phone) {
   _cvSelectedPhone = phone;
   document.querySelectorAll('.cv-contact-item').forEach(el => {
     if (el.dataset.phone === phone) {
@@ -3451,11 +4122,15 @@ function cvOpenConversation(phone) {
   document.getElementById('cv-right-empty')?.classList.add('hidden');
   const convEl = document.getElementById('cv-right-conv');
   if (convEl) { convEl.classList.remove('hidden'); convEl.classList.add('flex'); }
+  // Mobile: show right panel fullscreen
+  const rightEl = document.getElementById('cv-right');
+  if (rightEl) rightEl.classList.add('cv-mobile-open');
   if (window.innerWidth < 768) {
     const leftEl = document.getElementById('cv-left');
     if (leftEl) leftEl.style.display = 'none';
   }
-  cvRenderMessages(group.messages);
+  // Render messages from the group (messages[] array from DB row)
+  cvRenderMessages(group.messages, group.lastAt);
 }
 
 function cvUpdateModeUI(mode) {
@@ -3476,48 +4151,63 @@ function cvUpdateModeUI(mode) {
   }
 }
 
-function cvRenderMessages(messages) {
+function cvRenderMessages(messages, updatedAt) {
   const container = document.getElementById('cv-messages');
   if (!container) return;
   container.innerHTML = '';
-  const sorted = [...messages].sort((a,b) => {
-    const da = a.created_at||a.timestamp||'', db = b.created_at||b.timestamp||'';
-    return da > db ? 1 : da < db ? -1 : 0;
-  });
-  let lastLabel = '';
-  for (const m of sorted) {
-    const at = m.created_at || m.timestamp || '';
-    const label = cvDateLabel(at);
-    if (label && label !== lastLabel) {
-      lastLabel = label;
+  // Messages can be: [{role,content}] (from DB messages[] column)
+  // or flat rows with user_message/ai_reply fields
+  const expanded = [];
+  for (const m of messages) {
+    if (m.role && m.content) {
+      // Format: {role: "user"|"assistant", content: "..."}
+      expanded.push({ text: m.content, isOut: m.role === 'assistant' });
+    } else {
+      // Flat format with user_message / ai_reply
+      const at = m.created_at || m.timestamp || '';
+      if (m.user_message) expanded.push({ text: m.user_message, isOut: false, at });
+      if (m.ai_reply) expanded.push({ text: m.ai_reply, isOut: true, at });
+      if (!m.user_message && !m.ai_reply) {
+        const isOut = m.direction === 'outgoing' || m.role === 'assistant';
+        const content = m.content || m.message || m.body || '';
+        if (content) expanded.push({ text: content, isOut, at });
+      }
+    }
+  }
+  // Show date label at top if we have updatedAt
+  if (updatedAt) {
+    const label = cvDateLabel(updatedAt);
+    if (label) {
       const sep = document.createElement('div');
       sep.className = 'flex items-center justify-center py-2';
-      sep.innerHTML = `<span class="px-3 py-1 rounded-full text-[10px] text-neutral-600 border border-neutral-800" style="background:#111">${label}</span>`;
+      sep.innerHTML = `<span class="px-3 py-1 rounded-full text-[10px] font-medium" style="background:#e2e8f0;color:#475569">${label}</span>`;
       container.appendChild(sep);
     }
-    const isOut = m.direction === 'outgoing' || m.role === 'assistant' || (!m.direction && !!m.ai_reply && !m.user_message);
-    const content = isOut ? (m.ai_reply||m.content||m.message||'') : (m.user_message||m.content||m.message||'');
-    if (!content) continue;
+  }
+  for (const msg of expanded) {
     const row = document.createElement('div');
-    row.className = `flex items-end gap-2 ${isOut?'justify-end':'justify-start'}`;
-    if (isOut) {
+    row.className = `flex items-end gap-2 ${msg.isOut?'justify-end':'justify-start'}`;
+    if (msg.isOut) {
       row.innerHTML = `<div class="flex flex-col items-end max-w-[72%]">
         <div class="rounded-2xl rounded-br-sm px-4 py-2.5 text-sm text-white" style="background:#16a34a">
-          <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(String(content))}</p>
+          <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(String(msg.text))}</p>
         </div>
-        <span class="text-[9px] text-neutral-700 mt-0.5 flex items-center gap-1">
-          <i data-lucide="bot" class="w-2.5 h-2.5 text-emerald-700"></i>${cvFmtTime(at)}
+        <span class="text-[9px] mt-0.5 flex items-center gap-1" style="color:#94a3b8">
+          <i data-lucide="bot" class="w-2.5 h-2.5" style="color:#16a34a"></i> IA
         </span>
       </div>`;
     } else {
       row.innerHTML = `<div class="flex flex-col items-start max-w-[72%]">
-        <div class="rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm" style="background:#1f1f1f;color:#e4e4e7">
-          <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(String(content))}</p>
+        <div class="rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm" style="background:#fff;color:#1e293b;border:1px solid #e2e8f0">
+          <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(String(msg.text))}</p>
         </div>
-        <span class="text-[9px] text-neutral-700 mt-0.5">${cvFmtTime(at)}</span>
+        <span class="text-[9px] mt-0.5" style="color:#94a3b8">Client</span>
       </div>`;
     }
     container.appendChild(row);
+  }
+  if (expanded.length === 0) {
+    container.innerHTML = '<div class="flex flex-col items-center justify-center h-full"><i data-lucide="message-square" class="w-10 h-10 mb-3" style="color:#cbd5e1"></i><p class="text-sm" style="color:#94a3b8">Aucun message dans cette conversation</p></div>';
   }
   container.scrollTop = container.scrollHeight;
   lucide.createIcons();
@@ -3548,8 +4238,8 @@ async function cvSendReply() {
       headers: {'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
       body: JSON.stringify({instance: INSTANCE, number: _cvSelectedPhone, text})
     });
-    showToast('Message envoyé !');
-  } catch(e) { showToast('Erreur : '+e.message,'error'); }
+    showToast(t('msg_sent'));
+  } catch(e) { showToast(t('msg_error')+' : '+e.message,'error'); }
 }
 
 function cvToggleMode() {
@@ -3558,7 +4248,7 @@ function cvToggleMode() {
   cvSaveMode(_cvSelectedPhone, next);
   cvUpdateModeUI(next);
   cvRenderList();
-  showToast(next==='manual' ? '✋ Mode manuel activé' : '🤖 IA réactivée');
+  showToast(next==='manual' ? '✋ '+t('msg_manual_mode') : '🤖 '+t('msg_ai_reactivated'));
 }
 function cvSetMode(mode) {
   if (!_cvSelectedPhone) return;
@@ -3566,15 +4256,15 @@ function cvSetMode(mode) {
   cvUpdateModeUI(mode);
   cvCloseCtxMenu();
   cvRenderList();
-  showToast(mode==='manual' ? '✋ Transféré au conseiller humain' : '🤖 Transféré à l\'IA');
+  showToast(mode==='manual' ? '✋ '+t('msg_transferred_human') : '🤖 '+t('msg_transferred_ai'));
 }
 function cvBlockToggle() {
   if (!_cvSelectedPhone) return;
   const was = cvIsBlocked(_cvSelectedPhone);
   cvSetBlocked(_cvSelectedPhone, !was);
   cvCloseCtxMenu();
-  if (!was) { cvGoBack(); showToast('Contact bloqué','warn'); }
-  else showToast('Contact débloqué');
+  if (!was) { cvGoBack(); showToast(t('msg_contact_blocked'),'warn'); }
+  else showToast(t('msg_contact_unblocked'));
   cvRenderList();
 }
 // ── Mode par contact (boutons dans la liste) ──────────────────────────────────
@@ -3633,12 +4323,12 @@ function _buildAndDownloadConv(name, msgs) {
   a.download = 'conversation_' + name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'') + '_' + new Date().toISOString().slice(0,10) + '.txt';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
-  typeof showToast === 'function' && showToast('Conversation téléchargée !');
+  typeof showToast === 'function' && showToast(t('msg_conv_downloaded'));
 }
 
 function downloadAllConversations() {
   if (!allConversations || !allConversations.length) {
-    typeof showToast === 'function' && showToast('Aucune conversation à exporter', 'err'); return;
+    typeof showToast === 'function' && showToast(t('msg_no_conv_export'), 'err'); return;
   }
   var content = '=== EXPORT TOUTES CONVERSATIONS — TITANEX AI ===\n';
   content += 'Date : ' + new Date().toLocaleString('fr-FR') + '\n';
@@ -3664,13 +4354,13 @@ function downloadAllConversations() {
   a.download = 'toutes_conversations_' + new Date().toISOString().slice(0,10) + '.txt';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
-  typeof showToast === 'function' && showToast('Toutes les conversations exportées !');
+  typeof showToast === 'function' && showToast(t('msg_all_conv_exported'));
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
 function cvDeleteConv() {
   if (!_cvSelectedPhone) return;
-  if (!confirm('Supprimer cette conversation ? Action irréversible.')) return;
+  if (!confirm(t('confirm_delete_conv'))) return;
   cvCloseCtxMenu();
   allConversations = allConversations.filter(m => {
     const phone = (m.phone||m.remoteJid||m.from||'').replace(/@s\.whatsapp\.net$/i,'').replace(/\D/g,'');
@@ -3679,7 +4369,7 @@ function cvDeleteConv() {
   _cvSelectedPhone = null;
   cvGoBack();
   cvRenderList();
-  showToast('Conversation supprimée');
+  showToast(t('msg_conv_deleted'));
 }
 function cvSearch() {
   _cvSearch = document.getElementById('cv-search')?.value||'';
@@ -3687,13 +4377,24 @@ function cvSearch() {
 }
 function cvSetTab(tab) {
   _cvTab = tab;
+  const tabStyles = {
+    all:     { bg:'#eef2ff', color:'#4338ca', activeBg:'#6366f1', activeColor:'#fff' },
+    auto:    { bg:'#f0fdf4', color:'#065f46', activeBg:'#d1fae5', activeColor:'#065f46' },
+    manual:  { bg:'#fffbeb', color:'#92400e', activeBg:'#fef3c7', activeColor:'#92400e' },
+    blocked: { bg:'#fef2f2', color:'#991b1b', activeBg:'#fee2e2', activeColor:'#991b1b' }
+  };
   document.querySelectorAll('.cvtab').forEach(b => {
-    b.classList.remove('text-white');
-    b.style.background = '';
-    b.classList.add('text-neutral-500');
+    const t = b.id.replace('cvtab-','');
+    const s = tabStyles[t] || tabStyles.all;
+    if (t === tab) {
+      b.style.background = s.activeBg; b.style.color = s.activeColor;
+      b.style.boxShadow = t==='all' ? '0 2px 8px rgba(99,102,241,.25)' : 'none';
+      b.style.border = 'none';
+    } else {
+      b.style.background = '#f1f5f9'; b.style.color = '#64748b';
+      b.style.boxShadow = 'none'; b.style.border = 'none';
+    }
   });
-  const active = document.getElementById('cvtab-'+tab);
-  if (active) { active.classList.remove('text-neutral-500'); active.classList.add('text-white'); active.style.background = '#262626'; }
   cvRenderList();
 }
 function cvSetViewMode(mode) {
@@ -3705,7 +4406,7 @@ function cvSetViewMode(mode) {
   } else {
     if (queueBtn) { queueBtn.style.background='#22c55e'; queueBtn.style.boxShadow='0 0 12px rgba(34,197,94,.2)'; queueBtn.className='flex-1 py-2 px-3 rounded-full text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all'; }
     if (convBtn) { convBtn.style.background=''; convBtn.style.boxShadow=''; convBtn.className='flex-1 py-2 px-3 rounded-full text-xs font-semibold text-neutral-500 border border-neutral-700 flex items-center justify-center gap-1.5 transition-all hover:border-neutral-600'; }
-    showToast('File d\'attente — bientôt disponible','info');
+    showToast(t('msg_queue_soon'),'info');
   }
 }
 function cvToggleDropdown(type) {
@@ -3756,6 +4457,9 @@ function cvGoBack() {
   document.getElementById('cv-right-empty')?.classList.remove('hidden');
   const convEl = document.getElementById('cv-right-conv');
   if (convEl) { convEl.classList.add('hidden'); convEl.classList.remove('flex'); }
+  // Mobile: hide right panel, show left
+  const rightEl = document.getElementById('cv-right');
+  if (rightEl) rightEl.classList.remove('cv-mobile-open');
   const leftEl = document.getElementById('cv-left');
   if (leftEl) leftEl.style.display = '';
   document.querySelectorAll('.cv-contact-item').forEach(el => {
@@ -3765,18 +4469,26 @@ function cvGoBack() {
 }
 async function cvRefresh() {
   const btn = document.getElementById('cv-refresh-btn');
-  if (btn) { btn.style.animation='spin 0.8s linear'; setTimeout(()=>btn.style.animation='',800); }
+  if (btn) {
+    const icon = btn.querySelector('i, svg');
+    if (icon) icon.style.animation = 'spin 0.8s linear infinite';
+  }
   await loadConversations();
+  if (btn) {
+    const icon = btn.querySelector('i, svg');
+    if (icon) icon.style.animation = '';
+  }
+  showToast(t('msg_updated'));
 }
 function cvToggleSound() {
   _cvSound = !_cvSound;
   const btn = document.getElementById('cv-sound-btn');
   if (btn) { btn.innerHTML = `<i data-lucide="${_cvSound?'volume-2':'volume-x'}" class="w-3.5 h-3.5"></i>`; lucide.createIcons(); }
-  showToast(_cvSound?'Son activé':'Son désactivé');
+  showToast(_cvSound?t('msg_sound_on'):t('msg_sound_off'));
 }
 function cvToggleHide() {
   _cvHideRead = !_cvHideRead;
-  showToast(_cvHideRead?'Conversations lues masquées':'Toutes conversations affichées');
+  showToast(_cvHideRead?t('msg_read_hidden'):t('msg_all_shown'));
   cvRenderList();
 }
 function cvShowStats() {
@@ -3787,6 +4499,251 @@ function cvShowStats() {
   const blocked = groups.filter(g=>cvIsBlocked(g.phone)).length;
   showToast(`${total} contacts · ${auto} Auto · ${manual} Manuel · ${blocked} Bloqués`,'info');
 }
+// ─── Paiements / Transactions ──────────────────────────────────────────────────
+async function loadTransactions() {
+  try {
+    const data = await api('/admin/transactions');
+    allTransactions = data || [];
+  } catch(e) {
+    console.error('loadTransactions error:', e);
+    showToast(t('msg_error_load_tx'),'error');
+  }
+  payRender();
+}
+
+function payGetFiltered() {
+  const period = document.getElementById('pay-period')?.value || 'all';
+  const search = (document.getElementById('pay-search')?.value || '').toLowerCase();
+  const now = new Date();
+  return allTransactions.filter(t => {
+    // Status filter
+    if (_payFilter !== 'all') {
+      const ts = (t.status || '').toLowerCase();
+      if (_payFilter === 'SUCCESSFUL' && ts !== 'successful') return false;
+      if (_payFilter === 'FAILED' && ts !== 'failed') return false;
+      if (_payFilter === 'pending' && ts !== 'pending') return false;
+    }
+    // Period filter
+    if (period !== 'all' && t.created_at) {
+      const d = new Date(t.created_at);
+      if (period === 'today' && d.toDateString() !== now.toDateString()) return false;
+      if (period === 'week') { const w = new Date(now); w.setDate(now.getDate() - 7); if (d < w) return false; }
+      if (period === 'month' && (d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear())) return false;
+    }
+    // Search
+    if (search) {
+      const hay = ((t.user_id||'')+(t.payment_reference||'')+(t.amount||'')).toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+}
+
+function payRender() {
+  const filtered = payGetFiltered();
+  // Stats (from ALL transactions, not filtered)
+  const successful = allTransactions.filter(t => (t.status||'').toLowerCase() === 'successful');
+  const totalAmount = successful.reduce((s, t) => s + (t.amount || 0), 0);
+  const now = new Date();
+  const thisMonth = successful.filter(t => { const d = new Date(t.created_at); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); });
+  const monthAmount = thisMonth.reduce((s, t) => s + (t.amount || 0), 0);
+  const rate = allTransactions.length > 0 ? Math.round((successful.length / allTransactions.length) * 100) : 0;
+  document.getElementById('pay-total').textContent = totalAmount.toLocaleString('fr-FR') + ' XAF';
+  document.getElementById('pay-month').textContent = monthAmount.toLocaleString('fr-FR') + ' XAF';
+  document.getElementById('pay-count').textContent = allTransactions.length;
+  document.getElementById('pay-rate').textContent = rate + '%';
+  // Table
+  const tbody = document.getElementById('pay-tbody');
+  const empty = document.getElementById('pay-empty');
+  if (!tbody) return;
+  const start = _payPageNum * PAY_PER_PAGE;
+  const page = filtered.slice(start, start + PAY_PER_PAGE);
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    if (empty) empty.classList.remove('hidden');
+  } else {
+    if (empty) empty.classList.add('hidden');
+    tbody.innerHTML = page.map(t => {
+      const st = (t.status || 'pending').toLowerCase();
+      const sc = st === 'successful' ? 'background:#d1fae5;color:#065f46' : st === 'failed' ? 'background:#fee2e2;color:#991b1b' : 'background:#fef3c7;color:#92400e';
+      const sl = st === 'successful' ? 'Réussi' : st === 'failed' ? 'Échoué' : 'En attente';
+      const d = t.created_at ? new Date(t.created_at) : null;
+      const ds = d ? d.toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) : '—';
+      return '<tr style="border-bottom:1px solid #f8fafc">' +
+        '<td style="padding:12px 14px;font-size:13px;color:#374151">' + ds + '</td>' +
+        '<td style="padding:12px 14px;font-size:13px;color:#374151;font-weight:500">' + escapeHtml(t.user_id || '—') + '</td>' +
+        '<td style="padding:12px 14px;font-size:14px;color:#0f172a;font-weight:700;text-align:right">' + (t.amount || 0).toLocaleString('fr-FR') + ' ' + (t.currency || 'XAF') + '</td>' +
+        '<td style="padding:12px 14px;text-align:center"><span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;' + sc + '">' + sl + '</span></td>' +
+        '<td style="padding:12px 14px;font-size:12px;color:#94a3b8;font-family:monospace">' + escapeHtml(t.payment_reference || '—') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / PAY_PER_PAGE);
+  document.getElementById('pay-showing').textContent = filtered.length === 0 ? 'Aucune transaction' : (start + 1) + '-' + Math.min(start + PAY_PER_PAGE, filtered.length) + ' sur ' + filtered.length;
+  document.getElementById('pay-prev').disabled = _payPageNum <= 0;
+  document.getElementById('pay-next').disabled = _payPageNum >= totalPages - 1;
+  document.getElementById('pay-prev').style.opacity = _payPageNum <= 0 ? '.4' : '1';
+  document.getElementById('pay-next').style.opacity = _payPageNum >= totalPages - 1 ? '.4' : '1';
+  lucide.createIcons();
+}
+
+function payFilter(status) {
+  _payFilter = status;
+  _payPageNum = 0;
+  document.querySelectorAll('.payfilt-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = '#64748b'; });
+  const active = document.getElementById('payfilt-' + status);
+  if (active) { active.style.background = '#6366f1'; active.style.color = '#fff'; }
+  payRender();
+}
+
+function payPage(dir) {
+  const filtered = payGetFiltered();
+  const totalPages = Math.ceil(filtered.length / PAY_PER_PAGE);
+  _payPageNum = Math.max(0, Math.min(_payPageNum + dir, totalPages - 1));
+  payRender();
+}
+
+function exportTransCSV() {
+  const filtered = payGetFiltered();
+  if (!filtered.length) { showToast(t('msg_no_tx_export'), 'error'); return; }
+  let csv = 'Date,Client,Montant,Devise,Statut,Reference\n';
+  filtered.forEach(t => {
+    const d = t.created_at ? new Date(t.created_at).toISOString().slice(0, 19).replace('T', ' ') : '';
+    csv += [d, t.user_id || '', t.amount || 0, t.currency || 'XAF', t.status || '', t.payment_reference || ''].map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'transactions_' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  showToast(t('msg_csv_exported'));
+}
+
+// ─── Mes Transactions (vue tenant) ────────────────────────────────────────────
+let myTransactions = [];
+let _mytxFilter = 'all';
+let _mytxPage = 0;
+const MYTX_PER_PAGE = 10;
+
+async function loadMyTransactions() {
+  const sid = SESSION?.id;
+  if (!sid) { myTransactions = []; mytxRender(); return; }
+  try {
+    // Use JWT-secured route — falls back to tenant_id query if no token
+    const token = localStorage.getItem('titanex_token') || '';
+    let res;
+    if (token) {
+      res = await fetch('/api/tenant/transactions', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+    } else {
+      res = await fetch('/payment/history?tenant_id=' + encodeURIComponent(sid), {
+        headers: { 'x-admin-key': ADMIN_KEY }
+      });
+    }
+    myTransactions = await res.json();
+    if (!Array.isArray(myTransactions)) myTransactions = [];
+  } catch(e) {
+    console.error('loadMyTransactions error:', e);
+    myTransactions = [];
+  }
+  mytxRender();
+}
+
+function mytxGetFiltered() {
+  const period = document.getElementById('mytx-period')?.value || 'all';
+  const now = new Date();
+  return myTransactions.filter(t => {
+    if (_mytxFilter !== 'all') {
+      const ts = (t.status || '').toLowerCase();
+      if (_mytxFilter === 'SUCCESSFUL' && ts !== 'successful') return false;
+      if (_mytxFilter === 'FAILED' && ts !== 'failed') return false;
+      if (_mytxFilter === 'pending' && ts !== 'pending') return false;
+    }
+    if (period !== 'all' && t.created_at) {
+      const d = new Date(t.created_at);
+      if (period === 'month' && (d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear())) return false;
+      if (period === '3months') { const m3 = new Date(now); m3.setMonth(now.getMonth() - 3); if (d < m3) return false; }
+    }
+    return true;
+  });
+}
+
+function mytxRender() {
+  const filtered = mytxGetFiltered();
+  // Stats
+  const successful = myTransactions.filter(t => (t.status||'').toLowerCase() === 'successful');
+  const totalPaid = successful.reduce((s, t) => s + (t.amount || 0), 0);
+  document.getElementById('mytx-total').textContent = totalPaid.toLocaleString('fr-FR') + ' XAF';
+  // Last transaction
+  const last = myTransactions[0];
+  document.getElementById('mytx-last').textContent = last?.created_at ? new Date(last.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'}) : 'Aucune';
+  // Subscription
+  const dateFin = SESSION?.date_fin;
+  if (dateFin) {
+    const df = new Date(dateFin);
+    document.getElementById('mytx-expire').textContent = df.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
+    const daysLeft = Math.ceil((df - new Date()) / 86400000);
+    const renewEl = document.getElementById('mytx-renew');
+    if (daysLeft > 0) { renewEl.textContent = daysLeft + 'j'; renewEl.style.color = daysLeft <= 7 ? '#ef4444' : '#0f172a'; }
+    else { renewEl.textContent = 'Expiré'; renewEl.style.color = '#ef4444'; }
+  } else {
+    document.getElementById('mytx-expire').textContent = '—';
+    document.getElementById('mytx-renew').textContent = '—';
+  }
+  // Table
+  const tbody = document.getElementById('mytx-tbody');
+  const empty = document.getElementById('mytx-empty');
+  if (!tbody) return;
+  const start = _mytxPage * MYTX_PER_PAGE;
+  const page = filtered.slice(start, start + MYTX_PER_PAGE);
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    if (empty) empty.classList.remove('hidden');
+  } else {
+    if (empty) empty.classList.add('hidden');
+    tbody.innerHTML = page.map(t => {
+      const st = (t.status || 'pending').toLowerCase();
+      const sc = st === 'successful' ? 'background:#d1fae5;color:#065f46' : st === 'failed' ? 'background:#fee2e2;color:#991b1b' : 'background:#fef3c7;color:#92400e';
+      const sl = st === 'successful' ? 'Réussi' : st === 'failed' ? 'Échoué' : 'En attente';
+      const d = t.created_at ? new Date(t.created_at) : null;
+      const ds = d ? d.toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) : '—';
+      return '<tr style="border-bottom:1px solid #f8fafc">' +
+        '<td style="padding:12px 14px;font-size:13px;color:#374151">' + ds + '</td>' +
+        '<td style="padding:12px 14px;font-size:14px;color:#0f172a;font-weight:700;text-align:right">' + (t.amount || 0).toLocaleString('fr-FR') + ' ' + (t.currency || 'XAF') + '</td>' +
+        '<td style="padding:12px 14px;text-align:center"><span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;' + sc + '">' + sl + '</span></td>' +
+        '<td style="padding:12px 14px;font-size:12px;color:#94a3b8;font-family:monospace">' + escapeHtml(t.payment_reference || '—') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / MYTX_PER_PAGE);
+  document.getElementById('mytx-showing').textContent = filtered.length === 0 ? 'Aucune transaction' : (start + 1) + '-' + Math.min(start + MYTX_PER_PAGE, filtered.length) + ' sur ' + filtered.length;
+  document.getElementById('mytx-prev').disabled = _mytxPage <= 0;
+  document.getElementById('mytx-next').disabled = _mytxPage >= totalPages - 1;
+  document.getElementById('mytx-prev').style.opacity = _mytxPage <= 0 ? '.4' : '1';
+  document.getElementById('mytx-next').style.opacity = _mytxPage >= totalPages - 1 ? '.4' : '1';
+  lucide.createIcons();
+}
+
+function mytxFilter(status) {
+  _mytxFilter = status;
+  _mytxPage = 0;
+  document.querySelectorAll('.mytxfilt-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = '#64748b'; });
+  const active = document.getElementById('mytxfilt-' + status);
+  if (active) { active.style.background = '#6366f1'; active.style.color = '#fff'; }
+  mytxRender();
+}
+
+function mytxPage(dir) {
+  const filtered = mytxGetFiltered();
+  const totalPages = Math.ceil(filtered.length / MYTX_PER_PAGE);
+  _mytxPage = Math.max(0, Math.min(_mytxPage + dir, totalPages - 1));
+  mytxRender();
+}
+
 async function cvCheckConnection() {
   const inst = (JSON.parse(localStorage.getItem('titanex_session')||'{}')).instance_name||'';
   if (!inst) return;
@@ -3797,7 +4754,7 @@ async function cvCheckConnection() {
     const data = await res.json();
     const ok = data.status==='open'||data.state==='open'||data.connected===true;
     if (dot) { dot.style.background = ok?'#22c55e':'#f87171'; dot.style.animation = ok?'ppPulse 2s ease-in-out infinite':''; }
-    if (txt) { txt.textContent = ok?'Connecté':'Déconnecté'; txt.style.color = ok?'#22c55e':'#f87171'; }
+    if (txt) { txt.textContent = ok?t('status_connected'):t('msg_offline'); txt.style.color = ok?'#22c55e':'#f87171'; }
   } catch(e) {
     if (dot) dot.style.background = '#f87171';
     if (txt) { txt.textContent = 'Déconnecté'; txt.style.color = '#f87171'; }
@@ -3841,10 +4798,10 @@ async function checkDomain() {
   const status = document.getElementById('domain-sub-status');
   const btn = document.getElementById('domain-check-btn');
   const val = input ? input.value.trim() : '';
-  if (!val) { showToast('Entrez un sous-domaine à vérifier', 'error'); return; }
-  if (!/^[a-z0-9-]+$/.test(val)) { showToast('Sous-domaine invalide (lettres minuscules, chiffres et tirets uniquement)', 'error'); return; }
+  if (!val) { showToast(t('msg_enter_subdomain'), 'error'); return; }
+  if (!/^[a-z0-9-]+$/.test(val)) { showToast(t('msg_invalid_subdomain'), 'error'); return; }
   if (btn) { btn.textContent = '…'; btn.disabled = true; }
-  if (status) { status.classList.remove('hidden'); status.innerHTML = '<span style="color:#94a3b8">Vérification en cours…</span>'; }
+  if (status) { status.classList.remove('hidden'); status.innerHTML = '<span style="color:#94a3b8">'+t('msg_checking')+'</span>'; }
   await new Promise(r => setTimeout(r, 1200));
   const reserved = ['titanex','admin','api','app','dashboard','www','mail','smtp'];
   const available = !reserved.includes(val);
@@ -3860,9 +4817,9 @@ async function checkDomain() {
 
 function copyDNS(val) {
   navigator.clipboard.writeText(val).then(() => {
-    showToast('Copié : ' + val);
+    showToast(t('msg_copied')+': ' + val);
   }).catch(() => {
-    showToast('Impossible de copier automatiquement', 'error');
+    showToast(t('msg_copy_failed'), 'error');
   });
 }
 
@@ -3870,7 +4827,7 @@ async function saveDomain() {
   const SESSION = JSON.parse(localStorage.getItem('titanex_session') || '{}');
   const sub = document.getElementById('domain-sub-input')?.value.trim() || '';
   const custom = document.getElementById('domain-custom-input')?.value.trim() || '';
-  if (!sub) { showToast('Entrez un sous-domaine', 'error'); return; }
+  if (!sub) { showToast(t('msg_enter_subdomain'), 'error'); return; }
   localStorage.setItem('titanex_domain_' + (SESSION.instance_name||''), JSON.stringify({ subdomain: sub, custom }));
   if (SESSION.id) {
     try {
@@ -3881,7 +4838,7 @@ async function saveDomain() {
       });
     } catch(e) { /* silent — local save succeeded */ }
   }
-  showToast('Configuration sauvegardée !');
+  showToast(t('msg_config_saved'));
 }
 
 // ─── Knowledge Base (refactored) ─────────────────────────────────────────────
@@ -4028,19 +4985,19 @@ function confirmCreateFolder() {
   closeKBModal('kb-modal-new');
   renderKBFolders();
   updateKBStats();
-  showToast('Dossier "' + name + '" créé !');
+  showToast(t('msg_folder_created').replace('{name}',name));
 }
 
 function deleteFolder(id) {
   const folder = KB_FOLDERS.find(f => f.id === id);
   if (!folder) return;
-  if (!confirm('Supprimer le dossier "' + folder.name + '" et tous ses fichiers ?')) return;
+  if (!confirm(t('confirm_delete_folder').replace('{name}',folder.name))) return;
   KB_CHARS_USED = Math.max(0, KB_CHARS_USED - (folder.chars || 0));
   KB_FOLDERS = KB_FOLDERS.filter(f => f.id !== id);
   kbSave();
   renderKBFolders();
   updateKBStats();
-  showToast('Dossier supprimé');
+  showToast(t('msg_folder_deleted'));
 }
 
 function openFolder(id) {
@@ -4135,7 +5092,7 @@ function kbDeleteFile(folderId, fileName) {
   kbSave();
   kbRenderFiles(folder);
   updateKBStats();
-  showToast('Fichier supprimé');
+  showToast(t('msg_file_deleted'));
 }
 
 function kbDragOver(e) {
@@ -4164,11 +5121,11 @@ function kbHandleFiles(fileList) {
   Array.from(fileList).forEach(file => {
     const ext = (file.name.split('.').pop() || '').toLowerCase();
     if (!ALLOWED.includes(ext)) {
-      showToast('Format non supporté : ' + file.name, 'error');
+      showToast(t('msg_format_unsupported')+': ' + file.name, 'error');
       return;
     }
     if (folder.files.find(f => f.name === file.name)) {
-      showToast('Fichier déjà présent : ' + file.name, 'error');
+      showToast(t('msg_file_exists')+': ' + file.name, 'error');
       return;
     }
     // Estimate chars: ~4 bytes per char average for text
@@ -4187,7 +5144,7 @@ function kbHandleFiles(fileList) {
     kbSave();
     kbRenderFiles(folder);
     updateKBStats();
-    showToast(added + ' fichier' + (added > 1 ? 's' : '') + ' importé' + (added > 1 ? 's' : '') + ' !');
+    showToast(t('msg_files_imported').replace('{n}',added));
   }
 }
 
@@ -4206,7 +5163,7 @@ function kbSaveFolder() {
   renderKBFolders();
   updateKBStats();
   closeKBModal('kb-modal-folder');
-  showToast('Dossier sauvegardé !');
+  showToast(t('msg_folder_saved'));
 }
 
 // ─── Knowledge Base — New functions ───────────────────────────────────────────
@@ -4647,52 +5604,51 @@ function setModalDelay(d) {
   });
 }
 
-function saveAgentConfig() {
+async function saveAgentConfig() {
   if (!_modalAgentId) return;
   const agent = allAgents.find(a => a.id === _modalAgentId);
   if (!agent) return;
+  const saveBtn = document.querySelector('#agent-config-modal button[onclick*="saveAgentConfig"]') || (event && event.target ? event.target.closest('button') : null);
+  if (saveBtn) btnLoading(saveBtn, 'Sauvegarde...');
 
-  // Save prompt
   const prompt = document.getElementById('modal-agent-prompt')?.value || '';
   agent.personality = prompt;
-
-  // Save display name
   const dispName = document.getElementById('modal-agent-display-name')?.value.trim();
   if (dispName) agent.name = dispName;
-
-  // Save lang & delay
   agent.lang  = document.getElementById('modal-agent-lang')?.value || 'fr';
   agent.delay = _modalDelay;
 
-  // Save tools
   const tools = {};
   AGENT_TOOLS.forEach(t => {
     const btn = document.getElementById('tool-' + t.id + '-toggle');
     if (btn) tools[t.id] = btn.getAttribute('aria-checked') === 'true';
   });
   localStorage.setItem('titanex_tools_' + _modalAgentId, JSON.stringify(tools));
-
-  // Persist agent
   const idx = allAgents.findIndex(a => a.id === _modalAgentId);
   if (idx >= 0) allAgents[idx] = { ...agent };
   saveAgentsLocal();
 
-  // Try API save
   const stored = JSON.parse(localStorage.getItem('titanex_settings_' + INSTANCE) || '{}');
   stored.system_prompt = prompt;
   localStorage.setItem('titanex_settings_' + INSTANCE, JSON.stringify(stored));
-  const tid = SESSION?.id || SESSION?.tenant_id;
-  if (tid) {
-    fetch('/admin/tenant/' + tid, {
-      method:'PUT',
-      headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
-      body: JSON.stringify({ system_prompt: prompt })
-    }).catch(() => {});
+  try {
+    const tid = SESSION?.id || SESSION?.tenant_id;
+    if (tid) {
+      const r = await fetch('/admin/tenant/' + tid, {
+        method:'PUT',
+        headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
+        body: JSON.stringify({ system_prompt: prompt })
+      });
+      if (!r.ok) throw new Error('Erreur');
+    }
+    if (saveBtn) btnSuccess(saveBtn, 'Sauvegardé');
+    showToast('Agent configuré et sauvegardé !');
+    renderAgents();
+    setTimeout(function(){ closeAgentModal(); }, 600);
+  } catch(e) {
+    if (saveBtn) btnError(saveBtn, 'Erreur');
+    showToast('Erreur: ' + e.message, 'error');
   }
-
-  renderAgents();
-  closeAgentModal();
-  showToast('Agent configuré et sauvegardé !');
 }
 
 function filterAgents() { renderAgents(); }
@@ -4799,24 +5755,60 @@ function setAgentStyle(style) {
   });
 }
 
-function saveAgent() {
+async function saveAgent() {
   if (!selectedAgentObj) return;
-  selectedAgentObj.personality = document.getElementById('agent-prompt').value;
+  const btn = document.getElementById('agent-save-btn');
+  btnLoading(btn, 'Enregistrement...');
+  const prompt = document.getElementById('agent-prompt').value;
+  selectedAgentObj.personality = prompt;
   const idx = allAgents.findIndex(a => a.id === selectedAgentObj.id);
   if (idx >= 0) allAgents[idx] = { ...selectedAgentObj };
   saveAgentsLocal();
-  showToast('Agent enregistre !');
+  try {
+    const r = await fetch('/admin/stores', {
+      method:'POST', headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
+      body: JSON.stringify({ instance_name: INSTANCE, system_prompt: prompt })
+    });
+    if (!r.ok) throw new Error('Erreur');
+    btnSuccess(btn, 'Enregistré');
+    showToast('Agent enregistré !');
+  } catch(e) {
+    btnError(btn, 'Erreur');
+    showToast('Erreur: ' + e.message, 'error');
+  }
   updateScoreDisplay();
 }
 
 function toggleAgent(id) {
   const agent = allAgents.find(a => a.id === id);
   if (!agent) return;
+  const btn = document.getElementById('agent-toggle-btn');
   agent.status = !agent.status;
   saveAgentsLocal();
-  renderAgents();
-  if (selectedAgentObj?.id === id) openAgentDetail(agent);
-  showToast(agent.status ? 'Agent deploye !' : 'Agent desactive');
+  if (agent.status && btn) {
+    btnLoading(btn, 'Déploiement...');
+    // Also set agent_mode to actif in backend
+    const tok = SESSION?.token || SESSION?.access_token || '';
+    fetch('/api/tenant/agent-mode', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+      body: JSON.stringify({ agent_mode: 'actif' })
+    }).then(function() {
+      syncAgentModeUI('actif');
+      localStorage.setItem('titanex_agent_mode', 'actif');
+    }).catch(function(){});
+    setTimeout(function() {
+      btn._originalHTML = null; btn._originalStyle = null;
+      btnReset(btn);
+      renderAgents();
+      if (selectedAgentObj?.id === id) openAgentDetail(agent);
+    }, 800);
+    showToast('Agent deploye ! 🚀');
+  } else {
+    renderAgents();
+    if (selectedAgentObj?.id === id) openAgentDetail(agent);
+    showToast('Agent desactive');
+  }
 }
 
 function toggleCurrentAgent() {
@@ -4825,7 +5817,7 @@ function toggleCurrentAgent() {
 }
 
 function deleteAgent(id) {
-  if (!confirm('Supprimer cet agent ?')) return;
+  if (!confirm(LANG==='en'?'Delete this agent?':'Supprimer cet agent ?')) return;
   allAgents = allAgents.filter(a => a.id !== id);
   saveAgentsLocal();
   if (selectedAgentObj?.id === id) closeAgentDetail();
@@ -4837,22 +5829,34 @@ function saveAgentsLocal() {
   localStorage.setItem('titanex_agents_' + INSTANCE, JSON.stringify(allAgents));
 }
 
-function sendPlayground() {
+async function sendPlayground() {
   const input = document.getElementById('playground-input');
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
   const mc = document.getElementById('playground-messages');
-  // Clear placeholder
   if (mc.querySelector('p.text-center')) mc.innerHTML = '';
-  // User message
-  mc.innerHTML += `<div class="flex justify-end"><div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm bg-emerald-500/20 text-emerald-100"><p>${escapeHtml(text)}</p><p class="text-[10px] mt-0.5 text-emerald-400/50">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p></div></div>`;
+  const now = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  mc.innerHTML += `<div class="flex justify-end"><div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm bg-emerald-500/20 text-emerald-100"><p>${escapeHtml(text)}</p><p class="text-[10px] mt-0.5 text-emerald-400/50">${now}</p></div></div>`;
   mc.scrollTop = mc.scrollHeight;
-  // Bot reply (simulated)
-  setTimeout(() => {
-    mc.innerHTML += `<div class="flex justify-start"><div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm bg-zinc-800 text-white"><p>Bonjour ! Je suis en mode test. Configurez mon prompt pour voir mes vraies reponses.</p><p class="text-[10px] mt-0.5 text-zinc-500">${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p></div></div>`;
-    mc.scrollTop = mc.scrollHeight;
-  }, 800);
+  // Typing indicator
+  mc.innerHTML += `<div id="pg-typing" class="flex justify-start"><div class="rounded-2xl px-3.5 py-2 bg-zinc-800 flex gap-1"><span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce"></span><span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce" style="animation-delay:.15s"></span><span class="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce" style="animation-delay:.3s"></span></div></div>`;
+  mc.scrollTop = mc.scrollHeight;
+  let reply = '';
+  try {
+    const prompt = selectedAgentObj?.personality || document.getElementById('agent-prompt')?.value || '';
+    const res = await fetch('/admin/chat', {
+      method:'POST', headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
+      body: JSON.stringify({ instance: INSTANCE, message: text, system_prompt: prompt })
+    });
+    if (res.ok) { const data = await res.json(); reply = data.reply || ''; }
+  } catch(e) {}
+  if (!reply) reply = 'Erreur de connexion. Vérifiez que l\'agent est configuré.';
+  const typing = document.getElementById('pg-typing');
+  if (typing) typing.remove();
+  const now2 = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  mc.innerHTML += `<div class="flex justify-start"><div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-sm bg-zinc-800 text-white"><p>${escapeHtml(reply)}</p><p class="text-[10px] mt-0.5 text-zinc-500">${now2}</p></div></div>`;
+  mc.scrollTop = mc.scrollHeight;
 }
 
 // ─── Catalogue ────────────────────────────────────────────────────────────────
@@ -5219,8 +6223,9 @@ async function submitProduct(){
   saveProdData();
   if(!prodData.nom||!prodData.nom.trim())return showToast('Nom requis','error');
   var btn=document.querySelector('#wizard-footer button:last-child');
-  if(btn){btn.textContent='⏳...';btn.disabled=true;}
-  var instance=(SESSION&&SESSION.instance_name)?SESSION.instance_name:'Titanex_User_aefe5bb7_1';
+  btnLoading(btn, 'Enregistrement...');
+  var instance=(SESSION&&SESSION.instance_name)?SESSION.instance_name:'';
+  if(!instance){btnError(btn,'Erreur');showToast('Session expirée. Reconnectez-vous.','error');return;}
   var payload={
     instance_name:instance,
     nom:prodData.nom.trim(),
@@ -5234,21 +6239,18 @@ async function submitProduct(){
     var method=prodData.id?'PATCH':'POST';
     var r=await fetch(url,{method:method,headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     var result=await r.json();
-    console.log('[SUBMIT RESULT]',result);
     if(!r.ok||result.error)throw new Error(result.error||'Erreur serveur '+r.status);
-    closeProductWizard();
+    btnSuccess(btn, prodData.id ? 'Modifié' : 'Ajouté');
     showToast(prodData.id?'Produit mis a jour ✅':'Produit ajoute ✅');
-    _rendered.catalogue=false;
-    loadCatalogue();
+    setTimeout(function(){closeProductWizard();_rendered.catalogue=false;loadCatalogue();},600);
   }catch(e){
-    console.error('[SUBMIT ERROR]',e);
+    btnError(btn, 'Erreur');
     showToast('Erreur: '+e.message,'error');
-    if(btn){btn.textContent='Terminer ✓';btn.disabled=false;}
   }
 }
 
 async function deleteProduct(id){
-  if(!confirm('Supprimer ce produit ?'))return;
+  if(!confirm(LANG==='en'?'Delete this product?':'Supprimer ce produit ?'))return;
   try{await api('/admin/catalogue/'+id,{method:'DELETE'});showToast('Produit supprime');loadCatalogue();}
   catch(e){showToast(e.message,'error');}
 }
@@ -5442,7 +6444,7 @@ function copyRefLink() {
   navigator.clipboard.writeText(val).then(() => {
     showToast('Lien copié !');
   }).catch(() => {
-    showToast('Impossible de copier', 'error');
+    showToast(t('msg_copy_failed'), 'error');
   });
 }
 
@@ -5698,7 +6700,7 @@ function stopQRPolling() {
 function showConnected() {
   const wa = document.getElementById('wa-status');
   if (wa) {
-    wa.innerHTML = '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block mr-1"></span><span class="text-emerald-600 font-semibold text-sm">Connecté</span>';
+    wa.innerHTML = '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block mr-1"></span><span class="text-emerald-600 font-semibold text-sm">'+t('status_connected')+'</span>';
   }
 }
 
@@ -5737,7 +6739,7 @@ function connShowConnected(data) {
   const badge = document.getElementById('conn-wa-status-badge');
   if (badge) {
     badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-400 border border-emerald-500/30 bg-emerald-500/10';
-    badge.innerHTML = '<i data-lucide="wifi" class="w-2.5 h-2.5"></i> Connecté ✓';
+    badge.innerHTML = '<i data-lucide="wifi" class="w-2.5 h-2.5"></i> '+t('status_connected')+' ✓';
   }
   const pulse = document.getElementById('conn-wa-pulse');
   if (pulse) pulse.classList.remove('hidden');
@@ -5745,12 +6747,13 @@ function connShowConnected(data) {
   const phoneEl = document.getElementById('conn-wa-phone');
   if (phoneEl && phone) { phoneEl.textContent = '+' + phone.replace(/\D/g,'').replace(/^237/,'237 ').substring(0,15); phoneEl.classList.remove('hidden'); }
   const btn = document.getElementById('conn-wa-btn');
-  if (btn) { btn.textContent = 'Gérer'; btn.onclick = () => { document.getElementById('conn-wa-detail').classList.remove('hidden'); document.getElementById('conn-wa-detail').scrollIntoView({behavior:'smooth'}); }; btn.style.background = '#18181b'; btn.style.border = '1px solid #3f3f46'; btn.style.color = '#a1a1aa'; }
+  if (btn) { btn.textContent = 'Gérer'; btn.dataset.mode = 'manage'; btn.style.background = '#18181b'; btn.style.border = '1px solid #3f3f46'; btn.style.color = '#a1a1aa'; }
   // Detail card
   const detail = document.getElementById('conn-wa-detail');
   if (detail) detail.classList.remove('hidden');
   const detailPhone = document.getElementById('conn-wa-detail-phone');
-  if (detailPhone) detailPhone.textContent = phone ? '+' + phone : (SESSION && SESSION.instance_name ? SESSION.instance_name : 'Instance active');
+  const sess = JSON.parse(localStorage.getItem('titanex_session') || '{}');
+  if (detailPhone) detailPhone.textContent = (phone ? '+' + phone + ' — ' : '') + (sess.instance_name || 'Instance active');
   // Hide QR section
   const qrSec = document.getElementById('conn-qr-section');
   if (qrSec) qrSec.classList.add('hidden');
@@ -5771,17 +6774,27 @@ async function connLoadStats() {
   const SESSION = JSON.parse(localStorage.getItem('titanex_session') || '{}');
   const INSTANCE = SESSION.instance_name || '';
   if (!INSTANCE) return;
+  const todayEl = document.getElementById('conn-stat-today');
+  const totalEl = document.getElementById('conn-stat-total');
+  const uptimeEl = document.getElementById('conn-stat-uptime');
   try {
-    const res = await fetch('/admin/tenant-stats/' + INSTANCE);
-    const data = await res.json();
-    const todayEl = document.getElementById('conn-stat-today');
-    const totalEl = document.getElementById('conn-stat-total');
-    const uptimeEl = document.getElementById('conn-stat-uptime');
-    if (todayEl) todayEl.textContent = data.messages_today ?? data.today ?? '–';
-    if (totalEl) totalEl.textContent = data.total_messages ?? data.total ?? '–';
-    if (uptimeEl) uptimeEl.textContent = data.uptime ?? '99.9%';
+    // Load conversations to compute stats
+    const convs = await api('/admin/conversations/' + INSTANCE).catch(() => []);
+    let totalMsgs = 0;
+    let todayMsgs = 0;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    (convs || []).forEach(c => {
+      const msgs = Array.isArray(c.messages) ? c.messages.length : 0;
+      totalMsgs += msgs;
+      if (c.updated_at && c.updated_at.slice(0, 10) === todayStr) todayMsgs += msgs;
+    });
+    if (todayEl) todayEl.textContent = todayMsgs;
+    if (totalEl) totalEl.textContent = totalMsgs;
+    if (uptimeEl) uptimeEl.textContent = '99.9%';
   } catch(e) {
-    const todayEl = document.getElementById('conn-stat-today'); if(todayEl) todayEl.textContent = '–';
+    if (todayEl) todayEl.textContent = '–';
+    if (totalEl) totalEl.textContent = '–';
+    if (uptimeEl) uptimeEl.textContent = '–';
   }
 }
 
@@ -5864,7 +6877,7 @@ async function connWAConnect() {
 }
 
 async function connWADisconnect() {
-  if (!confirm('Déconnecter WhatsApp ? L\'agent ne répondra plus aux messages.')) return;
+  if (!confirm(LANG==='en'?'Disconnect WhatsApp? The agent will no longer respond to messages.':'Déconnecter WhatsApp ? L\'agent ne répondra plus aux messages.')) return;
   const SESSION = JSON.parse(localStorage.getItem('titanex_session') || '{}');
   const INSTANCE = SESSION.instance_name || '';
   try {
@@ -5878,8 +6891,8 @@ async function connWADisconnect() {
   const pulse = document.getElementById('conn-wa-pulse');
   if (pulse) pulse.classList.add('hidden');
   const btn = document.getElementById('conn-wa-btn');
-  if (btn) { btn.textContent = 'Connecter'; btn.onclick = connWAConnect; btn.style.background = '#25d366'; btn.style.border = ''; btn.style.color = 'white'; }
-  document.getElementById('conn-wa-detail').classList.add('hidden');
+  if (btn) { btn.textContent = 'Connecter'; btn.dataset.mode = 'connect'; btn.style.background = '#25d366'; btn.style.border = ''; btn.style.color = 'white'; }
+  document.getElementById('conn-wa-detail')?.classList.add('hidden');
   document.getElementById('conn-qr-section').classList.remove('hidden');
   // Reset QR
   const qrImg = document.getElementById('conn-qr-img');
@@ -5897,7 +6910,12 @@ async function connWADisconnect() {
 }
 
 function connWARescan() {
-  window.location.href = '/dashboard/qr-connect.html';
+  const inst = (JSON.parse(localStorage.getItem('titanex_session')||'{}')).instance_name || INSTANCE || '';
+  if (inst) {
+    window.open('/dashboard/qr-connect.html?instance=' + encodeURIComponent(inst), 'titanex_qr', 'width=420,height=560,scrollbars=no,resizable=no');
+  } else {
+    generateWAQR();
+  }
 }
 
 // Assistant Chat
@@ -5957,6 +6975,56 @@ function connShowToast(msg, type) {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3500);
+}
+
+// ─── Connexions: bouton dispatcher ───────────────────────────────────────────
+function connWAAction() {
+  const btn = document.getElementById('conn-wa-btn');
+  const mode = btn?.dataset.mode || 'connect';
+  if (mode === 'manage') {
+    const detail = document.getElementById('conn-wa-detail');
+    if (detail) { detail.classList.remove('hidden'); detail.scrollIntoView({ behavior: 'smooth' }); }
+  } else {
+    generateWAQR();
+  }
+}
+
+// ─── WhatsApp Test Message ────────────────────────────────────────────────────
+async function connWATest() {
+  const sess = JSON.parse(localStorage.getItem('titanex_session') || '{}');
+  let phone = sess.telephone || sess.phone || '';
+  const inst = sess.instance_name || INSTANCE || '';
+  if (!phone) {
+    phone = prompt('Entrez votre numéro WhatsApp (ex: 237652249455) :');
+    if (!phone) return;
+  }
+  const cleanPhone = phone.replace(/\D/g, '');
+  if (cleanPhone.length < 9) { showToast('Numéro invalide', 'error'); return; }
+  const testBtn = event?.target?.closest('button');
+  if (testBtn) { testBtn.disabled = true; testBtn.style.opacity = '0.5'; }
+  try {
+    const res = await fetch('/admin/send-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+      body: JSON.stringify({ instance: inst, number: cleanPhone, text: '✅ Test Titanex AI — Votre agent WhatsApp est opérationnel !' })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) showToast('✅ Message test envoyé à +' + cleanPhone);
+    else showToast('Erreur: ' + (data.error || 'Envoi échoué'), 'error');
+  } catch(e) { showToast('Erreur réseau: ' + e.message, 'error'); }
+  if (testBtn) { testBtn.disabled = false; testBtn.style.opacity = '1'; }
+}
+
+// ─── Waitlist (plateformes à venir) ──────────────────────────────────────────
+function connWaitlist(platform) {
+  const email = prompt('📬 ' + platform + ' arrive bientôt !\n\nEntrez votre email pour être notifié :');
+  if (!email || !email.includes('@')) { if (email !== null) showToast('Email invalide', 'error'); return; }
+  fetch('/admin/stores', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+    body: JSON.stringify({ instance_name: '__waitlist_' + platform.toLowerCase(), system_prompt: 'waitlist:' + email + ':' + new Date().toISOString() })
+  }).catch(() => {});
+  showToast('📬 Inscrit ! Vous serez notifié quand ' + platform + ' sera disponible.');
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
@@ -6091,22 +7159,32 @@ Ne répète jamais le même message. Adapte chaque réponse au contexte du clien
   showToast('Prompt réinitialisé');
 }
 
-function saveSettings() {
-  const stored = JSON.parse(localStorage.getItem('titanex_settings_' + INSTANCE) || '{}');
-  stored.merchant_name = (document.getElementById('settings-store-name')?.value || '').trim();
-  stored.lang = document.getElementById('settings-lang')?.value || 'fr';
-  stored.system_prompt = (document.getElementById('settings-prompt')?.value || '').trim();
+async function saveSettings() {
+  var btn = document.getElementById('settings-save-btn');
+  if (!btn) btn = event && event.target ? event.target.closest('button') : null;
+  if (btn) { btn.disabled=true; btn.style.background='#9ca3af'; btn.style.cursor='not-allowed'; btn.textContent='Sauvegarde...'; }
+  var storeName = (document.getElementById('settings-store-name')?.value || '').trim();
+  var lang = document.getElementById('settings-lang')?.value || 'fr';
+  var prompt = (document.getElementById('settings-prompt')?.value || '').trim();
+  var stored = JSON.parse(localStorage.getItem('titanex_settings_' + INSTANCE) || '{}');
+  stored.merchant_name = storeName; stored.lang = lang; stored.system_prompt = prompt;
   localStorage.setItem('titanex_settings_' + INSTANCE, JSON.stringify(stored));
-  // Attempt API save
-  if (SESSION?.id || SESSION?.tenant_id) {
-    const tid = SESSION.id || SESSION.tenant_id;
-    fetch('/admin/tenant/' + tid, {
-      method:'PUT',
-      headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
-      body: JSON.stringify({ merchant_name: stored.merchant_name, system_prompt: stored.system_prompt })
-    }).catch(() => {});
+  try {
+    if (SESSION?.id || SESSION?.tenant_id) {
+      var tid = SESSION.id || SESSION.tenant_id;
+      var r = await fetch('/admin/tenant/' + tid, {
+        method:'PUT',
+        headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
+        body: JSON.stringify({ merchant_name: storeName, preferred_lang: lang, system_prompt: prompt })
+      });
+      if (!r.ok) { var e2=await r.json().catch(function(){return{}}); throw new Error(e2.error||e2.message||'Erreur serveur '+r.status); }
+    }
+    if (btn) { btn.textContent='Sauvegarde'; btn.style.background='#10b981'; btn.style.cursor='pointer'; setTimeout(function(){ btn.disabled=false; btn.textContent='Sauvegarder'; },2000); }
+    showToast('Parametres sauvegardes !');
+  } catch(e) {
+    if (btn) { btn.textContent='Erreur'; btn.style.background='#ef4444'; setTimeout(function(){ btn.disabled=false; btn.style.background='#10b981'; btn.style.cursor='pointer'; btn.textContent='Sauvegarder'; },2500); }
+    showToast('Erreur: ' + e.message, 'error');
   }
-  showToast('Paramètres sauvegardés !');
 }
 
 function saveOrgSettings() {
@@ -6200,7 +7278,7 @@ function copyInstanceKey() {
   if (!val) return showToast('Aucune clé à copier', 'error');
   navigator.clipboard.writeText(val)
     .then(() => showToast('Clé copiée !'))
-    .catch(() => showToast('Impossible de copier', 'error'));
+    .catch(() => showToast(t('msg_copy_failed'), 'error'));
 }
 
 // Notifications tab
@@ -6288,7 +7366,7 @@ function exportData() {
 }
 
 function confirmDeleteAccount() {
-  if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) return;
+  if (!confirm(LANG==='en'?'⚠️ Are you sure you want to delete your account? This action is irreversible.':'⚠️ Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) return;
   const input = prompt('Tapez DELETE pour confirmer :');
   if (input === 'DELETE') {
     localStorage.removeItem('titanex_session');
@@ -6691,7 +7769,7 @@ function escapeHtml(s) {
 
 function copyShareLink() {
   const text = 'Creez votre agent commercial WhatsApp IA et boostez vos ventes avec Titanex AI. ' + window.location.origin;
-  navigator.clipboard.writeText(text).then(() => showToast('Lien copie !')).catch(() => showToast('Impossible de copier', 'error'));
+  navigator.clipboard.writeText(text).then(() => showToast(t('msg_copied'))).catch(() => showToast(t('msg_copy_failed'), 'error'));
 }
 
 function copyReferral() {
@@ -6749,11 +7827,13 @@ function closeEditProfileModal(){
   m.classList.add('hidden');m.style.display='none';
 }
 async function saveEditProfile(){
+  var btn=document.querySelector('#edit-profile-modal button[onclick*="saveEditProfile"]') || (event && event.target ? event.target.closest('button') : null);
+  if(btn) btnLoading(btn, 'Enregistrement...');
   var token=localStorage.getItem('titanex_token');
   var prenom=document.getElementById('edit-prenom').value.trim();
   var nom=document.getElementById('edit-nom').value.trim();
   var wa=document.getElementById('edit-whatsapp').value.trim();
-  if(!prenom){showToast('Prenom requis','error');return;}
+  if(!prenom){showToast('Prenom requis','error');if(btn)btnReset(btn);return;}
   var body={prenom:prenom,nom:nom,whatsapp:wa?'+237'+wa:''};
   try{
     if(token){
@@ -6763,9 +7843,10 @@ async function saveEditProfile(){
     if(SESSION){SESSION.nom=prenom+' '+nom;SESSION.telephone=body.whatsapp;localStorage.setItem('titanex_session',JSON.stringify(SESSION));}
     var fn=document.getElementById('profile-display-name');if(fn)fn.textContent=prenom+' '+nom;
     var pd=document.getElementById('profile-phone-display');if(pd)pd.textContent=body.whatsapp||'Non renseigne';
-    closeEditProfileModal();
+    if(btn) btnSuccess(btn, 'Enregistré');
     showToast('Profil mis a jour !');
-  }catch(e){showToast(e.message||'Erreur','error');}
+    setTimeout(function(){closeEditProfileModal();},800);
+  }catch(e){if(btn)btnError(btn,'Erreur');showToast(e.message||'Erreur','error');}
 }
 
 // ─── Categories & Statuts ─────────────────────────────────────────────────────
@@ -6856,7 +7937,7 @@ function saveNewCategory(){
 function deleteCategory(id){
   var c=CAT_DATA.find(function(x){return x.id===id;});
   if(!c)return;
-  if(!confirm('Supprimer la categorie "'+c.nom+'" ?'))return;
+  if(!confirm((LANG==='en'?'Delete category "':'Supprimer la categorie "')+c.nom+'" ?'))return;
   CAT_DATA=CAT_DATA.filter(function(x){return x.id!==id;});
   saveCatData();
   showToast('Categorie supprimee');
@@ -6979,7 +8060,7 @@ function removeFromGallery(ids){
 
 function deleteSelectedGallery(){
   if(!gallerySelected.length)return;
-  if(!confirm('Supprimer '+gallerySelected.length+' media(s) ?'))return;
+  if(!confirm((LANG==='en'?'Delete ':'Supprimer ')+gallerySelected.length+' media(s) ?'))return;
   removeFromGallery(gallerySelected);
   showToast('Medias supprimes');
 }
@@ -7059,6 +8140,358 @@ document.addEventListener('DOMContentLoaded',function(){
   applyTranslations();updateLangBtn();
   var _pm=document.getElementById('add-product-modal');if(_pm){_pm.style.display='none';_pm.classList.add('hidden');}
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MA BOUTIQUE — Store Configuration
+// ═══════════════════════════════════════════════════════════════════════════════
+async function loadStoreConfig() {
+  try {
+    const token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+    const r = await fetch(API + '/api/tenant/store', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!r.ok) throw new Error('Erreur chargement');
+    const data = await r.json();
+    document.getElementById('store-shop-name').value = data.shop_name || '';
+    document.getElementById('store-description').value = data.description || '';
+    document.getElementById('store-orange').value = data.orange_money || '';
+    document.getElementById('store-mtn').value = data.mtn_momo || '';
+    document.getElementById('store-timezone').value = data.timezone || 'Africa/Douala';
+    document.getElementById('store-lang').value = data.preferred_lang || 'fr';
+    if (data.logo_url) {
+      document.getElementById('store-logo-preview').innerHTML = '<img src="' + data.logo_url + '" style="width:100%;height:100%;object-fit:cover">';
+    }
+  } catch(e) { console.warn('Store config load:', e); }
+}
+
+function handleStoreLogo(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('store-logo-preview').innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
+    document.getElementById('store-logo-preview').dataset.base64 = e.target.result;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+async function saveStoreConfig() {
+  const btn = document.getElementById('store-save-btn');
+  btnLoading(btn, 'Enregistrement...');
+  try {
+    const token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+    const logoPreview = document.getElementById('store-logo-preview');
+    const payload = {
+      shop_name: document.getElementById('store-shop-name').value.trim(),
+      description: document.getElementById('store-description').value.trim(),
+      orange_money: document.getElementById('store-orange').value.trim(),
+      mtn_momo: document.getElementById('store-mtn').value.trim(),
+      timezone: document.getElementById('store-timezone').value,
+      preferred_lang: document.getElementById('store-lang').value
+    };
+    if (logoPreview.dataset.base64) payload.logo_url = logoPreview.dataset.base64;
+    const r = await fetch(API + '/api/tenant/store', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error('Erreur sauvegarde');
+    btnSuccess(btn, 'Sauvegardé');
+    showToast('Boutique mise a jour !');
+  } catch(e) {
+    btnError(btn, 'Erreur');
+    showToast('Erreur: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ONBOARDING WIZARD (3 steps)
+// ═══════════════════════════════════════════════════════════════════════════════
+var _obStep = 1;
+
+async function checkOnboarding() {
+  try {
+    const token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+    if (!token) return;
+    const r = await fetch(API + '/api/tenant/onboarding-status', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!r.ok) return;
+    const data = await r.json();
+    if (!data.onboarding_done) showOnboardingWizard();
+  } catch(e) { console.warn('Onboarding check:', e); }
+}
+
+function showOnboardingWizard() {
+  _obStep = 1;
+  var modal = document.getElementById('onboarding-modal');
+  if (modal) { modal.style.display = 'flex'; renderOnboardingStep(); return; }
+  // Create modal
+  var m = document.createElement('div');
+  m.id = 'onboarding-modal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML = '<div style="background:#fff;border-radius:24px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:modalIn .3s ease">' +
+    '<div style="padding:28px 28px 0">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">' +
+        '<div><h2 style="font-size:20px;font-weight:800;color:#0f172a;margin:0">Bienvenue sur Titanex AI !</h2>' +
+        '<p style="font-size:13px;color:#64748b;margin:4px 0 0">Configurons votre boutique en 3 etapes rapides</p></div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">' +
+        '<div id="ob-dot-1" style="width:32px;height:32px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">1</div>' +
+        '<div id="ob-line-1" style="flex:1;height:3px;background:#e2e8f0;border-radius:2px"></div>' +
+        '<div id="ob-dot-2" style="width:32px;height:32px;border-radius:50%;background:#e2e8f0;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">2</div>' +
+        '<div id="ob-line-2" style="flex:1;height:3px;background:#e2e8f0;border-radius:2px"></div>' +
+        '<div id="ob-dot-3" style="width:32px;height:32px;border-radius:50%;background:#e2e8f0;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">3</div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="ob-body" style="padding:0 28px"></div>' +
+    '<div id="ob-footer" style="padding:20px 28px 28px;display:flex;justify-content:space-between;gap:12px"></div>' +
+  '</div>';
+  document.body.appendChild(m);
+  renderOnboardingStep();
+}
+
+function renderOnboardingStep() {
+  var body = document.getElementById('ob-body');
+  var footer = document.getElementById('ob-footer');
+  // Update progress dots
+  for (var i = 1; i <= 3; i++) {
+    var dot = document.getElementById('ob-dot-' + i);
+    if (i < _obStep) { dot.style.background = '#10b981'; dot.style.color = '#fff'; dot.innerHTML = '&#10003;'; }
+    else if (i === _obStep) { dot.style.background = '#10b981'; dot.style.color = '#fff'; dot.textContent = i; }
+    else { dot.style.background = '#e2e8f0'; dot.style.color = '#94a3b8'; dot.textContent = i; }
+    if (i < 3) {
+      var line = document.getElementById('ob-line-' + i);
+      line.style.background = i < _obStep ? '#10b981' : '#e2e8f0';
+    }
+  }
+  var INP = 'width:100%;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;font-size:15px;color:#0f172a;outline:none;font-family:inherit;box-sizing:border-box';
+  if (_obStep === 1) {
+    body.innerHTML = '<div style="display:flex;flex-direction:column;gap:16px">' +
+      '<div style="text-align:center;margin-bottom:8px"><span style="font-size:36px">🏪</span><h3 style="font-size:17px;font-weight:700;color:#0f172a;margin:8px 0 4px">Configurez votre boutique</h3><p style="font-size:13px;color:#64748b">Informations essentielles pour demarrer</p></div>' +
+      '<div><label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Nom de la boutique *</label><input type="text" id="ob-shop-name" placeholder="Ex: Boutique Mode Douala" style="' + INP + '"></div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
+        '<div><label style="font-size:13px;font-weight:600;color:#334155;display:flex;align-items:center;gap:4px;margin-bottom:6px"><span>🟠</span> Orange Money</label><input type="tel" id="ob-orange" placeholder="6XXXXXXXX" style="' + INP + '"></div>' +
+        '<div><label style="font-size:13px;font-weight:600;color:#334155;display:flex;align-items:center;gap:4px;margin-bottom:6px"><span>🟡</span> MTN MoMo</label><input type="tel" id="ob-mtn" placeholder="6XXXXXXXX" style="' + INP + '"></div>' +
+      '</div>' +
+      '<div><label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Fuseau horaire</label><select id="ob-timezone" style="' + INP + ';cursor:pointer;background:#fff"><option value="Africa/Douala">Africa/Douala (UTC+1)</option><option value="Africa/Lagos">Africa/Lagos (UTC+1)</option><option value="Africa/Abidjan">Africa/Abidjan (UTC+0)</option><option value="Europe/Paris">Europe/Paris (UTC+1)</option><option value="America/New_York">America/New_York (UTC-5)</option></select></div>' +
+    '</div>';
+    footer.innerHTML = '<div></div><button onclick="obNext()" style="padding:12px 32px;border-radius:14px;border:none;background:#10b981;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(16,185,129,.25)">Suivant →</button>';
+  } else if (_obStep === 2) {
+    body.innerHTML = '<div style="display:flex;flex-direction:column;gap:16px">' +
+      '<div style="text-align:center;margin-bottom:8px"><span style="font-size:36px">📦</span><h3 style="font-size:17px;font-weight:700;color:#0f172a;margin:8px 0 4px">Ajoutez votre premier produit</h3><p style="font-size:13px;color:#64748b">Vous pourrez en ajouter d\'autres plus tard</p></div>' +
+      '<div><label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Nom du produit *</label><input type="text" id="ob-prod-name" placeholder="Ex: Nike Air Max 42" style="' + INP + '"></div>' +
+      '<div><label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Prix (FCFA)</label><input type="number" id="ob-prod-price" placeholder="Ex: 15000" style="' + INP + '"></div>' +
+      '<div><label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Description</label><textarea id="ob-prod-desc" rows="3" placeholder="Decrivez votre produit..." style="' + INP + ';resize:vertical"></textarea></div>' +
+      '<div><label style="font-size:13px;font-weight:600;color:#334155;display:block;margin-bottom:6px">Image (optionnel)</label><input type="file" id="ob-prod-img" accept="image/*" style="font-size:13px;color:#64748b"></div>' +
+    '</div>';
+    footer.innerHTML = '<button onclick="obPrev()" style="padding:12px 24px;border-radius:14px;border:2px solid #e2e8f0;background:#fff;color:#374151;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">← Precedent</button><button onclick="obNext()" style="padding:12px 32px;border-radius:14px;border:none;background:#10b981;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(16,185,129,.25)">Suivant →</button>';
+  } else if (_obStep === 3) {
+    body.innerHTML = '<div style="display:flex;flex-direction:column;gap:16px;align-items:center">' +
+      '<span style="font-size:36px">📱</span><h3 style="font-size:17px;font-weight:700;color:#0f172a;margin:0">Connectez WhatsApp</h3><p style="font-size:13px;color:#64748b;text-align:center">Scannez le QR code avec votre WhatsApp pour activer l\'agent IA</p>' +
+      '<div id="ob-qr-container" style="width:260px;height:260px;background:#f8fafc;border-radius:16px;display:flex;align-items:center;justify-content:center;border:2px solid #e2e8f0"><div style="width:28px;height:28px;border:3px solid #10b981;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite"></div></div>' +
+      '<p id="ob-qr-status" style="font-size:13px;color:#64748b;text-align:center">Chargement du QR code...</p>' +
+    '</div>';
+    footer.innerHTML = '<button onclick="obPrev()" style="padding:12px 24px;border-radius:14px;border:2px solid #e2e8f0;background:#fff;color:#374151;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">← Precedent</button><button onclick="obFinish()" id="ob-finish-btn" style="padding:12px 32px;border-radius:14px;border:none;background:#10b981;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(16,185,129,.25)">Terminer !</button>';
+    loadOnboardingQR();
+  }
+}
+
+async function obNext() {
+  if (_obStep === 1) {
+    var shopName = document.getElementById('ob-shop-name').value.trim();
+    if (!shopName) return showToast('Nom de boutique requis', 'error');
+    try {
+      var token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+      var r = await fetch(API + '/api/tenant/store', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          shop_name: shopName,
+          orange_money: document.getElementById('ob-orange').value.trim(),
+          mtn_momo: document.getElementById('ob-mtn').value.trim(),
+          timezone: document.getElementById('ob-timezone').value
+        })
+      });
+      if (!r.ok) throw new Error('Erreur serveur ' + r.status);
+    } catch(e) { showToast('Erreur de sauvegarde, réessayez', 'error'); return; }
+  } else if (_obStep === 2) {
+    var prodName = document.getElementById('ob-prod-name').value.trim();
+    if (!prodName) return showToast('Nom du produit requis', 'error');
+    try {
+      var token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+      var imgFile = document.getElementById('ob-prod-img').files[0];
+      var imgUrl = null;
+      if (imgFile) {
+        imgUrl = await new Promise(function(resolve) {
+          var reader = new FileReader();
+          reader.onload = function(e) { resolve(e.target.result); };
+          reader.readAsDataURL(imgFile);
+        });
+      }
+      var r = await fetch(API + '/api/tenant/catalogue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          nom: prodName,
+          prix: parseFloat(document.getElementById('ob-prod-price').value) || 0,
+          description: document.getElementById('ob-prod-desc').value.trim(),
+          image_url: imgUrl, stock: 100
+        })
+      });
+      if (!r.ok) throw new Error('Erreur serveur ' + r.status);
+    } catch(e) { showToast('Erreur de sauvegarde, réessayez', 'error'); return; }
+  }
+  _obStep++;
+  renderOnboardingStep();
+}
+
+function obPrev() { if (_obStep > 1) { _obStep--; renderOnboardingStep(); } }
+
+async function loadOnboardingQR() {
+  try {
+    var instance = INSTANCE || SESSION?.instance_name;
+    if (!instance) { document.getElementById('ob-qr-status').textContent = 'Instance non configuree'; return; }
+    var r = await fetch(API + '/admin/qr/' + instance);
+    var data = await r.json();
+    var container = document.getElementById('ob-qr-container');
+    if (data.base64) {
+      container.innerHTML = '<img src="' + data.base64 + '" style="width:240px;height:240px;border-radius:8px">';
+      document.getElementById('ob-qr-status').textContent = 'Scannez ce QR code avec WhatsApp';
+    } else {
+      container.innerHTML = '<div style="text-align:center"><span style="font-size:28px">✅</span><p style="font-size:14px;font-weight:600;color:#059669;margin:8px 0 0">WhatsApp connecte !</p></div>';
+      document.getElementById('ob-qr-status').textContent = 'Votre WhatsApp est deja connecte';
+    }
+  } catch(e) {
+    document.getElementById('ob-qr-status').textContent = 'Erreur chargement QR. Vous pourrez le connecter plus tard.';
+  }
+}
+
+async function obFinish() {
+  var btn = document.getElementById('ob-finish-btn');
+  btn.textContent = '...'; btn.disabled = true;
+  try {
+    var token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+    var r = await fetch(API + '/api/tenant/onboarding-done', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+    });
+    if (!r.ok) throw new Error('Erreur serveur ' + r.status);
+  } catch(e) {
+    showToast('Erreur lors de la finalisation, réessayez', 'error');
+    btn.textContent = 'Terminer !'; btn.disabled = false;
+    return;
+  }
+  document.getElementById('onboarding-modal').style.display = 'none';
+  launchConfetti();
+  showToast('Bienvenue ! Votre boutique est prete !');
+  _rendered.catalogue = false;
+  loadCatalogue();
+}
+
+function launchConfetti() {
+  var colors = ['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
+  var container = document.createElement('div');
+  container.style.cssText = 'position:fixed;inset:0;z-index:99999;pointer-events:none;overflow:hidden';
+  document.body.appendChild(container);
+  for (var i = 0; i < 80; i++) {
+    var c = document.createElement('div');
+    var color = colors[Math.floor(Math.random() * colors.length)];
+    var left = Math.random() * 100;
+    var delay = Math.random() * 500;
+    var size = Math.random() * 8 + 4;
+    c.style.cssText = 'position:absolute;top:-10px;left:' + left + '%;width:' + size + 'px;height:' + size + 'px;background:' + color + ';border-radius:' + (Math.random() > 0.5 ? '50%' : '2px') + ';animation:confettiFall ' + (Math.random() * 2 + 2) + 's ease-out ' + delay + 'ms forwards';
+    container.appendChild(c);
+  }
+  if (!document.getElementById('confetti-style')) {
+    var style = document.createElement('style');
+    style.id = 'confetti-style';
+    style.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(' + (Math.random()*720) + 'deg);opacity:0}}';
+    document.head.appendChild(style);
+  }
+  setTimeout(function() { container.remove(); }, 4000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SALES STATISTICS — Dashboard Charts
+// ═══════════════════════════════════════════════════════════════════════════════
+var _statsChart1 = null, _statsChart2 = null;
+
+async function loadTenantStats() {
+  try {
+    var token = SESSION?.token || SESSION?.access_token || SESSION?.jwt || '';
+    var r = await fetch(API + '/api/tenant/stats', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!r.ok) return;
+    var stats = await r.json();
+    renderDashboardStats(stats);
+  } catch(e) { console.warn('Stats load:', e); }
+}
+
+function renderDashboardStats(stats) {
+  var container = document.getElementById('dashboard-stats-section');
+  if (!container) return;
+  container.classList.remove('hidden');
+
+  // Sales chart
+  var salesLabels = Object.keys(stats.sales_by_day || {}).map(function(d) {
+    return new Date(d).toLocaleDateString('fr-FR', { weekday: 'short' });
+  });
+  var salesData = Object.values(stats.sales_by_day || {});
+
+  var convsLabels = Object.keys(stats.convs_by_day || {}).map(function(d) {
+    return new Date(d).toLocaleDateString('fr-FR', { weekday: 'short' });
+  });
+  var convsData = Object.values(stats.convs_by_day || {});
+
+  // Update stat cards
+  var el;
+  el = document.getElementById('stat-total-revenue'); if (el) el.textContent = (stats.total_revenue || 0).toLocaleString() + ' FCFA';
+  el = document.getElementById('stat-total-orders'); if (el) el.textContent = stats.total_orders || 0;
+  el = document.getElementById('stat-conversion-rate'); if (el) el.textContent = (stats.conversion_rate || 0) + '%';
+  el = document.getElementById('stat-best-day'); if (el) el.textContent = stats.best_day ? new Date(stats.best_day.date).toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'short' }) + ' (' + (stats.best_day.amount || 0).toLocaleString() + ' FCFA)' : 'Aucune vente';
+
+  // Top 3 products
+  var topEl = document.getElementById('stat-top-products');
+  if (topEl && stats.top_products) {
+    topEl.innerHTML = stats.top_products.length === 0 ? '<p style="font-size:13px;color:#94a3b8">Aucune donnee</p>' :
+      stats.top_products.map(function(p, i) {
+        var medals = ['🥇','🥈','🥉'];
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid #f1f5f9"><span style="font-size:18px">' + medals[i] + '</span><span style="font-size:14px;font-weight:600;color:#0f172a;flex:1">' + escapeHtml(p.nom) + '</span><span style="font-size:12px;color:#64748b">' + p.mentions + ' mentions</span></div>';
+      }).join('');
+  }
+
+  // Draw Chart.js charts
+  if (typeof Chart === 'undefined') return;
+
+  // Sales bar chart
+  var ctx1 = document.getElementById('chart-sales-7d');
+  if (ctx1) {
+    if (_statsChart1) _statsChart1.destroy();
+    _statsChart1 = new Chart(ctx1.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: salesLabels,
+        datasets: [{ label: 'Ventes (FCFA)', data: salesData, backgroundColor: 'rgba(16,185,129,0.7)', borderRadius: 6, borderSkipped: false }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 } } }, x: { ticks: { font: { size: 11 } } } } }
+    });
+  }
+
+  // Conversations line chart
+  var ctx2 = document.getElementById('chart-convs-7d');
+  if (ctx2) {
+    if (_statsChart2) _statsChart2.destroy();
+    _statsChart2 = new Chart(ctx2.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: convsLabels,
+        datasets: [{ label: 'Conversations', data: convsData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#3b82f6' }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 }, stepSize: 1 } }, x: { ticks: { font: { size: 11 } } } } }
+    });
+  }
+}
 </script>
 </body>
 </html>

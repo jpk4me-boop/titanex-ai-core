@@ -18,56 +18,57 @@
 </head><body>
 <div class="card">
   <div class="logo"><div class="logo-txt">Titanex <em>AI</em></div></div>
+  <div style="text-align:right;margin-bottom:4px"><button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:4px 10px;border-radius:6px;border:1px solid var(--br);background:var(--s2);color:var(--t2);font-size:11px;font-weight:700;cursor:pointer">FR</button></div>
   <div id="msg" class="msg"></div>
 
   <div id="step1">
     <div class="progress"><div class="prog-dot on"></div><div class="prog-dot"></div><div class="prog-dot"></div></div>
-    <div class="step-title">Votre profil</div>
-    <div class="step-sub">Personnalisez votre agent IA WhatsApp</div>
+    <div class="step-title" data-i18n="setup_step1_title">Votre profil</div>
+    <div class="step-sub" data-i18n="setup_step1_sub">Personnalisez votre agent IA WhatsApp</div>
     <div class="row2">
-      <div class="fld"><label>Prenom *</label><input id="s-prenom" placeholder="Amadou"></div>
-      <div class="fld"><label>Nom *</label><input id="s-nom" placeholder="Diallo"></div>
+      <div class="fld"><label data-i18n="setup_firstname">Prenom *</label><input id="s-prenom" placeholder="Amadou" data-i18n-placeholder="setup_ph_firstname"></div>
+      <div class="fld"><label data-i18n="setup_lastname">Nom *</label><input id="s-nom" placeholder="Diallo" data-i18n-placeholder="setup_ph_lastname"></div>
     </div>
-    <div class="fld"><label>Telephone WhatsApp *</label><input id="s-tel" placeholder="237672482763" type="tel"></div>
-    <div class="fld"><label>Pays</label>
+    <div class="fld"><label data-i18n="setup_phone">Telephone WhatsApp *</label><input id="s-tel" placeholder="237672482763" data-i18n-placeholder="setup_ph_phone" type="tel"></div>
+    <div class="fld"><label data-i18n="setup_country">Pays</label>
       <select id="s-pays">
-        <option value="CM">Cameroun</option><option value="CI">Cote d Ivoire</option>
-        <option value="SN">Senegal</option><option value="CG">Congo</option>
-        <option value="CD">RD Congo</option><option value="TG">Togo</option>
-        <option value="BJ">Benin</option><option value="FR">France</option>
+        <option value="CM" data-i18n="setup_country_CM">Cameroun</option><option value="CI" data-i18n="setup_country_CI">Cote d Ivoire</option>
+        <option value="SN" data-i18n="setup_country_SN">Senegal</option><option value="CG" data-i18n="setup_country_CG">Congo</option>
+        <option value="CD" data-i18n="setup_country_CD">RD Congo</option><option value="TG" data-i18n="setup_country_TG">Togo</option>
+        <option value="BJ" data-i18n="setup_country_BJ">Benin</option><option value="FR" data-i18n="setup_country_FR">France</option>
       </select>
     </div>
-    <button class="btn-main" onclick="goStep2()">Continuer</button>
+    <button class="btn-main" onclick="goStep2()" data-i18n="setup_continue">Continuer</button>
   </div>
 
   <div id="step2" style="display:none">
     <div class="progress"><div class="prog-dot"></div><div class="prog-dot on"></div><div class="prog-dot"></div></div>
-    <div class="step-title">Votre boutique</div>
-    <div class="step-sub">Ces infos configurent votre agent IA</div>
-    <div class="fld"><label>Nom de votre boutique *</label><input id="s-boutique" placeholder="Ma Super Boutique"></div>
-    <div class="fld"><label>Type de boutique *</label>
+    <div class="step-title" data-i18n="setup_step2_title">Votre boutique</div>
+    <div class="step-sub" data-i18n="setup_step2_sub">Ces infos configurent votre agent IA</div>
+    <div class="fld"><label data-i18n="setup_shop_name">Nom de votre boutique *</label><input id="s-boutique" placeholder="Ma Super Boutique" data-i18n-placeholder="setup_ph_shop"></div>
+    <div class="fld"><label data-i18n="setup_shop_type">Type de boutique *</label>
       <select id="s-type">
-        <option value="">-- Choisir --</option>
-        <option>Artisanat et accessoires</option>
-        <option>Mode et vetements</option>
-        <option>Cosmetiques et beaute</option>
-        <option>Alimentation</option>
-        <option>Electronique</option>
-        <option>Services</option>
-        <option>Autre</option>
+        <option value="" data-i18n="setup_type_choose">-- Choisir --</option>
+        <option data-i18n="setup_type_craft">Artisanat et accessoires</option>
+        <option data-i18n="setup_type_fashion">Mode et vetements</option>
+        <option data-i18n="setup_type_beauty">Cosmetiques et beaute</option>
+        <option data-i18n="setup_type_food">Alimentation</option>
+        <option data-i18n="setup_type_electronics">Electronique</option>
+        <option data-i18n="setup_type_services">Services</option>
+        <option data-i18n="setup_type_other">Autre</option>
       </select>
     </div>
-    <div class="fld"><label>Description de votre activite</label>
-      <textarea id="s-desc" rows="3" placeholder="Ex: Boutique en ligne au Cameroun..."></textarea>
+    <div class="fld"><label data-i18n="setup_shop_desc">Description de votre activite</label>
+      <textarea id="s-desc" rows="3" placeholder="Ex: Boutique en ligne au Cameroun..." data-i18n-placeholder="setup_ph_desc"></textarea>
     </div>
-    <button class="btn-main" onclick="goStep3()">Continuer</button>
-    <button class="btn-ghost" onclick="goStep(1)">Retour</button>
+    <button class="btn-main" onclick="goStep3()" data-i18n="setup_continue">Continuer</button>
+    <button class="btn-ghost" onclick="goStep(1)" data-i18n="setup_back">Retour</button>
   </div>
 
   <div id="step3" style="display:none">
     <div class="progress"><div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot on"></div></div>
-    <div class="step-title">Choisir votre plan</div>
-    <div class="step-sub">7 jours d essai gratuit - sans carte bancaire</div>
+    <div class="step-title" data-i18n="setup_step3_title">Choisir votre plan</div>
+    <div class="step-sub" data-i18n="setup_step3_sub">7 jours d essai gratuit - sans carte bancaire</div>
     <div class="plan-grid">
       <div class="plan-card" id="plan-starter" onclick="selectPlan('starter')">
         <div class="plan-name">Starter</div><div class="plan-price">9 900 F</div><div class="plan-desc">1 agent</div>
@@ -79,11 +80,23 @@
         <div class="plan-name">Business</div><div class="plan-price">49 900 F</div><div class="plan-desc">5 agents</div>
       </div>
     </div>
-    <button class="btn-main" id="btn-finish" onclick="finishSetup()">Lancer mon agent IA</button>
-    <button class="btn-ghost" onclick="goStep(2)">Retour</button>
+    <button class="btn-main" id="btn-finish" onclick="finishSetup()" data-i18n="setup_launch">Lancer mon agent IA</button>
+    <button class="btn-ghost" onclick="goStep(2)" data-i18n="setup_back">Retour</button>
   </div>
 </div>
 
+<script>
+var TRANSLATIONS={
+fr:{setup_step1_title:"Votre profil",setup_step1_sub:"Personnalisez votre agent IA WhatsApp",setup_firstname:"Prenom *",setup_lastname:"Nom *",setup_phone:"Telephone WhatsApp *",setup_country:"Pays",setup_continue:"Continuer",setup_step2_title:"Votre boutique",setup_step2_sub:"Ces infos configurent votre agent IA",setup_shop_name:"Nom de votre boutique *",setup_shop_type:"Type de boutique *",setup_shop_desc:"Description de votre activite",setup_step3_title:"Choisir votre plan",setup_step3_sub:"7 jours d'essai gratuit — sans carte bancaire",setup_launch:"Lancer mon agent IA",setup_back:"Retour",setup_ph_firstname:"Amadou",setup_ph_lastname:"Diallo",setup_ph_phone:"237672482763",setup_ph_shop:"Ma Super Boutique",setup_ph_desc:"Ex: Boutique en ligne au Cameroun...",setup_type_choose:"-- Choisir --",setup_type_craft:"Artisanat et accessoires",setup_type_fashion:"Mode et vetements",setup_type_beauty:"Cosmetiques et beaute",setup_type_food:"Alimentation",setup_type_electronics:"Electronique",setup_type_services:"Services",setup_type_other:"Autre",setup_country_CM:"Cameroun",setup_country_CI:"Cote d Ivoire",setup_country_SN:"Senegal",setup_country_CG:"Congo",setup_country_CD:"RD Congo",setup_country_TG:"Togo",setup_country_BJ:"Benin",setup_country_FR:"France",error_fill_fields:"Remplissez tous les champs",error_fill_shop:"Remplissez nom et type de boutique",msg_profile_ok:"Profil configure ! Connexion WhatsApp...",error_retry:"Erreur, reessayez"},
+en:{setup_step1_title:"Your profile",setup_step1_sub:"Customize your WhatsApp AI agent",setup_firstname:"First name *",setup_lastname:"Last name *",setup_phone:"WhatsApp number *",setup_country:"Country",setup_continue:"Continue",setup_step2_title:"Your store",setup_step2_sub:"This info configures your AI agent",setup_shop_name:"Your store name *",setup_shop_type:"Store type *",setup_shop_desc:"Describe your business",setup_step3_title:"Choose your plan",setup_step3_sub:"7-day free trial — no credit card",setup_launch:"Launch my AI agent",setup_back:"Back",setup_ph_firstname:"John",setup_ph_lastname:"Doe",setup_ph_phone:"237672482763",setup_ph_shop:"My Store",setup_ph_desc:"Ex: Online shop in Cameroon...",setup_type_choose:"-- Choose --",setup_type_craft:"Crafts and accessories",setup_type_fashion:"Fashion and clothing",setup_type_beauty:"Cosmetics and beauty",setup_type_food:"Food",setup_type_electronics:"Electronics",setup_type_services:"Services",setup_type_other:"Other",setup_country_CM:"Cameroon",setup_country_CI:"Ivory Coast",setup_country_SN:"Senegal",setup_country_CG:"Congo",setup_country_CD:"DR Congo",setup_country_TG:"Togo",setup_country_BJ:"Benin",setup_country_FR:"France",error_fill_fields:"Please fill in all fields",error_fill_shop:"Please fill in store name and type",msg_profile_ok:"Profile configured! Connecting WhatsApp...",error_retry:"Error, please retry"}
+};
+var LANG=localStorage.getItem('titanex_lang')||'fr';
+function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
+function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+function applyTranslations(){document.querySelectorAll('[data-i18n]').forEach(function(el){var key=el.getAttribute('data-i18n');var val=t(key);if(el.tagName==='INPUT'||el.tagName==='TEXTAREA')el.placeholder=val;else if(el.tagName==='OPTION')el.textContent=val;else el.textContent=val;});document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){el.placeholder=t(el.getAttribute('data-i18n-placeholder'));});}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
+</script>
 <script>
 var API = window.location.protocol + '//' + window.location.hostname;
 var PLAN = 'pro';
@@ -94,8 +107,8 @@ if (!token) { location.href = '/dashboard/login.html'; }
 
 function showMsg(m,t){var e=document.getElementById('msg');e.textContent=m;e.className='msg '+t;e.style.display='block';}
 function goStep(n){[1,2,3].forEach(function(i){document.getElementById('step'+i).style.display=n===i?'block':'none';});document.getElementById('msg').style.display='none';}
-function goStep2(){var p=document.getElementById('s-prenom').value.trim(),n=document.getElementById('s-nom').value.trim(),t=document.getElementById('s-tel').value.trim();if(!p||!n||!t){showMsg('Remplissez tous les champs','err');return;}goStep(2);}
-function goStep3(){var b=document.getElementById('s-boutique').value.trim(),t=document.getElementById('s-type').value;if(!b||!t){showMsg('Remplissez nom et type de boutique','err');return;}goStep(3);}
+function goStep2(){var p=document.getElementById('s-prenom').value.trim(),n=document.getElementById('s-nom').value.trim(),te=document.getElementById('s-tel').value.trim();if(!p||!n||!te){showMsg(t('error_fill_fields'),'err');return;}goStep(2);}
+function goStep3(){var b=document.getElementById('s-boutique').value.trim(),ty=document.getElementById('s-type').value;if(!b||!ty){showMsg(t('error_fill_shop'),'err');return;}goStep(3);}
 function selectPlan(p){PLAN=p;document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('on');});document.getElementById('plan-'+p).classList.add('on');}
 
 function finishSetup(){
@@ -113,11 +126,11 @@ function finishSetup(){
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
     body:JSON.stringify({nom:prenom+' '+nom+' - '+boutique,telephone:tel,plan:PLAN,system_prompt:prompt})
   }).then(function(r){return r.json();}).then(function(d){
-    btn.disabled=false;btn.innerHTML='Lancer mon agent IA';
+    btn.disabled=false;btn.innerHTML=t('setup_launch');
     if(d.error){showMsg(d.error,'err');return;}
-    showMsg('Profil configure ! Connexion WhatsApp...','ok');
+    showMsg(t('msg_profile_ok'),'ok');
     setTimeout(function(){location.href='/dashboard/qr-connect.html?instance='+instance;},1000);
-  }).catch(function(){btn.disabled=false;btn.innerHTML='Lancer mon agent IA';showMsg('Erreur, reessayez','err');});
+  }).catch(function(){btn.disabled=false;btn.innerHTML=t('setup_launch');showMsg(t('error_retry'),'err');});
 }
 </script>
 </body></html>

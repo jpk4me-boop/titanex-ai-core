@@ -351,19 +351,20 @@
 <body>
 
 <aside class="sidebar">
-  <div class="sidebar-label">Parametres</div>
-  <button class="nav-item active" onclick="setNav(this)"><span class="icon">👤</span> Profil</button>
-  <button class="nav-item" onclick="location.href='/dashboard/'"><span class="icon">🏠</span> Dashboard</button>
-  <button class="nav-item" onclick="setNav(this)"><span class="icon">🏢</span> Organisation</button>
-  <button class="nav-item" onclick="setNav(this)"><span class="icon">💎</span> Abonnement</button>
-  <button class="nav-item" onclick="setNav(this)"><span class="icon">🔑</span> Cles API</button>
-  <button class="nav-item" onclick="setNav(this)"><span class="icon">🔔</span> Notifications</button>
+  <div class="sidebar-label" data-i18n="nav_settings">Parametres</div>
+  <button class="nav-item active" onclick="setNav(this)"><span class="icon">👤</span> <span data-i18n="nav_profile">Profil</span></button>
+  <button class="nav-item" onclick="location.href='/dashboard/'"><span class="icon">🏠</span> <span data-i18n="nav_dashboard">Dashboard</span></button>
+  <button class="nav-item" onclick="setNav(this)"><span class="icon">🏢</span> <span data-i18n="nav_org">Organisation</span></button>
+  <button class="nav-item" onclick="setNav(this)"><span class="icon">💎</span> <span data-i18n="nav_subscription">Abonnement</span></button>
+  <button class="nav-item" onclick="setNav(this)"><span class="icon">🔑</span> <span data-i18n="nav_api_keys">Cles API</span></button>
+  <button class="nav-item" onclick="setNav(this)"><span class="icon">🔔</span> <span data-i18n="nav_notifications">Notifications</span></button>
 </aside>
 
 <main class="main">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:5px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer">FR</button></div>
   <div class="page-header">
-    <h1>Mon Profil</h1>
-    <p>Gerez vos informations personnelles et votre compte</p>
+    <h1 data-i18n="title_my_profile">Mon Profil</h1>
+    <p data-i18n="title_my_profile_sub">Gerez vos informations personnelles et votre compte</p>
   </div>
 
   <div id="loader" class="loader"><div class="spinner"></div></div>
@@ -373,15 +374,15 @@
     <div class="success-banner" id="successBanner" style="display:none">
       <span style="font-size:20px;">🎉</span>
       <div>
-        <p style="font-size:13.5px;font-weight:700;color:#15803d;margin:0;">Profil complet !</p>
-        <p style="font-size:12.5px;color:#16a34a;margin:0;">Toutes les informations sont renseignees.</p>
+        <p style="font-size:13.5px;font-weight:700;color:#15803d;margin:0;" data-i18n="msg_profile_complete">Profil complet !</p>
+        <p style="font-size:12.5px;color:#16a34a;margin:0;" data-i18n="msg_profile_complete_sub">Toutes les informations sont renseignees.</p>
       </div>
     </div>
 
     <div class="card">
       <div class="profile-banner" id="bannerEl">
         <span class="banner-text">TITANEX AI</span>
-        <button class="banner-edit-btn" onclick="openModal('Photo')">🖼️ Changer la banniere</button>
+        <button class="banner-edit-btn" onclick="openModal('Photo')">🖼️ <span data-i18n="btn_change_banner">Changer la banniere</span></button>
       </div>
       <div class="card-body">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;">
@@ -392,67 +393,67 @@
         </div>
         <h2 id="fullname" style="font-size:19px;font-weight:800;color:#0f172a;margin-bottom:10px;">—</h2>
         <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
-          <div class="info-row">✉️ <span id="emailDisplay">chargement...</span></div>
-          <div class="info-row">📞 <span id="whatsappDisplay">chargement...</span></div>
-          <div class="info-row">📅 Membre depuis <span id="memberSince">...</span></div>
+          <div class="info-row">✉️ <span id="emailDisplay" data-i18n="loading">chargement...</span></div>
+          <div class="info-row">📞 <span id="whatsappDisplay" data-i18n="loading">chargement...</span></div>
+          <div class="info-row">📅 <span data-i18n="member_since">Membre depuis</span> <span id="memberSince">...</span></div>
         </div>
         <div style="display:flex;gap:10px;margin-bottom:18px">
-          <button onclick="openModal('Infos')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#6366f1;color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(99,102,241,.3)" onmouseover="this.style.background='#4f46e5';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(99,102,241,.4)'" onmouseout="this.style.background='#6366f1';this.style.transform='none';this.style.boxShadow='0 4px 14px rgba(99,102,241,.3)'">✏️ Editer le profil</button>
-          <button onclick="openModal('MDP')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:11px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f8fafc';this.style.borderColor='#cbd5e1'" onmouseout="this.style.background='#fff';this.style.borderColor='#e2e8f0'">🔒 Changer le mot de passe</button>
+          <button onclick="openModal('Infos')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#6366f1;color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(99,102,241,.3)" onmouseover="this.style.background='#4f46e5';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(99,102,241,.4)'" onmouseout="this.style.background='#6366f1';this.style.transform='none';this.style.boxShadow='0 4px 14px rgba(99,102,241,.3)'">✏️ <span data-i18n="btn_edit_profile">Editer le profil</span></button>
+          <button onclick="openModal('MDP')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:11px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f8fafc';this.style.borderColor='#cbd5e1'" onmouseout="this.style.background='#fff';this.style.borderColor='#e2e8f0'">🔒 <span data-i18n="btn_change_password">Changer le mot de passe</span></button>
         </div>
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value" id="statCredits" style="color:#6366f1;">—</div><div class="stat-label">Credits</div></div>
-          <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-value" id="statOrgs" style="color:#0ea5e9;">1</div><div class="stat-label">Organisations</div></div>
-          <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-value" id="statAgentsActifs" style="color:#10b981;">—</div><div class="stat-label">Agents actifs</div></div>
-          <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value" id="statAgentsTotal" style="color:#f59e0b;">—</div><div class="stat-label">Agents total</div></div>
+          <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value" id="statCredits" style="color:#6366f1;">—</div><div class="stat-label" data-i18n="stat_credits">Credits</div></div>
+          <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-value" id="statOrgs" style="color:#0ea5e9;">1</div><div class="stat-label" data-i18n="stat_orgs">Organisations</div></div>
+          <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-value" id="statAgentsActifs" style="color:#10b981;">—</div><div class="stat-label" data-i18n="stat_agents_active">Agents actifs</div></div>
+          <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value" id="statAgentsTotal" style="color:#f59e0b;">—</div><div class="stat-label" data-i18n="stat_agents_total">Agents total</div></div>
         </div>
       </div>
     </div>
 
     <div class="card"><div class="card-body">
-      <div class="card-title">🏪 Boutique</div>
-      <div class="form-group"><label class="lbl">Nom de la boutique</label><input type="text" id="shopName" placeholder="Utilise comme variable {merchant_name}"/></div>
-      <div class="form-group"><label class="lbl">Langue preferee</label><select id="prefLang"><option value="fr">Francais</option><option value="en">English</option><option value="es">Espanol</option><option value="pt">Portugues</option><option value="ar">العربية</option></select></div>
+      <div class="card-title">🏪 <span data-i18n="title_shop">Boutique</span></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_shop_name">Nom de la boutique</label><input type="text" id="shopName" data-i18n-placeholder="placeholder_shop" placeholder="Utilise comme variable {merchant_name}"/></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_preferred_lang">Langue preferee</label><select id="prefLang"><option value="fr">Francais</option><option value="en">English</option><option value="es">Espanol</option><option value="pt">Portugues</option><option value="ar">العربية</option></select></div>
       <div class="form-group">
-        <label class="lbl">Logo de la boutique</label>
+        <label class="lbl" data-i18n="form_shop_logo">Logo de la boutique</label>
         <div class="logo-row">
           <div class="logo-preview" id="logoPreview">T</div>
           <div style="display:flex;gap:8px;">
-            <button class="btn-secondary" style="font-size:12.5px;padding:8px 14px;" onclick="document.getElementById('logoInput').click()">📁 Choisir</button>
+            <button class="btn-secondary" style="font-size:12.5px;padding:8px 14px;" onclick="document.getElementById('logoInput').click()">📁 <span data-i18n="btn_choose">Choisir</span></button>
             <button class="btn-ghost-red" onclick="deleteLogo()">🗑️</button>
           </div>
         </div>
         <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="uploadLogo(this)"/>
-        <p style="font-size:11.5px;color:#94a3b8;margin-top:6px;">200 × 200 px recommande</p>
+        <p style="font-size:11.5px;color:#94a3b8;margin-top:6px;" data-i18n="form_logo_hint">200 × 200 px recommande</p>
       </div>
       <div class="form-group">
-        <label class="lbl">Banniere</label>
+        <label class="lbl" data-i18n="form_banner">Banniere</label>
         <div class="banner-preview" id="bannerPreview"><span class="banner-preview-text">TITANEX AI</span></div>
         <div style="display:flex;gap:8px;">
-          <button class="btn-secondary" style="font-size:12.5px;padding:8px 14px;" onclick="document.getElementById('bannerInput').click()">🖼️ Choisir</button>
+          <button class="btn-secondary" style="font-size:12.5px;padding:8px 14px;" onclick="document.getElementById('bannerInput').click()">🖼️ <span data-i18n="btn_choose">Choisir</span></button>
           <button class="btn-ghost-red" onclick="deleteBanner()">🗑️</button>
         </div>
         <input type="file" id="bannerInput" accept="image/*" style="display:none" onchange="uploadBanner(this)"/>
       </div>
-      <div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-save" onclick="saveBoutique(this)">💾 Enregistrer</button></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-save" onclick="saveBoutique(this)">💾 <span data-i18n="btn_save">Enregistrer</span></button></div>
     </div></div>
 
     <div class="card"><div class="card-body">
       <div class="section-header">
-        <div class="card-title" style="margin-bottom:0;">🤖 Script de vente IA</div>
-        <button class="btn-secondary" style="font-size:12.5px;padding:7px 13px;" onclick="resetScript()">↺ Reinitialiser</button>
+        <div class="card-title" style="margin-bottom:0;">🤖 <span data-i18n="title_ai_script">Script de vente IA</span></div>
+        <button class="btn-secondary" style="font-size:12.5px;padding:7px 13px;" onclick="resetScript()">↺ <span data-i18n="btn_reset">Reinitialiser</span></button>
       </div>
-      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Ce script guide automatiquement votre agent IA.</p>
-      <textarea id="aiScript" rows="6" placeholder="Decrivez comment votre agent doit se comporter..."></textarea>
-      <div style="display:flex;justify-content:flex-end;margin-top:14px;"><button class="btn-save" onclick="saveBoutique(this)">💾 Enregistrer</button></div>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;" data-i18n="title_ai_script_sub">Ce script guide automatiquement votre agent IA.</p>
+      <textarea id="aiScript" rows="6" data-i18n-placeholder="placeholder_script" placeholder="Decrivez comment votre agent doit se comporter..."></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px;"><button class="btn-save" onclick="saveBoutique(this)">💾 <span data-i18n="btn_save">Enregistrer</span></button></div>
     </div></div>
 
     <div class="danger-zone">
-      <div class="card-title" style="color:#b91c1c;">⚠️ Zone de danger</div>
-      <p style="font-size:13px;color:#9f1239;margin-bottom:16px;">Ces actions sont irreversibles.</p>
+      <div class="card-title" style="color:#b91c1c;">⚠️ <span data-i18n="title_danger_zone">Zone de danger</span></div>
+      <p style="font-size:13px;color:#9f1239;margin-bottom:16px;" data-i18n="title_danger_sub">Ces actions sont irreversibles.</p>
       <div style="display:flex;gap:10px;">
-        <button class="btn-ghost-red" style="font-weight:600;" onclick="deactivateAccount()">Desactiver le compte</button>
-        <button class="btn-danger" onclick="deleteAccount()">🗑️ Supprimer definitivement</button>
+        <button class="btn-ghost-red" style="font-weight:600;" onclick="deactivateAccount()" data-i18n="btn_deactivate">Desactiver le compte</button>
+        <button class="btn-danger" onclick="deleteAccount()">🗑️ <span data-i18n="btn_delete_account">Supprimer definitivement</span></button>
       </div>
     </div>
   </div>
@@ -461,48 +462,227 @@
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;">
-      <div><h2 style="font-size:18px;font-weight:700;color:#0f172a;">⚙️ Modifier le profil</h2><p style="font-size:12.5px;color:#94a3b8;margin-top:3px;">Mettez a jour vos informations</p></div>
+      <div><h2 style="font-size:18px;font-weight:700;color:#0f172a;">⚙️ <span data-i18n="modal_edit_profile">Modifier le profil</span></h2><p style="font-size:12.5px;color:#94a3b8;margin-top:3px;" data-i18n="modal_edit_sub">Mettez a jour vos informations</p></div>
       <button onclick="closeModal()" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:17px;color:#64748b;display:flex;align-items:center;justify-content:center;">×</button>
     </div>
     <div class="modal-tabs">
-      <button class="modal-tab active" id="tab-Infos" onclick="switchTab('Infos')">👤 Infos</button>
-      <button class="modal-tab" id="tab-Photo" onclick="switchTab('Photo')">📷 Photo</button>
-      <button class="modal-tab" id="tab-MDP" onclick="switchTab('MDP')">🔒 Mot de passe</button>
+      <button class="modal-tab active" id="tab-Infos" onclick="switchTab('Infos')">👤 <span data-i18n="tab_infos">Infos</span></button>
+      <button class="modal-tab" id="tab-Photo" onclick="switchTab('Photo')">📷 <span data-i18n="tab_photo">Photo</span></button>
+      <button class="modal-tab" id="tab-MDP" onclick="switchTab('MDP')">🔒 <span data-i18n="tab_password">Mot de passe</span></button>
     </div>
     <div id="panel-Infos">
-      <div class="form-row" style="margin-bottom:14px;"><div><label class="lbl">Prenom *</label><input type="text" id="mPrenom"/></div><div><label class="lbl">Nom *</label><input type="text" id="mNom"/></div></div>
-      <div class="form-group"><label class="lbl">Email</label><input type="email" id="mEmail" disabled/><p style="font-size:11.5px;color:#94a3b8;">Non modifiable</p></div>
-      <div class="form-group"><label class="lbl">N° WhatsApp</label><input type="tel" id="mWhatsapp" placeholder="+237672482763"/></div>
-      <div class="btn-row"><button class="btn-secondary" style="flex:1;" onclick="closeModal()">Annuler</button><button class="btn-primary" style="flex:1;justify-content:center;" onclick="saveProfile(this)">💾 Enregistrer</button></div>
+      <div class="form-row" style="margin-bottom:14px;"><div><label class="lbl" data-i18n="form_firstname">Prenom *</label><input type="text" id="mPrenom"/></div><div><label class="lbl" data-i18n="form_lastname">Nom *</label><input type="text" id="mNom"/></div></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_email">Email</label><input type="email" id="mEmail" disabled/><p style="font-size:11.5px;color:#94a3b8;" data-i18n="form_email_hint">Non modifiable</p></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_whatsapp">N° WhatsApp</label><input type="tel" id="mWhatsapp" placeholder="+237672482763"/></div>
+      <div class="btn-row"><button class="btn-secondary" style="flex:1;" onclick="closeModal()" data-i18n="btn_cancel">Annuler</button><button class="btn-primary" style="flex:1;justify-content:center;" onclick="saveProfile(this)">💾 <span data-i18n="btn_save">Enregistrer</span></button></div>
     </div>
     <div id="panel-Photo" style="display:none;">
       <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8fafc;border-radius:13px;border:1px solid #e2e8f0;margin-bottom:14px;">
         <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;overflow:hidden;background-size:cover;background-position:center" id="modalAvatarPreview">?</div>
-        <div><p style="font-weight:600;font-size:13.5px;color:#1e293b;">Photo actuelle</p><p style="font-size:12px;color:#94a3b8;margin-top:3px;">JPG, PNG — Max 5 Mo</p></div>
+        <div><p style="font-weight:600;font-size:13.5px;color:#1e293b;" data-i18n="photo_current">Photo actuelle</p><p style="font-size:12px;color:#94a3b8;margin-top:3px;" data-i18n="photo_hint">JPG, PNG — Max 5 Mo</p></div>
       </div>
       <div class="upload-zone" onclick="document.getElementById('logoInput').click()" style="margin-bottom:14px;">
         <div style="font-size:28px;margin-bottom:7px;">📤</div>
-        <p style="font-size:13.5px;font-weight:600;color:#374151;">Glissez une photo ou cliquez</p>
-        <p style="font-size:12px;color:#94a3b8;margin-top:4px;">PNG, JPG jusqu'a 5 Mo</p>
+        <p style="font-size:13.5px;font-weight:600;color:#374151;" data-i18n="photo_drop">Glissez une photo ou cliquez</p>
+        <p style="font-size:12px;color:#94a3b8;margin-top:4px;" data-i18n="photo_drop_hint">PNG, JPG jusqu'a 5 Mo</p>
       </div>
-      <div><label class="lbl">Banniere de profil</label>
+      <div><label class="lbl" data-i18n="form_banner_profile">Banniere de profil</label>
         <div class="upload-zone" onclick="document.getElementById('bannerInput').click()">
           <div style="font-size:24px;margin-bottom:6px;">🖼️</div>
-          <p style="font-size:13.5px;font-weight:600;color:#374151;">Choisir une banniere</p>
+          <p style="font-size:13.5px;font-weight:600;color:#374151;" data-i18n="btn_choose_banner">Choisir une banniere</p>
         </div>
       </div>
-      <div class="btn-row" style="margin-top:16px;"><button class="btn-secondary" style="flex:1;" onclick="closeModal()">Fermer</button></div>
+      <div class="btn-row" style="margin-top:16px;"><button class="btn-secondary" style="flex:1;" onclick="closeModal()" data-i18n="btn_close">Fermer</button></div>
     </div>
     <div id="panel-MDP" style="display:none;">
-      <div class="form-group"><label class="lbl">Mot de passe actuel</label><div class="pw-wrap"><input type="password" id="curPw" placeholder="••••••••"/><button class="pw-toggle" onclick="togglePw('curPw',this)">👁️</button></div></div>
-      <div class="form-group"><label class="lbl">Nouveau mot de passe</label><div class="pw-wrap"><input type="password" id="newPw" placeholder="••••••••"/><button class="pw-toggle" onclick="togglePw('newPw',this)">👁️</button></div></div>
-      <div class="form-group"><label class="lbl">Confirmer</label><div class="pw-wrap"><input type="password" id="cfPw" placeholder="••••••••"/><button class="pw-toggle" onclick="togglePw('cfPw',this)">👁️</button></div></div>
-      <div class="warn-box">⚠️ Minimum 8 caracteres avec majuscule et chiffre</div>
-      <div class="btn-row"><button class="btn-secondary" style="flex:1;" onclick="closeModal()">Annuler</button><button class="btn-primary" style="flex:1;justify-content:center;" onclick="changePassword(this)">🔒 Modifier</button></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_current_password">Mot de passe actuel</label><div class="pw-wrap"><input type="password" id="curPw" placeholder="••••••••"/><button class="pw-toggle" onclick="togglePw('curPw',this)">👁️</button></div></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_new_password">Nouveau mot de passe</label><div class="pw-wrap"><input type="password" id="newPw" placeholder="••••••••"/><button class="pw-toggle" onclick="togglePw('newPw',this)">👁️</button></div></div>
+      <div class="form-group"><label class="lbl" data-i18n="form_confirm_password">Confirmer</label><div class="pw-wrap"><input type="password" id="cfPw" placeholder="••••••••"/><button class="pw-toggle" onclick="togglePw('cfPw',this)">👁️</button></div></div>
+      <div class="warn-box">⚠️ <span data-i18n="form_password_hint">Minimum 8 caracteres avec majuscule et chiffre</span></div>
+      <div class="btn-row"><button class="btn-secondary" style="flex:1;" onclick="closeModal()" data-i18n="btn_cancel">Annuler</button><button class="btn-primary" style="flex:1;justify-content:center;" onclick="changePassword(this)">🔒 <span data-i18n="btn_change">Modifier</span></button></div>
     </div>
   </div>
 </div>
 
+<script>
+var TRANSLATIONS={
+fr:{
+  nav_settings:"Parametres",
+  nav_profile:"Profil",
+  nav_dashboard:"Dashboard",
+  nav_org:"Organisation",
+  nav_subscription:"Abonnement",
+  nav_api_keys:"Cles API",
+  nav_notifications:"Notifications",
+  title_my_profile:"Mon Profil",
+  title_my_profile_sub:"Gerez vos informations personnelles et votre compte",
+  msg_profile_complete:"Profil complet !",
+  msg_profile_complete_sub:"Toutes les informations sont renseignees.",
+  btn_change_banner:"Changer la banniere",
+  btn_edit_profile:"Editer le profil",
+  btn_change_password:"Changer le mot de passe",
+  stat_credits:"Credits",
+  stat_orgs:"Organisations",
+  stat_agents_active:"Agents actifs",
+  stat_agents_total:"Agents total",
+  title_shop:"Boutique",
+  form_shop_name:"Nom de la boutique",
+  form_preferred_lang:"Langue preferee",
+  form_shop_logo:"Logo de la boutique",
+  btn_choose:"Choisir",
+  form_banner:"Banniere",
+  form_logo_hint:"200 × 200 px recommande",
+  title_ai_script:"Script de vente IA",
+  title_ai_script_sub:"Ce script guide automatiquement votre agent IA.",
+  btn_reset:"Reinitialiser",
+  btn_save:"Enregistrer",
+  title_danger_zone:"Zone de danger",
+  title_danger_sub:"Ces actions sont irreversibles.",
+  btn_deactivate:"Desactiver le compte",
+  btn_delete_account:"Supprimer definitivement",
+  modal_edit_profile:"Modifier le profil",
+  modal_edit_sub:"Mettez a jour vos informations",
+  tab_infos:"Infos",
+  tab_photo:"Photo",
+  tab_password:"Mot de passe",
+  form_firstname:"Prenom *",
+  form_lastname:"Nom *",
+  form_email:"Email",
+  form_email_hint:"Non modifiable",
+  form_whatsapp:"N° WhatsApp",
+  btn_cancel:"Annuler",
+  btn_close:"Fermer",
+  photo_current:"Photo actuelle",
+  photo_hint:"JPG, PNG — Max 5 Mo",
+  photo_drop:"Glissez une photo ou cliquez",
+  photo_drop_hint:"PNG, JPG jusqu'a 5 Mo",
+  form_banner_profile:"Banniere de profil",
+  btn_choose_banner:"Choisir une banniere",
+  form_current_password:"Mot de passe actuel",
+  form_new_password:"Nouveau mot de passe",
+  form_confirm_password:"Confirmer",
+  form_password_hint:"Minimum 8 caracteres avec majuscule et chiffre",
+  btn_change:"Modifier",
+  msg_profile_updated:"Profil mis a jour !",
+  msg_settings_saved:"Parametres sauvegardes !",
+  msg_logo_updated:"Logo mis a jour !",
+  msg_logo_deleted:"Logo supprime",
+  msg_banner_updated:"Banniere mise a jour !",
+  msg_banner_deleted:"Banniere supprimee",
+  msg_script_reset:"Script reinitialise",
+  msg_password_changed:"Mot de passe modifie !",
+  msg_account_deactivated:"Compte desactive",
+  msg_account_deleted:"Compte supprime",
+  error_firstname_required:"Prenom requis",
+  error_passwords_mismatch:"Les mots de passe ne correspondent pas",
+  error_password_min:"Minimum 8 caracteres",
+  error_password_wrong:"Mot de passe actuel incorrect",
+  error_fill_fields:"Remplissez tous les champs",
+  error_server:"Erreur serveur",
+  confirm_deactivate:"Desactiver votre compte ?",
+  confirm_delete:"SUPPRESSION DEFINITIVE — Toutes vos donnees seront effacees. Confirmer ?",
+  member_since:"Membre depuis",
+  loading:"chargement...",
+  placeholder_shop:"Utilise comme variable {merchant_name}",
+  placeholder_script:"Decrivez comment votre agent doit se comporter..."
+},
+en:{
+  nav_settings:"Settings",
+  nav_profile:"Profile",
+  nav_dashboard:"Dashboard",
+  nav_org:"Organization",
+  nav_subscription:"Subscription",
+  nav_api_keys:"API Keys",
+  nav_notifications:"Notifications",
+  title_my_profile:"My Profile",
+  title_my_profile_sub:"Manage your personal information and account",
+  msg_profile_complete:"Profile complete!",
+  msg_profile_complete_sub:"All information is filled in.",
+  btn_change_banner:"Change banner",
+  btn_edit_profile:"Edit profile",
+  btn_change_password:"Change password",
+  stat_credits:"Credits",
+  stat_orgs:"Organizations",
+  stat_agents_active:"Active agents",
+  stat_agents_total:"Total agents",
+  title_shop:"Store",
+  form_shop_name:"Store name",
+  form_preferred_lang:"Preferred language",
+  form_shop_logo:"Store logo",
+  btn_choose:"Choose",
+  form_banner:"Banner",
+  form_logo_hint:"200 × 200 px recommended",
+  title_ai_script:"AI Sales Script",
+  title_ai_script_sub:"This script automatically guides your AI agent.",
+  btn_reset:"Reset",
+  btn_save:"Save",
+  title_danger_zone:"Danger Zone",
+  title_danger_sub:"These actions are irreversible.",
+  btn_deactivate:"Deactivate account",
+  btn_delete_account:"Delete permanently",
+  modal_edit_profile:"Edit profile",
+  modal_edit_sub:"Update your information",
+  tab_infos:"Info",
+  tab_photo:"Photo",
+  tab_password:"Password",
+  form_firstname:"First name *",
+  form_lastname:"Last name *",
+  form_email:"Email",
+  form_email_hint:"Cannot be changed",
+  form_whatsapp:"WhatsApp number",
+  btn_cancel:"Cancel",
+  btn_close:"Close",
+  photo_current:"Current photo",
+  photo_hint:"JPG, PNG — Max 5 MB",
+  photo_drop:"Drag a photo or click",
+  photo_drop_hint:"PNG, JPG up to 5 MB",
+  form_banner_profile:"Profile banner",
+  btn_choose_banner:"Choose a banner",
+  form_current_password:"Current password",
+  form_new_password:"New password",
+  form_confirm_password:"Confirm",
+  form_password_hint:"Minimum 8 characters with uppercase and number",
+  btn_change:"Change",
+  msg_profile_updated:"Profile updated!",
+  msg_settings_saved:"Settings saved!",
+  msg_logo_updated:"Logo updated!",
+  msg_logo_deleted:"Logo deleted",
+  msg_banner_updated:"Banner updated!",
+  msg_banner_deleted:"Banner deleted",
+  msg_script_reset:"Script reset",
+  msg_password_changed:"Password changed!",
+  msg_account_deactivated:"Account deactivated",
+  msg_account_deleted:"Account deleted",
+  error_firstname_required:"First name required",
+  error_passwords_mismatch:"Passwords do not match",
+  error_password_min:"Minimum 8 characters",
+  error_password_wrong:"Current password is incorrect",
+  error_fill_fields:"Please fill in all fields",
+  error_server:"Server error",
+  confirm_deactivate:"Deactivate your account?",
+  confirm_delete:"PERMANENT DELETION — All your data will be erased. Confirm?",
+  member_since:"Member since",
+  loading:"loading...",
+  placeholder_shop:"Used as variable {merchant_name}",
+  placeholder_script:"Describe how your agent should behave..."
+}
+};
+var LANG=localStorage.getItem('titanex_lang')||'fr';
+function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
+function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');var val=t(key);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else{el.textContent=val;}
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+    el.placeholder=t(el.getAttribute('data-i18n-placeholder'));
+  });
+}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
+</script>
 <script>
 var TOKEN = localStorage.getItem('titanex_token');
 var PROFILE = {};
@@ -538,12 +718,14 @@ function switchTab(tab){
   });
 }
 function togglePw(id,btn){var el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁️':'🙈';}
-function btnLoad(btn,on){if(!btn)return;if(on){btn._t=btn.textContent;btn.textContent='...';btn.disabled=true;}else{btn.textContent=btn._t||'OK';btn.disabled=false;}}
+function btnLoad(btn,on){if(!btn)return;if(on){btn._t=btn.innerHTML;btn.innerHTML='...';btn.disabled=true;}else{btn.innerHTML=btn._t||'OK';btn.disabled=false;}}
 
 function formatDate(str){
   if(!str)return'—';
   var d=new Date(str);
-  var m=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  var mFR=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+  var mEN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var m=LANG==='en'?mEN:mFR;
   return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear();
 }
 
@@ -575,7 +757,9 @@ function populateUI(d){
   if(d.banner_url){document.getElementById('bannerEl').style.backgroundImage='url('+d.banner_url+')';}
   document.getElementById('fullname').textContent=((d.prenom||'')+' '+(d.nom||'')).trim()||'—';
   document.getElementById('emailDisplay').textContent=d.email||'—';
+  document.getElementById('emailDisplay').removeAttribute('data-i18n');
   document.getElementById('whatsappDisplay').textContent=d.whatsapp||'—';
+  document.getElementById('whatsappDisplay').removeAttribute('data-i18n');
   document.getElementById('memberSince').textContent=formatDate(d.member_since);
   document.getElementById('statCredits').textContent=(d.credits||0).toLocaleString('fr-FR');
   document.getElementById('statAgentsActifs').textContent=d.agents_actifs||0;
@@ -591,12 +775,12 @@ function populateUI(d){
 async function saveProfile(btn){
   btnLoad(btn,true);
   var body={prenom:document.getElementById('mPrenom').value.trim(),nom:document.getElementById('mNom').value.trim(),whatsapp:document.getElementById('mWhatsapp').value.trim()};
-  if(!body.prenom){toast('Prenom requis','err');btnLoad(btn,false);return;}
+  if(!body.prenom){toast(t('error_firstname_required'),'err');btnLoad(btn,false);return;}
   try{
     var r=await fetch('/api/tenant/profile',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(body)});
-    if(!r.ok){var e=await r.json();throw new Error(e.error||'Erreur');}
-    PROFILE=Object.assign(PROFILE,body);populateUI(PROFILE);closeModal();toast('Profil mis a jour !');
-  }catch(e){toast(e.message||'Erreur','err');}
+    if(!r.ok){var e=await r.json();throw new Error(e.error||t('error_server'));}
+    PROFILE=Object.assign(PROFILE,body);populateUI(PROFILE);closeModal();toast(t('msg_profile_updated'));
+  }catch(e){toast(e.message||t('error_server'),'err');}
   btnLoad(btn,false);
 }
 
@@ -605,25 +789,25 @@ async function saveBoutique(btn){
   var body={shop_name:document.getElementById('shopName').value.trim(),preferred_lang:document.getElementById('prefLang').value,ai_script:document.getElementById('aiScript').value.trim()};
   try{
     var r=await fetch('/api/tenant/shop',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(body)});
-    if(!r.ok){var e=await r.json();throw new Error(e.error||'Erreur');}
-    toast('Parametres sauvegardes !');
-  }catch(e){toast(e.message||'Erreur','err');}
+    if(!r.ok){var e=await r.json();throw new Error(e.error||t('error_server'));}
+    toast(t('msg_settings_saved'));
+  }catch(e){toast(e.message||t('error_server'),'err');}
   btnLoad(btn,false);
 }
 
 async function changePassword(btn){
   var cur=document.getElementById('curPw').value,nw=document.getElementById('newPw').value,cf=document.getElementById('cfPw').value;
-  if(!cur||!nw){toast('Remplissez tous les champs','err');return;}
-  if(nw!==cf){toast('Les mots de passe ne correspondent pas','err');return;}
-  if(nw.length<8){toast('Minimum 8 caracteres','err');return;}
+  if(!cur||!nw){toast(t('error_fill_fields'),'err');return;}
+  if(nw!==cf){toast(t('error_passwords_mismatch'),'err');return;}
+  if(nw.length<8){toast(t('error_password_min'),'err');return;}
   btnLoad(btn,true);
   try{
     var r=await fetch('/api/tenant/change-password',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({current_password:cur,new_password:nw})});
-    if(r.status===400){toast('Mot de passe actuel incorrect','err');btnLoad(btn,false);return;}
-    if(!r.ok)throw new Error('Erreur serveur');
-    toast('Mot de passe modifie !');closeModal();
+    if(r.status===400){toast(t('error_password_wrong'),'err');btnLoad(btn,false);return;}
+    if(!r.ok)throw new Error(t('error_server'));
+    toast(t('msg_password_changed'));closeModal();
     ['curPw','newPw','cfPw'].forEach(function(id){document.getElementById(id).value='';});
-  }catch(e){toast(e.message||'Erreur','err');}
+  }catch(e){toast(e.message||t('error_server'),'err');}
   btnLoad(btn,false);
 }
 
@@ -632,22 +816,22 @@ function uploadLogo(input){
   var reader=new FileReader();
   reader.onload=function(e){
     fetch('/api/tenant/logo',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({logo_url:e.target.result})})
-    .then(function(){PROFILE.logo_url=e.target.result;populateUI(PROFILE);toast('Logo mis a jour !');})
-    .catch(function(){PROFILE.logo_url=e.target.result;populateUI(PROFILE);toast('Logo mis a jour !');});
+    .then(function(){PROFILE.logo_url=e.target.result;populateUI(PROFILE);toast(t('msg_logo_updated'));})
+    .catch(function(){PROFILE.logo_url=e.target.result;populateUI(PROFILE);toast(t('msg_logo_updated'));});
   };
   reader.readAsDataURL(input.files[0]);
 }
 function deleteLogo(){
   fetch('/api/tenant/logo',{method:'DELETE',headers:{Authorization:'Bearer '+TOKEN}}).catch(function(){});
-  PROFILE.logo_url=null;populateUI(PROFILE);toast('Logo supprime');
+  PROFILE.logo_url=null;populateUI(PROFILE);toast(t('msg_logo_deleted'));
 }
 function uploadBanner(input){
   if(!input.files||!input.files[0])return;
   var reader=new FileReader();
   reader.onload=function(e){
     fetch('/api/tenant/banner',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({banner_url:e.target.result})})
-    .then(function(){PROFILE.banner_url=e.target.result;populateUI(PROFILE);toast('Banniere mise a jour !');})
-    .catch(function(){PROFILE.banner_url=e.target.result;populateUI(PROFILE);toast('Banniere mise a jour !');});
+    .then(function(){PROFILE.banner_url=e.target.result;populateUI(PROFILE);toast(t('msg_banner_updated'));})
+    .catch(function(){PROFILE.banner_url=e.target.result;populateUI(PROFILE);toast(t('msg_banner_updated'));});
   };
   reader.readAsDataURL(input.files[0]);
 }
@@ -656,20 +840,20 @@ function deleteBanner(){
   PROFILE.banner_url=null;populateUI(PROFILE);
   document.getElementById('bannerEl').style.backgroundImage='';
   document.getElementById('bannerPreview').style.backgroundImage='';
-  toast('Banniere supprimee');
+  toast(t('msg_banner_deleted'));
 }
-function resetScript(){document.getElementById('aiScript').value=DEFAULT_SCRIPT;toast('Script reinitialise');}
+function resetScript(){document.getElementById('aiScript').value=DEFAULT_SCRIPT;toast(t('msg_script_reset'));}
 
 async function deactivateAccount(){
-  if(!confirm('Desactiver votre compte ?'))return;
+  if(!confirm(t('confirm_deactivate')))return;
   try{await fetch('/api/tenant/deactivate',{method:'POST',headers:{Authorization:'Bearer '+TOKEN}});}catch(e){}
-  toast('Compte desactive');
+  toast(t('msg_account_deactivated'));
   setTimeout(function(){localStorage.removeItem('titanex_token');location.href='/dashboard/login.html';},1500);
 }
 async function deleteAccount(){
-  if(!confirm('SUPPRESSION DEFINITIVE — Toutes vos donnees seront effacees. Confirmer ?'))return;
+  if(!confirm(t('confirm_delete')))return;
   try{await fetch('/api/tenant/account',{method:'DELETE',headers:{Authorization:'Bearer '+TOKEN}});}catch(e){}
-  toast('Compte supprime');
+  toast(t('msg_account_deleted'));
   setTimeout(function(){localStorage.clear();location.href='/';},2000);
 }
 

@@ -118,7 +118,9 @@ fr:{
   login_forgot:"Mot de passe oublié ?",login_welcome:"Bon retour !",
   login_google:"Se connecter avec Google",login_tab_email:"Email",login_tab_phone:"Téléphone",
   login_back:"← Retour à l'accueil",
-  nav_login:"Se connecter",nav_trial:"Essai gratuit 🚀"
+  nav_login:"Se connecter",nav_trial:"Essai gratuit 🚀",
+  error_enter_email:"Veuillez saisir votre email",error_enter_phone:"Veuillez saisir votre téléphone",
+  error_network:"Erreur réseau. Réessayez.",error_google_email:"Email Google non disponible",error_email_unavail:"Email non disponible"
 },
 en:{
   login_title:"Sign in to your account",
@@ -129,7 +131,9 @@ en:{
   login_forgot:"Forgot password?",login_welcome:"Welcome back!",
   login_google:"Sign in with Google",login_tab_email:"Email",login_tab_phone:"Phone",
   login_back:"← Back to home",
-  nav_login:"Sign in",nav_trial:"Free trial 🚀"
+  nav_login:"Sign in",nav_trial:"Free trial 🚀",
+  error_enter_email:"Please enter your email",error_enter_phone:"Please enter your phone number",
+  error_network:"Network error. Please retry.",error_google_email:"Google email not available",error_email_unavail:"Email not available"
 }
 };
 var LANG=localStorage.getItem('titanex_lang')||'fr';
@@ -171,7 +175,7 @@ function showErr(msg){
 
 async function doLogin(type){
   var val=(type==='email'?document.getElementById('inp-email'):document.getElementById('inp-tel')).value.trim();
-  if(!val){showErr('Veuillez saisir votre '+(type==='email'?'email':'téléphone'));return;}
+  if(!val){showErr(t(type==='email'?'error_enter_email':'error_enter_phone'));return;}
   try{
     var body=type==='email'?{email:val}:{telephone:val};
     var r=await fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
@@ -179,7 +183,7 @@ async function doLogin(type){
     if(d.error){showErr(d.error);return;}
     localStorage.setItem('titanex_session',JSON.stringify(d.session));
     window.location.href='/dashboard/';
-  }catch(e){showErr('Erreur réseau. Réessayez.');}
+  }catch(e){showErr(t('error_network'));}
 }
 
 function initGoogle(){
@@ -190,14 +194,14 @@ function initGoogle(){
       var p=resp.credential.split('.');
       var pay=JSON.parse(atob(p[1]+'=='));
       var em=pay.email;
-      if(!em){showErr('Email Google non disponible');return;}
+      if(!em){showErr(t('error_google_email'));return;}
       fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})})
         .then(function(r){return r.json();})
         .then(function(d){
           if(d.error){showErr(d.error);return;}
           localStorage.setItem('titanex_session',JSON.stringify(d.session));
           window.location.href='/dashboard/';
-        }).catch(function(){showErr('Erreur réseau');});
+        }).catch(function(){showErr(t('error_network'));});
     }
   });
   document.getElementById('gbtn').onclick=function(){
@@ -209,7 +213,7 @@ function initGoogle(){
             .then(function(r){return r.json();})
             .then(function(u){
               var em=u.email;
-              if(!em){showErr('Email non dispo');return;}
+              if(!em){showErr(t('error_email_unavail'));return;}
               fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})})
                 .then(function(r){return r.json();})
                 .then(function(d){

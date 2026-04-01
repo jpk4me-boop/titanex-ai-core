@@ -66,13 +66,13 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
             </div>
             <div class="flex items-baseline gap-1 mb-3">
               <span class="text-2xl font-bold text-white">9 900</span>
-              <span class="text-xs text-zinc-400">XAF / mois</span>
+              <span class="text-xs text-zinc-400" data-i18n="pay_per_month">XAF / mois</span>
             </div>
             <ul class="space-y-1.5">
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>1 agent WhatsApp</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>3 000 credits/mois</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Catalogue illimite</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Reponses 24h/24</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat1">1 agent WhatsApp</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat2">3 000 credits/mois</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat3">Catalogue illimite</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat4">Reponses 24h/24</span></li>
             </ul>
           </div>
           <div id="check-starter" class="w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all"></div>
@@ -81,7 +81,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
 
       <!-- Pro -->
       <div onclick="selectPlan('pro',24900)" id="plan-pro" class="relative rounded-2xl border-2 border-emerald-500/50 bg-emerald-500/[.03] p-5 cursor-pointer transition-all duration-200 hover:border-emerald-400">
-        <span class="absolute -top-2.5 left-5 bg-emerald-500 text-black text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wide">Populaire</span>
+        <span class="absolute -top-2.5 left-5 bg-emerald-500 text-black text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wide" data-i18n="pay_popular_badge">Populaire</span>
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
@@ -89,13 +89,13 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
             </div>
             <div class="flex items-baseline gap-1 mb-3">
               <span class="text-2xl font-bold text-emerald-400">24 900</span>
-              <span class="text-xs text-zinc-400">XAF / mois</span>
+              <span class="text-xs text-zinc-400" data-i18n="pay_per_month">XAF / mois</span>
             </div>
             <ul class="space-y-1.5">
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>2 agents WhatsApp</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>10 000 credits/mois</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Analyses & rapports</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Support prioritaire</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat1">2 agents WhatsApp</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat2">10 000 credits/mois</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat3">Analyses & rapports</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat4">Support prioritaire</span></li>
             </ul>
           </div>
           <div id="check-pro" class="w-6 h-6 rounded-full border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all">
@@ -113,13 +113,13 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
             </div>
             <div class="flex items-baseline gap-1 mb-3">
               <span class="text-2xl font-bold text-white">49 900</span>
-              <span class="text-xs text-zinc-400">XAF / mois</span>
+              <span class="text-xs text-zinc-400" data-i18n="pay_per_month">XAF / mois</span>
             </div>
             <ul class="space-y-1.5">
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>4 agents WhatsApp</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>50 000 credits/mois</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Marque blanche</li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>Accompagnement VIP</li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat1">4 agents WhatsApp</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat2">50 000 credits/mois</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat3">Marque blanche</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat4">Accompagnement VIP</span></li>
             </ul>
           </div>
           <div id="check-business" class="w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all"></div>
@@ -138,7 +138,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
           </span>
           <input id="pay-phone" type="tel" maxlength="9" placeholder="6XXXXXXXX" class="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-zinc-600 font-medium tracking-wide" oninput="detectOperator()">
         </div>
-        <p id="phone-error" class="text-xs text-red-400 mt-1 hidden">Le numero doit commencer par 6 et contenir 9 chiffres</p>
+        <p id="phone-error" class="text-xs text-red-400 mt-1 hidden" data-i18n="pay_phone_error">Le numero doit commencer par 6 et contenir 9 chiffres</p>
       </div>
 
       <!-- Operator -->
@@ -157,11 +157,11 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
       <!-- Summary -->
       <div class="rounded-xl bg-zinc-950 border border-zinc-800 px-4 py-3">
         <div class="flex items-center justify-between text-xs text-zinc-400 mb-1">
-          <span>Plan selectionne</span>
+          <span data-i18n="pay_plan_selected">Plan selectionne</span>
           <span id="sum-plan" class="font-semibold text-white">Pro</span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-xs text-zinc-400">Total a payer</span>
+          <span class="text-xs text-zinc-400" data-i18n="pay_total">Total a payer</span>
           <span id="sum-price" class="text-lg font-bold text-emerald-400">24 900 XAF</span>
         </div>
         <div class="text-[10px] text-zinc-500 mt-1" id="sum-op">via MTN MoMo</div>
@@ -198,18 +198,18 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
       <div class="text-left space-y-2 px-2">
         <div class="flex items-start gap-3 text-sm text-zinc-400">
           <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-          Composez le code USSD sur votre telephone
+          <span data-i18n="pay_ussd_step1">Composez le code USSD sur votre telephone</span>
         </div>
         <div class="flex items-start gap-3 text-sm text-zinc-400">
           <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-          Suivez les instructions <span id="ussd-op-name" class="font-semibold text-white">MTN</span>
+          <span><span data-i18n="pay_ussd_step2">Suivez les instructions</span> <span id="ussd-op-name" class="font-semibold text-white">MTN</span></span>
         </div>
         <div class="flex items-start gap-3 text-sm text-zinc-400">
           <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-          Confirmez le paiement de <span id="ussd-amount" class="font-semibold text-emerald-400">24 900 XAF</span>
+          <span><span data-i18n="pay_ussd_step3">Confirmez le paiement de</span> <span id="ussd-amount" class="font-semibold text-emerald-400">24 900 XAF</span></span>
         </div>
       </div>
-      <div class="text-xs text-zinc-500" id="ussd-ref">Reference: —</div>
+      <div class="text-xs text-zinc-500" id="ussd-ref"><span data-i18n="pay_ussd_ref">Reference:</span> <span id="ussd-ref-val">—</span></div>
 
       <!-- Progress bar -->
       <div class="space-y-2">
@@ -218,7 +218,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
         </div>
         <div class="flex items-center justify-center gap-2 text-xs text-zinc-400">
           <div class="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full" style="animation:spin 1s linear infinite"></div>
-          <span id="verify-txt">En attente de confirmation...</span>
+          <span id="verify-txt" data-i18n="pay_waiting">En attente de confirmation...</span>
         </div>
       </div>
 
@@ -242,10 +242,10 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
         <p class="text-sm text-zinc-400" data-i18n="pay_success_sub">Votre agent WhatsApp est maintenant actif</p>
       </div>
       <div class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-sm">
-        <div class="flex justify-between text-zinc-400 mb-1"><span>Plan</span><span id="success-plan" class="text-white font-semibold">Pro</span></div>
-        <div class="flex justify-between text-zinc-400"><span>Valide</span><span class="text-white font-semibold">30 jours</span></div>
+        <div class="flex justify-between text-zinc-400 mb-1"><span data-i18n="pay_success_plan">Plan</span><span id="success-plan" class="text-white font-semibold">Pro</span></div>
+        <div class="flex justify-between text-zinc-400"><span data-i18n="pay_success_valid">Valide</span><span class="text-white font-semibold" data-i18n="pay_success_days">30 jours</span></div>
       </div>
-      <p class="text-xs text-zinc-500">Redirection vers le dashboard dans <span id="countdown">3</span>s...</p>
+      <p class="text-xs text-zinc-500"><span data-i18n="pay_redirect">Redirection vers le dashboard dans</span> <span id="countdown">3</span>s...</p>
       <button onclick="location.href='/dashboard/'" class="w-full py-3 rounded-xl bg-emerald-500 text-black text-sm font-bold hover:bg-emerald-600 transition-all">
         <span data-i18n="pay_go_dashboard">Acceder au Dashboard</span>
       </button>
@@ -288,7 +288,42 @@ fr:{
   pay_retry:"Recommencer le paiement",
   pay_go_dashboard:"Acceder au Dashboard",
   pay_footer_secure:"Paiement securise via Campay",
-  pay_help:"Besoin d'aide ? WhatsApp : +237 672 482 763"
+  pay_help:"Besoin d'aide ? WhatsApp : +237 672 482 763",
+  pay_plan_starter_feat1:"1 agent WhatsApp",
+  pay_plan_starter_feat2:"3 000 credits/mois",
+  pay_plan_starter_feat3:"Catalogue illimite",
+  pay_plan_starter_feat4:"Reponses 24h/24",
+  pay_plan_pro_feat1:"2 agents WhatsApp",
+  pay_plan_pro_feat2:"10 000 credits/mois",
+  pay_plan_pro_feat3:"Analyses & rapports",
+  pay_plan_pro_feat4:"Support prioritaire",
+  pay_plan_business_feat1:"4 agents WhatsApp",
+  pay_plan_business_feat2:"50 000 credits/mois",
+  pay_plan_business_feat3:"Marque blanche",
+  pay_plan_business_feat4:"Accompagnement VIP",
+  pay_popular_badge:"Populaire",
+  pay_per_month:"XAF / mois",
+  pay_phone_error:"Le numero doit commencer par 6 et contenir 9 chiffres",
+  pay_plan_selected:"Plan selectionne",
+  pay_total:"Total a payer",
+  pay_ussd_step1:"Composez le code USSD sur votre telephone",
+  pay_ussd_step2:"Suivez les instructions",
+  pay_ussd_step3:"Confirmez le paiement de",
+  pay_ussd_ref:"Reference:",
+  pay_waiting:"En attente de confirmation...",
+  pay_verifying:"Verification en cours...",
+  pay_almost:"Presque... patientez",
+  pay_timeout:"Delai depasse. Reessayez ou verifiez votre telephone.",
+  pay_failed:"Paiement echoue. Reessayez.",
+  pay_success_plan:"Plan",
+  pay_success_valid:"Valide",
+  pay_success_days:"30 jours",
+  pay_redirect:"Redirection vers le dashboard dans",
+  pay_copied:"Code copie !",
+  error_invalid_phone:"Entrez un numero valide (9 chiffres)",
+  error_session:"Session introuvable, reconnectez-vous",
+  pay_initializing:"Initialisation...",
+  pay_pay_now:"Payer maintenant"
 },
 en:{
   pay_title:"Choose your plan",pay_subtitle:"7 days free, no credit card",
@@ -305,7 +340,42 @@ en:{
   pay_retry:"Retry payment",
   pay_go_dashboard:"Go to Dashboard",
   pay_footer_secure:"Secure payment via Campay",
-  pay_help:"Need help? WhatsApp: +237 672 482 763"
+  pay_help:"Need help? WhatsApp: +237 672 482 763",
+  pay_plan_starter_feat1:"1 WhatsApp agent",
+  pay_plan_starter_feat2:"3,000 credits/month",
+  pay_plan_starter_feat3:"Unlimited catalog",
+  pay_plan_starter_feat4:"24/7 responses",
+  pay_plan_pro_feat1:"2 WhatsApp agents",
+  pay_plan_pro_feat2:"10,000 credits/month",
+  pay_plan_pro_feat3:"Analytics & reports",
+  pay_plan_pro_feat4:"Priority support",
+  pay_plan_business_feat1:"4 WhatsApp agents",
+  pay_plan_business_feat2:"50,000 credits/month",
+  pay_plan_business_feat3:"White label",
+  pay_plan_business_feat4:"VIP support",
+  pay_popular_badge:"Popular",
+  pay_per_month:"XAF / month",
+  pay_phone_error:"Number must start with 6 and contain 9 digits",
+  pay_plan_selected:"Selected plan",
+  pay_total:"Total to pay",
+  pay_ussd_step1:"Dial the USSD code on your phone",
+  pay_ussd_step2:"Follow the instructions",
+  pay_ussd_step3:"Confirm the payment of",
+  pay_ussd_ref:"Reference:",
+  pay_waiting:"Waiting for confirmation...",
+  pay_verifying:"Verifying...",
+  pay_almost:"Almost... please wait",
+  pay_timeout:"Timeout. Retry or check your phone.",
+  pay_failed:"Payment failed. Please retry.",
+  pay_success_plan:"Plan",
+  pay_success_valid:"Valid",
+  pay_success_days:"30 days",
+  pay_redirect:"Redirecting to dashboard in",
+  pay_copied:"Code copied!",
+  error_invalid_phone:"Enter a valid number (9 digits)",
+  error_session:"Session not found, please sign in again",
+  pay_initializing:"Initializing...",
+  pay_pay_now:"Pay now"
 }
 };
 var LANG=localStorage.getItem('titanex_lang')||'fr';
@@ -428,13 +498,13 @@ function validatePhone() {
 // ─── Payment initiation ─────────────────────────────────────────────────────
 async function initierPaiement() {
   var phone = document.getElementById('pay-phone').value.trim();
-  if (!validatePhone() || phone.length !== 9) { toast('Entrez un numero valide (9 chiffres)', 'error'); return; }
-  if (!TENANT_ID) { toast('Session introuvable, reconnectez-vous', 'error'); return; }
+  if (!validatePhone() || phone.length !== 9) { toast(t('error_invalid_phone'), 'error'); return; }
+  if (!TENANT_ID) { toast(t('error_session'), 'error'); return; }
 
   var fullPhone = '237' + phone;
   var btn = document.getElementById('pay-btn');
   btn.disabled = true;
-  document.getElementById('pay-btn-txt').textContent = 'Initialisation...';
+  document.getElementById('pay-btn-txt').textContent = t('pay_initializing');
 
   try {
     var r = await fetch(API + '/payment/initiate', {
@@ -449,7 +519,7 @@ async function initierPaiement() {
     showUssdStep(d.ussd_code || '*126#');
   } catch(e) {
     btn.disabled = false;
-    document.getElementById('pay-btn-txt').textContent = 'Payer maintenant';
+    document.getElementById('pay-btn-txt').textContent = t('pay_pay_now');
     toast(e.message || 'Erreur de paiement', 'error');
   }
 }
@@ -461,7 +531,7 @@ function showUssdStep(ussdCode) {
   document.getElementById('ussd-code').textContent = ussdCode;
   document.getElementById('ussd-amount').textContent = SEL.prix.toLocaleString('fr-FR') + ' XAF';
   document.getElementById('ussd-op-name').textContent = OP === 'mtn' ? 'MTN MoMo' : 'Orange Money';
-  document.getElementById('ussd-ref').textContent = 'Reference: ' + REF;
+  document.getElementById('ussd-ref-val').textContent = REF;
   try { lucide.createIcons(); } catch(e){}
 
   // Start polling
@@ -473,8 +543,8 @@ function showUssdStep(ussdCode) {
 function updateProgress() {
   var pct = Math.min((pollCount / 20) * 100, 100);
   document.getElementById('progress-bar').style.width = pct + '%';
-  if (pollCount >= 5) document.getElementById('verify-txt').textContent = 'Verification en cours...';
-  if (pollCount >= 12) document.getElementById('verify-txt').textContent = 'Presque... patientez';
+  if (pollCount >= 5) document.getElementById('verify-txt').textContent = t('pay_verifying');
+  if (pollCount >= 12) document.getElementById('verify-txt').textContent = t('pay_almost');
 }
 
 async function pollStatus() {
@@ -482,7 +552,7 @@ async function pollStatus() {
   updateProgress();
   if (pollCount > 20) {
     clearInterval(pollTimer);
-    document.getElementById('verify-txt').textContent = 'Delai depasse. Reessayez ou verifiez votre telephone.';
+    document.getElementById('verify-txt').textContent = t('pay_timeout');
     return;
   }
   try {
@@ -494,7 +564,7 @@ async function pollStatus() {
       setTimeout(showSuccess, 500);
     } else if (d.status === 'FAILED') {
       clearInterval(pollTimer);
-      document.getElementById('verify-txt').textContent = 'Paiement echoue. Reessayez.';
+      document.getElementById('verify-txt').textContent = t('pay_failed');
     }
   } catch(e) {}
 }
@@ -532,13 +602,13 @@ function retryPayment() {
   document.getElementById('step-plan').classList.remove('hidden');
   var btn = document.getElementById('pay-btn');
   btn.disabled = false;
-  document.getElementById('pay-btn-txt').textContent = 'Payer maintenant';
+  document.getElementById('pay-btn-txt').textContent = t('pay_pay_now');
 }
 
 // ─── Utils ──────────────────────────────────────────────────────────────────
 function copyUssd() {
   var code = document.getElementById('ussd-code').textContent;
-  navigator.clipboard.writeText(code).then(function(){ toast('Code copie !', 'ok'); });
+  navigator.clipboard.writeText(code).then(function(){ toast(t('pay_copied'), 'ok'); });
 }
 
 function toast(msg, type) {

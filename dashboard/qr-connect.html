@@ -18,25 +18,70 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head><body><div class="card">
 <div class="logo">Titanex <em>AI</em></div>
+<div style="text-align:right;margin-bottom:8px"><button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:4px 10px;border-radius:6px;border:1.5px solid var(--br);background:var(--s2);color:var(--t2);font-size:11px;font-weight:700;cursor:pointer">FR</button></div>
 <div id="main-area">
   <div class="qr-wrap"><div class="spinner" id="sp"></div><div id="qrc" style="display:none"></div></div>
-  <div class="status" id="st">Génération du QR code...</div>
+  <div class="status" id="st" data-i18n="qr_generating">Génération du QR code...</div>
   <div class="timer" id="tm"></div>
   <div class="steps">
-    <div class="step"><div class="step-n">1</div><span>Ouvrez WhatsApp sur votre téléphone</span></div>
-    <div class="step"><div class="step-n">2</div><span>Paramètres → Appareils liés</span></div>
-    <div class="step"><div class="step-n">3</div><span>Lier un appareil</span></div>
-    <div class="step"><div class="step-n">4</div><span>Scannez ce QR code</span></div>
+    <div class="step"><div class="step-n">1</div><span data-i18n="qr_step1">Ouvrez WhatsApp sur votre téléphone</span></div>
+    <div class="step"><div class="step-n">2</div><span data-i18n="qr_step2">Paramètres → Appareils liés</span></div>
+    <div class="step"><div class="step-n">3</div><span data-i18n="qr_step3">Lier un appareil</span></div>
+    <div class="step"><div class="step-n">4</div><span data-i18n="qr_step4">Scannez ce QR code</span></div>
   </div>
-  <button class="refresh-btn" onclick="loadQR()">🔄 Regénérer le QR</button>
+  <button class="refresh-btn" onclick="loadQR()">🔄 <span data-i18n="qr_refresh">Regénérer le QR</span></button>
 </div>
 <div class="connected-box" id="ok">
   <div style="font-size:3rem;margin-bottom:.75rem">✅</div>
-  <div style="font-size:1rem;font-weight:700;margin-bottom:.4rem">WhatsApp connecté !</div>
-  <div style="font-size:.8rem;color:var(--t2);margin-bottom:1.2rem">Votre agent IA est maintenant actif.</div>
-  <button class="go-btn" onclick="location.href='/dashboard/'">🏠 Dashboard</button>
+  <div style="font-size:1rem;font-weight:700;margin-bottom:.4rem" data-i18n="qr_connected">WhatsApp connecté !</div>
+  <div style="font-size:.8rem;color:var(--t2);margin-bottom:1.2rem" data-i18n="qr_active">Votre agent IA est maintenant actif.</div>
+  <button class="go-btn" onclick="location.href='/dashboard/'">🏠 <span data-i18n="qr_dashboard">Dashboard</span></button>
 </div>
 </div>
+<script>
+var TRANSLATIONS={
+fr:{
+  qr_generating:"Génération du QR code...",
+  qr_step1:"Ouvrez WhatsApp sur votre téléphone",
+  qr_step2:"Paramètres → Appareils liés",
+  qr_step3:"Lier un appareil",
+  qr_step4:"Scannez ce QR code",
+  qr_refresh:"Regénérer le QR",
+  qr_connected:"WhatsApp connecté !",
+  qr_active:"Votre agent IA est maintenant actif.",
+  qr_dashboard:"Dashboard",
+  qr_scan:"Scannez ce code avec WhatsApp",
+  qr_expired:"Expiré — cliquez Regénérer",
+  qr_valid:"Valide encore"
+},
+en:{
+  qr_generating:"Generating QR code...",
+  qr_step1:"Open WhatsApp on your phone",
+  qr_step2:"Settings → Linked Devices",
+  qr_step3:"Link a Device",
+  qr_step4:"Scan this QR code",
+  qr_refresh:"Regenerate QR",
+  qr_connected:"WhatsApp connected!",
+  qr_active:"Your AI agent is now active.",
+  qr_dashboard:"Dashboard",
+  qr_scan:"Scan this code with WhatsApp",
+  qr_expired:"Expired — click Regenerate",
+  qr_valid:"Valid for"
+}
+};
+var LANG=localStorage.getItem('titanex_lang')||'fr';
+function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
+function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');var val=t(key);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else{el.textContent=val;}
+  });
+}
+function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
+document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
+</script>
 <script>
 var API='';
 var INST=new URLSearchParams(window.location.search).get('instance')||'boutique1';
@@ -46,7 +91,7 @@ function loadQR(){
   document.getElementById('sp').style.display='block';
   document.getElementById('qrc').style.display='none';
   document.getElementById('qrc').innerHTML='';
-  document.getElementById('st').textContent='Génération du QR code...';
+  document.getElementById('st').textContent=t('qr_generating');
   document.getElementById('st').className='status';
   document.getElementById('tm').textContent='';
   fetch(API+'/admin/qr/'+INST).then(function(r){return r.json();}).then(function(d){
@@ -54,8 +99,8 @@ function loadQR(){
     document.getElementById('sp').style.display='none';
     var c=document.getElementById('qrc');c.style.display='block';
     new QRCode(c,{text:d.code,width:200,height:200,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
-    document.getElementById('st').textContent='📱 Scannez ce code avec WhatsApp';
-    var s=60;cd=setInterval(function(){s--;document.getElementById('tm').innerHTML='Valide encore <b style="color:#f59e0b">'+s+'s</b>';if(s<=0){clearInterval(cd);document.getElementById('qrc').style.display='none';document.getElementById('tm').textContent='Expiré — cliquez Regénérer';}},1000);
+    document.getElementById('st').textContent='📱 '+t('qr_scan');
+    var s=60;cd=setInterval(function(){s--;document.getElementById('tm').innerHTML=t('qr_valid')+' <b style="color:#f59e0b">'+s+'s</b>';if(s<=0){clearInterval(cd);document.getElementById('qrc').style.display='none';document.getElementById('tm').textContent=t('qr_expired');}},1000);
     var a=0;pt=setInterval(function(){a++;fetch(API+'/admin/qr/'+INST+'/status').then(function(r){return r.json();}).then(function(d){if(d.connected){clearInterval(pt);clearInterval(cd);document.getElementById('main-area').style.display='none';document.getElementById('ok').style.display='block';}}).catch(function(){});if(a>=40)clearInterval(pt);},3000);
   }).catch(function(e){document.getElementById('sp').style.display='none';document.getElementById('st').textContent='❌ '+(e.message||'Erreur');document.getElementById('st').className='status err';});
 }
