@@ -444,7 +444,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
         <!-- Leads Analysis -->
         <div class="fade-in delay-4">
-          <h2 class="text-xl font-bold text-white mb-4" data-i18n="dash_lead_analysis">Analyse des leads</h2>
+          <h2 class="text-xl font-bold mb-4" style="color:#15803D" data-i18n="dash_lead_analysis">Analyse des leads</h2>
           <div class="flex flex-wrap items-center gap-2 mb-4">
             <button onclick="setPeriod('7d')" id="period-7d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-all">7 derniers jours</button>
             <button onclick="setPeriod('30d')" id="period-30d" class="px-4 py-2 rounded-xl text-xs font-semibold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 transition-all">30 derniers jours</button>
@@ -500,7 +500,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                <h3 class="text-sm font-bold text-white" data-i18n="dash_credits_available">Credits disponibles</h3>
+                <h3 class="text-sm font-bold" style="color:#15803D" data-i18n="dash_credits_available">Credits disponibles</h3>
               </div>
               <span class="text-xs font-semibold text-zinc-400" id="credits-pct">0%</span>
             </div>
@@ -510,7 +510,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
             <div class="progress-bar mb-3"><div class="progress-fill" id="credits-bar" style="width:0%"></div></div>
             <div id="credits-warning" class="hidden text-xs text-red-400 font-medium mb-3" data-i18n="msg_credits_low">Credits presque epuises</div>
-            <button onclick="openCreditModal()" class="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2">
+            <button onclick="window.location.href='/dashboard/paiement.html'" class="py-2.5 rounded-xl text-sm font-bold text-white transition-all flex items-center justify-center gap-2" style="background:#22C55E;max-width:180px;width:100%;margin-left:auto">
               <i data-lucide="zap" class="w-3.5 h-3.5"></i> Recharger
             </button>
           </div>
@@ -519,7 +519,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
             <div class="flex items-center gap-2 mb-3">
               <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
-              <h3 class="text-sm font-bold text-white" data-i18n="dash_referral">Programme de Parrainage</h3>
+              <h3 class="text-sm font-bold" style="color:#15803D" data-i18n="dash_referral">Programme de Parrainage</h3>
             </div>
             <div class="flex items-center gap-2 mb-3">
               <i data-lucide="coins" class="w-4 h-4 text-emerald-400"></i>
@@ -542,7 +542,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
           <div class="flex items-center gap-2 mb-4">
             <i data-lucide="clock" class="w-[15px] h-[15px] text-emerald-400"></i>
-            <h3 class="text-sm font-bold text-white" data-i18n="dash_recent_actions">Dernieres Actions de l'Agent</h3>
+            <h3 class="text-sm font-bold" style="color:#15803D" data-i18n="dash_recent_actions">Dernieres Actions de l'Agent</h3>
           </div>
           <div id="activity-feed" class="space-y-1">
             <p class="text-sm text-zinc-400 text-center py-6" data-i18n="msg_no_recent_action">Aucune action recente</p>
@@ -551,7 +551,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
         <!-- ═══ SALES STATISTICS SECTION ═══ -->
         <div id="dashboard-stats-section" class="hidden space-y-5 fade-in delay-6">
-          <h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:0">Statistiques de vente</h2>
+          <h2 style="font-size:18px;font-weight:800;color:#15803D;margin:0">Statistiques de vente</h2>
           <!-- Stat cards row -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px">
@@ -574,17 +574,17 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <!-- Charts row -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px">
-              <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 14px;display:flex;align-items:center;gap:6px">📈 Ventes — 7 derniers jours</h3>
+              <h3 style="font-size:14px;font-weight:700;color:#15803D;margin:0 0 14px;display:flex;align-items:center;gap:6px">📈 Ventes — 7 derniers jours</h3>
               <canvas id="chart-sales-7d" height="180"></canvas>
             </div>
             <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px">
-              <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 14px;display:flex;align-items:center;gap:6px">💬 Conversations par jour</h3>
+              <h3 style="font-size:14px;font-weight:700;color:#15803D;margin:0 0 14px;display:flex;align-items:center;gap:6px">💬 Conversations par jour</h3>
               <canvas id="chart-convs-7d" height="180"></canvas>
             </div>
           </div>
           <!-- Top products -->
           <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px">
-            <h3 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 14px;display:flex;align-items:center;gap:6px">🔥 Top 3 produits les plus demandes</h3>
+            <h3 style="font-size:14px;font-weight:700;color:#15803D;margin:0 0 14px;display:flex;align-items:center;gap:6px">🔥 Top 3 produits les plus demandes</h3>
             <div id="stat-top-products" style="display:flex;flex-direction:column;gap:8px">
               <p style="font-size:13px;color:#94a3b8">Chargement...</p>
             </div>
@@ -3658,7 +3658,17 @@ async function loadDashboard() {
     document.getElementById('stat-agents-total').textContent = allAgents.length;
     document.getElementById('stat-agents-active').textContent = allAgents.filter(a => a.status).length;
     document.getElementById('stat-leads-total').textContent = allConversations.length;
-    document.getElementById('stat-leads-period').textContent = allConversations.length;
+
+    // Compute leads for current period with real growth
+    const now = Date.now();
+    const periodMs = currentPeriod === '7d' ? 7*864e5 : currentPeriod === '30d' ? 30*864e5 : 90*864e5;
+    const periodLeads = allConversations.filter(c => c.created_at && (now - new Date(c.created_at).getTime()) < periodMs);
+    const prevLeads = allConversations.filter(c => c.created_at && (now - new Date(c.created_at).getTime()) >= periodMs && (now - new Date(c.created_at).getTime()) < periodMs * 2);
+    document.getElementById('stat-leads-period').textContent = periodLeads.length;
+    const growthPct = prevLeads.length > 0 ? (((periodLeads.length - prevLeads.length) / prevLeads.length) * 100).toFixed(2) : (periodLeads.length > 0 ? '+100.00' : '0.00');
+    const growthVal = typeof growthPct === 'string' ? growthPct : (growthPct >= 0 ? '+' + growthPct : growthPct);
+    document.getElementById('leads-growth').textContent = growthVal + '';
+    document.getElementById('leads-period-pct').textContent = growthVal + '';
 
     // Credits
     const credits = SESSION.credits || 0;
@@ -3783,11 +3793,16 @@ function setPeriod(p) {
   const labels = { '7d':'7 derniers jours', '30d':'30 derniers jours', '90d':'90 derniers jours' };
   document.getElementById('leads-period-label').textContent = labels[p];
 
-  // Recount leads by period
+  // Recount leads by period with growth
   const now = Date.now();
   const ms = p === '7d' ? 7*864e5 : p === '30d' ? 30*864e5 : 90*864e5;
   const filtered = allConversations.filter(c => c.created_at && (now - new Date(c.created_at).getTime()) < ms);
+  const prev = allConversations.filter(c => c.created_at && (now - new Date(c.created_at).getTime()) >= ms && (now - new Date(c.created_at).getTime()) < ms * 2);
   document.getElementById('stat-leads-period').textContent = filtered.length;
+  const gPct = prev.length > 0 ? (((filtered.length - prev.length) / prev.length) * 100).toFixed(2) : (filtered.length > 0 ? '+100.00' : '0.00');
+  const gVal = typeof gPct === 'string' ? gPct : (gPct >= 0 ? '+' + gPct : gPct);
+  document.getElementById('leads-growth').textContent = gVal;
+  document.getElementById('leads-period-pct').textContent = gVal;
   drawLeadsChart();
 }
 
@@ -8388,7 +8403,7 @@ function renderDashboardStats(stats) {
       type: 'bar',
       data: {
         labels: salesLabels,
-        datasets: [{ label: 'Ventes (FCFA)', data: salesData, backgroundColor: 'rgba(16,185,129,0.7)', borderRadius: 6, borderSkipped: false }]
+        datasets: [{ label: 'Ventes (FCFA)', data: salesData, backgroundColor: 'rgba(34,197,94,0.7)', borderColor: '#22C55E', borderRadius: 6, borderSkipped: false }]
       },
       options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 } } }, x: { ticks: { font: { size: 11 } } } } }
     });
@@ -8402,7 +8417,7 @@ function renderDashboardStats(stats) {
       type: 'line',
       data: {
         labels: convsLabels,
-        datasets: [{ label: 'Conversations', data: convsData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#3b82f6' }]
+        datasets: [{ label: 'Conversations', data: convsData, borderColor: '#22C55E', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#22C55E' }]
       },
       options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 }, stepSize: 1 } }, x: { ticks: { font: { size: 11 } } } } }
     });
