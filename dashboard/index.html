@@ -510,8 +510,8 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
             <div class="progress-bar mb-3"><div class="progress-fill" id="credits-bar" style="width:0%"></div></div>
             <div id="credits-warning" class="hidden text-xs text-red-400 font-medium mb-3" data-i18n="msg_credits_low">Credits presque epuises</div>
-            <button onclick="window.location.href='/dashboard/paiement.html'" class="py-2.5 rounded-xl text-sm font-bold text-white transition-all items-center justify-center gap-2" style="background:#22C55E;max-width:160px;width:100%;margin-left:auto;display:flex">
-              <i data-lucide="zap" class="w-3.5 h-3.5"></i> Recharger
+            <button onclick="window.location.href='/dashboard/paiement.html'" style="background:#22C55E;color:#fff;max-width:160px;width:auto;display:block;margin-left:auto;padding:8px 20px;border-radius:10px;font-weight:700;border:none;cursor:pointer">
+              <i data-lucide="zap" class="w-3.5 h-3.5" style="display:inline-block;vertical-align:middle;margin-right:6px"></i>Recharger
             </button>
           </div>
 
@@ -3672,7 +3672,8 @@ async function loadDashboard() {
 
     // Credits
     const credits = SESSION.credits || 0;
-    updateCreditsUI(credits, 3000);
+    const maxCredits = SESSION.max_credits || SESSION.credits_max || 3000;
+    updateCreditsUI(credits, maxCredits);
     document.getElementById('badge-credits').textContent = credits;
     document.getElementById('header-credits-count').textContent = credits + ' credits';
 
