@@ -1506,11 +1506,11 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             <!-- Banner + Avatar -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 overflow-hidden">
               <!-- Banner zone -->
-              <div class="relative" style="height:160px;background:linear-gradient(135deg,#eef2ff 0%,#e0e7ff 40%,#dbeafe 100%)">
-                <div class="absolute inset-0 opacity-30" style="background-image:radial-gradient(circle at 20% 50%,#a5b4fc 0%,transparent 50%),radial-gradient(circle at 80% 20%,#93c5fd 0%,transparent 50%)"></div>
+              <div class="relative" style="height:160px;background:linear-gradient(135deg,#15803D 0%,#22C55E 100%)">
+                <div class="absolute inset-0 opacity-20" style="background-image:radial-gradient(circle at 20% 50%,#4ADE80 0%,transparent 50%),radial-gradient(circle at 80% 20%,#86efac 0%,transparent 50%)"></div>
                 <div id="banner-preview" class="absolute inset-0 bg-cover bg-center hidden"></div>
                 <button onclick="openEditProfileModal()" class="absolute top-3 right-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/90 hover:bg-white text-slate-700 text-sm font-semibold transition-all shadow-sm border border-white/50 backdrop-blur-sm" style="z-index:2">
-                  <i data-lucide="pencil" class="w-4 h-4 text-indigo-600"></i> Editer le profil
+                  <i data-lucide="pencil" class="w-4 h-4 text-[#15803D]"></i> Editer le profil
                 </button>
                 <label class="absolute top-3 right-44 cursor-pointer" style="z-index:2">
                   <input type="file" id="banner-file" accept="image/*" class="hidden" onchange="previewBanner(this)">
@@ -1524,7 +1524,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                     <div id="profile-avatar-img" class="w-20 h-20 rounded-full border-4 border-zinc-900 bg-zinc-800 overflow-hidden flex items-center justify-center">
                       <span id="profile-avatar-initial" class="text-2xl font-bold text-white">?</span>
                     </div>
-                    <label class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-emerald-500 hover:bg-emerald-400 border-2 border-zinc-900 flex items-center justify-center cursor-pointer transition-all shadow-lg">
+                    <label class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#22C55E] hover:bg-[#15803D] border-2 border-zinc-900 flex items-center justify-center cursor-pointer transition-all shadow-lg">
                       <input type="file" id="avatar-file" accept="image/*" class="hidden" onchange="previewAvatar(this)">
                       <i data-lucide="camera" class="w-3.5 h-3.5 text-black"></i>
                     </label>
@@ -1575,68 +1575,6 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               </div>
             </div>
 
-            <!-- Boutique Section -->
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 space-y-5">
-              <h3 class="text-base font-semibold text-white flex items-center gap-2"><i data-lucide="store" class="w-4 h-4 text-emerald-400"></i> Votre boutique</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-sm font-medium text-white mb-1.5 block">Nom de la boutique</label>
-                  <input type="text" id="settings-store-name" placeholder="Ex: Ma Boutique" class="w-full rounded-xl border border-zinc-800 bg-zinc-800/50 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none transition-all">
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-white mb-1.5 block">Langue préférée</label>
-                  <select id="settings-lang" class="w-full rounded-xl border border-zinc-800 bg-zinc-800/50 px-4 py-2.5 text-sm text-white focus:border-emerald-500/50 focus:outline-none transition-all">
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="ar">العربية</option>
-                    <option value="pt">Português</option>
-                  </select>
-                </div>
-              </div>
-              <!-- Logo upload -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-sm font-medium text-white mb-2 block">Logo de la boutique</label>
-                  <div class="flex items-center gap-3">
-                    <div id="logo-preview-wrap" class="w-20 h-20 rounded-xl border border-zinc-700 bg-zinc-800 flex items-center justify-center overflow-hidden shrink-0">
-                      <i data-lucide="image" class="w-6 h-6 text-zinc-600" id="logo-placeholder-icon"></i>
-                      <img id="logo-preview" class="w-full h-full object-cover hidden" src="" alt="Logo">
-                    </div>
-                    <div class="flex flex-col gap-2">
-                      <label class="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white border border-zinc-700 transition-all">
-                        <input type="file" id="logo-file" accept="image/*" class="hidden" onchange="previewLogo(this)">
-                        <i data-lucide="upload" class="w-3.5 h-3.5"></i> Choisir
-                      </label>
-                      <button onclick="removeLogo()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-400 border border-red-500/20 transition-all">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Supprimer
-                      </button>
-                    </div>
-                  </div>
-                  <p class="text-xs text-zinc-500 mt-1.5">PNG, JPG — 80×80 recommandé</p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-white mb-2 block">Bannière / Pancarte</label>
-                  <div class="rounded-xl border border-zinc-700 bg-zinc-800 overflow-hidden" style="height:80px">
-                    <div id="settings-banner-preview" class="w-full h-full flex items-center justify-center">
-                      <i data-lucide="image" class="w-6 h-6 text-zinc-600" id="settings-banner-icon"></i>
-                      <img id="settings-banner-img" class="w-full h-full object-cover hidden" src="" alt="Bannière">
-                    </div>
-                  </div>
-                  <div class="flex gap-2 mt-2">
-                    <label class="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white border border-zinc-700 transition-all">
-                      <input type="file" id="settings-banner-file" accept="image/*" class="hidden" onchange="previewSettingsBanner(this)">
-                      <i data-lucide="upload" class="w-3.5 h-3.5"></i> Choisir
-                    </label>
-                    <button onclick="removeSettingsBanner()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-400 border border-red-500/20 transition-all">
-                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Supprimer
-                    </button>
-                  </div>
-                  <p class="text-xs text-zinc-500 mt-1">PNG, JPG — 1200×400 recommandé</p>
-                </div>
-              </div>
-            </div>
-
             <!-- Script de vente IA -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 space-y-4">
               <div class="flex items-center justify-between flex-wrap gap-2">
@@ -1656,7 +1594,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
             <!-- Save Button -->
             <div style="display:flex;justify-content:flex-end;margin-top:8px">
-              <button onclick="saveSettings()" id="settings-save-btn" style="padding:8px 20px;border-radius:8px;border:none;background:#10b981;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s">Sauvegarder</button>
+              <button onclick="saveSettings()" id="settings-save-btn" style="padding:10px 24px;border-radius:10px;border:none;background:#22C55E;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 4px 14px rgba(34,197,94,.25)">💾 Sauvegarder</button>
             </div>
           </div>
 
@@ -7099,10 +7037,6 @@ function initSettingsPage() {
 
   // Load stored settings
   const stored = JSON.parse(localStorage.getItem('titanex_settings_' + INSTANCE) || '{}');
-  const storeInput = document.getElementById('settings-store-name');
-  if (storeInput) storeInput.value = stored.merchant_name || SESSION.merchant_name || '';
-  const langSel = document.getElementById('settings-lang');
-  if (langSel) langSel.value = stored.lang || 'fr';
   const promptTA = document.getElementById('settings-prompt');
   if (promptTA) {
     const DEFAULT_PROMPT = `Tu es un vendeur expert. Quand un client écrit, tu dois :
@@ -7165,12 +7099,10 @@ Ne répète jamais le même message. Adapte chaque réponse au contexte du clien
 async function saveSettings() {
   var btn = document.getElementById('settings-save-btn');
   if (!btn) btn = event && event.target ? event.target.closest('button') : null;
-  if (btn) { btn.disabled=true; btn.style.background='#9ca3af'; btn.style.cursor='not-allowed'; btn.textContent='Sauvegarde...'; }
-  var storeName = (document.getElementById('settings-store-name')?.value || '').trim();
-  var lang = document.getElementById('settings-lang')?.value || 'fr';
+  if (btn) { btn.disabled=true; btn.style.background='#9ca3af'; btn.style.cursor='not-allowed'; btn.innerHTML='⏳ Sauvegarde...'; }
   var prompt = (document.getElementById('settings-prompt')?.value || '').trim();
   var stored = JSON.parse(localStorage.getItem('titanex_settings_' + INSTANCE) || '{}');
-  stored.merchant_name = storeName; stored.lang = lang; stored.system_prompt = prompt;
+  stored.system_prompt = prompt;
   localStorage.setItem('titanex_settings_' + INSTANCE, JSON.stringify(stored));
   try {
     if (SESSION?.id || SESSION?.tenant_id) {
@@ -7178,14 +7110,14 @@ async function saveSettings() {
       var r = await fetch('/admin/tenant/' + tid, {
         method:'PUT',
         headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
-        body: JSON.stringify({ merchant_name: storeName, preferred_lang: lang, system_prompt: prompt })
+        body: JSON.stringify({ system_prompt: prompt })
       });
       if (!r.ok) { var e2=await r.json().catch(function(){return{}}); throw new Error(e2.error||e2.message||'Erreur serveur '+r.status); }
     }
-    if (btn) { btn.textContent='Sauvegarde'; btn.style.background='#10b981'; btn.style.cursor='pointer'; setTimeout(function(){ btn.disabled=false; btn.textContent='Sauvegarder'; },2000); }
-    showToast('Parametres sauvegardes !');
+    if (btn) { btn.innerHTML='✅ Sauvegardé'; btn.style.background='#22C55E'; btn.style.cursor='pointer'; setTimeout(function(){ btn.disabled=false; btn.innerHTML='💾 Sauvegarder'; },2000); }
+    showToast('Profil sauvegardé ✅');
   } catch(e) {
-    if (btn) { btn.textContent='Erreur'; btn.style.background='#ef4444'; setTimeout(function(){ btn.disabled=false; btn.style.background='#10b981'; btn.style.cursor='pointer'; btn.textContent='Sauvegarder'; },2500); }
+    if (btn) { btn.innerHTML='❌ Erreur'; btn.style.background='#ef4444'; setTimeout(function(){ btn.disabled=false; btn.style.background='#22C55E'; btn.style.cursor='pointer'; btn.innerHTML='💾 Sauvegarder'; },2500); }
     showToast('Erreur: ' + e.message, 'error');
   }
 }
