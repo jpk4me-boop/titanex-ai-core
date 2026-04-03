@@ -17,7 +17,7 @@
       overflow: hidden;
     }
     .sidebar {
-      width: 230px;
+      width: 200px;
       background: #15803D;
       display: flex;
       flex-direction: column;
@@ -59,6 +59,10 @@
       flex: 1;
       overflow-y: auto;
       padding: 28px 32px;
+    }
+    .main-inner {
+      max-width: 860px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -80,7 +84,7 @@
       margin-bottom: 18px;
     }
     .profile-banner {
-      height: 120px;
+      height: 140px;
       background: linear-gradient(135deg, #15803D 0%, #22C55E 100%);
       position: relative;
       display: flex;
@@ -360,6 +364,7 @@
 </aside>
 
 <main class="main">
+<div class="main-inner">
   <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:5px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer">FR</button></div>
   <div class="page-header">
     <h1 data-i18n="title_my_profile">Mon Profil</h1>
@@ -428,6 +433,7 @@
       </div>
     </div>
   </div>
+</div>
 </main>
 
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
