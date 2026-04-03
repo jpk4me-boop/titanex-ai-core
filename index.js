@@ -17,9 +17,6 @@ const app=express();
 app.use(express.json({limit:'50mb'}));
 app.use(express.urlencoded({extended:true,limit:'50mb'}));
 app.use("/dashboard", require("express").static(__dirname + "/dashboard"));
-app.get("/dashboard/app/{*path}", (req, res) => {
-  res.sendFile(require("path").join(__dirname, "dashboard/app/index.html"));
-});
 const adminRouter = require("./admin");
 app.use("/admin", adminRouter);
 const paymentRouter = require("./payment");

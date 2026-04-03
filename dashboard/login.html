@@ -182,7 +182,7 @@ async function doLogin(type){
     var d=await r.json();
     if(d.error){showErr(d.error);return;}
     localStorage.setItem('titanex_session',JSON.stringify(d.session));
-    window.location.href='/dashboard/app/';
+    window.location.href='/dashboard/';
   }catch(e){showErr(t('error_network'));}
 }
 
@@ -200,7 +200,7 @@ function initGoogle(){
         .then(function(d){
           if(d.error){showErr(d.error);return;}
           localStorage.setItem('titanex_session',JSON.stringify(d.session));
-          window.location.href='/dashboard/app/';
+          window.location.href='/dashboard/';
         }).catch(function(){showErr(t('error_network'));});
     }
   });
@@ -219,7 +219,7 @@ function initGoogle(){
                 .then(function(d){
                   if(d.error){showErr(d.error);return;}
                   localStorage.setItem('titanex_session',JSON.stringify(d.session));
-                  window.location.href='/dashboard/app/';
+                  window.location.href='/dashboard/';
                 });
             });
         }
