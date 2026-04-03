@@ -49,6 +49,16 @@ td{padding:14px 16px;font-size:14px;color:#374151;border-bottom:1px solid #f3f4f
 tr:nth-child(even) td{background:#fafbfc;}
 tr:hover td{background:#f0fdf4!important;}
 .badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block;}
+.ua-wrap{position:relative;display:inline-block;}
+.ua-btn{background:#22C55E;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .2s;min-height:36px;}
+.ua-btn:hover{background:#15803D;transform:translateY(-1px);box-shadow:0 4px 12px rgba(34,197,94,.3);}
+.ua-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);z-index:200;background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.12);min-width:200px;padding:6px 0;animation:pi .2s ease;}
+.ua-menu.open{display:block;}
+.ua-menu button{width:100%;text-align:left;background:none;border:none;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;color:#374151;transition:background .15s;}
+.ua-menu button:hover{background:#f0fdf4;}
+.ua-menu button.danger{color:#b91c1c;}
+.ua-menu button.danger:hover{background:#fef2f2;}
+.ua-sep{height:1px;background:#f1f5f9;margin:4px 0;}
 .fg{margin-bottom:16px;}
 .fg label{display:block;font-size:13px;font-weight:700;color:#374151;margin-bottom:7px;}
 .fg input,.fg select{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:inherit;color:#111827;background:#fff;outline:none;transition:all .2s ease;}
@@ -611,7 +621,7 @@ function renderUsers(list){
       '<td style="font-size:12.5px;color:'+(expired?'#ef4444':'#374151')+';font-weight:'+(expired?'700':'400')+'">'+(u.date_fin?fd(u.date_fin):'&mdash;')+'</td>'+
       '<td style="font-size:12.5px;">'+fd(u.created_at)+'</td>'+
       '<td><span class="badge" style="background:'+(isA?'#dcfce7':'#f1f5f9')+';color:'+(isA?'#15803D':'#64748b')+'">'+(isA?'Admin':'User')+'</span></td>'+
-      '<td style="display:flex;gap:4px;flex-wrap:wrap;">'+
+      '<td style="position:relative;">'+
         userActionBtns(u)+
       '</td>'+
     '</tr>';
@@ -623,61 +633,74 @@ function filterU(q){
 }
 
 function userActionBtns(u){
-  var s = u.statut || 'essai';
   var id = u.id;
-  var btns = '';
-  // Activer — visible si pas actif
-  if (s !== 'actif') btns += '<button style="background:#d1fae5;color:#065f46;border:1.5px solid #bbf7d0;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:32px" onclick="setStatut(\''+id+'\',\'actif\',this)">✅ Activer</button>';
-  // Suspendre — visible si actif ou essai
-  if (s === 'actif' || s === 'essai') btns += '<button style="background:#fef3c7;color:#92400e;border:1.5px solid #fde68a;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:32px" onclick="setStatut(\''+id+'\',\'suspendu\',this)">⏸️ Suspendre</button>';
-  // Bloquer — visible si actif ou essai
-  if (s === 'actif' || s === 'essai') btns += '<button style="background:#fee2e2;color:#991b1b;border:1.5px solid #fecaca;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:32px" onclick="setStatut(\''+id+'\',\'bloqué\',this)">🚫 Bloquer</button>';
-  // Bannir — visible si pas banni
-  if (s !== 'banni') btns += '<button style="background:#7f1d1d;color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:32px" onclick="bannirU(\''+id+'\',\''+((u.nom||u.email||'').replace(/'/g,"\\'"))+'\',this)">☠️ Bannir</button>';
-  // +30j — visible si actif ou essai
-  if (s === 'actif' || s === 'essai') btns += '<button style="background:#d1fae5;color:#065f46;border:1.5px solid #bbf7d0;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;min-height:32px" onclick="extendU(\''+id+'\',30,this)">+30j</button>';
-  return btns;
+  var nom = (u.nom||u.email||'').replace(/'/g,"\\'");
+  return '<div class="ua-wrap">' +
+    '<button class="ua-btn" onclick="toggleUAMenu(this)">Actions ▼</button>' +
+    '<div class="ua-menu" data-uid="'+id+'" data-unom="'+nom+'">' +
+      '<button onclick="doUA(this,\'actif\')">✅ Activer</button>' +
+      '<button onclick="doUA(this,\'suspendu\')">⏸️ Suspendre</button>' +
+      '<div class="ua-sep"></div>' +
+      '<button onclick="doUA(this,\'essai_reset\')">🔄 Essai à nouveau</button>' +
+      '<button onclick="doUA(this,\'gratuit\')">🎁 Accès gratuit</button>' +
+      '<div class="ua-sep"></div>' +
+      '<button class="danger" onclick="doUA(this,\'banni\')">🚫 Bannir</button>' +
+    '</div>' +
+  '</div>';
 }
 
-async function setStatut(id, statut, btn){
-  var labels = {actif:'Activer',suspendu:'Suspendre','bloqué':'Bloquer'};
-  if(!confirm((labels[statut]||statut)+' cet utilisateur ?'))return;
-  if(btn) btnLoading(btn, labels[statut]||'...');
+function toggleUAMenu(btn){
+  var menu = btn.nextElementSibling;
+  var wasOpen = menu.classList.contains('open');
+  closeAllUAMenus();
+  if(!wasOpen) menu.classList.add('open');
+}
+function closeAllUAMenus(){
+  document.querySelectorAll('.ua-menu.open').forEach(function(m){m.classList.remove('open');});
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.ua-wrap')) closeAllUAMenus();
+});
+
+async function doUA(btn, action){
+  var menu = btn.closest('.ua-menu');
+  var id = menu.getAttribute('data-uid');
+  var nom = menu.getAttribute('data-unom');
+  closeAllUAMenus();
+
+  if(action === 'banni'){
+    if(!confirm('⚠️ Bannir '+nom+' ?\n\nCette action est définitive.')) return;
+    if(!confirm('DERNIÈRE CONFIRMATION: Bannir '+nom+' définitivement ?')) return;
+  }
+
+  var labels = {actif:'Activation',suspendu:'Suspension',banni:'Bannissement',essai_reset:'Réinitialisation essai',gratuit:'Accès gratuit'};
+  toast('⏳ '+(labels[action]||action)+' en cours...');
+
   try{
-    var r=await fetch('/api/admin/tenants/'+id+'/statut',{method:'PATCH',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({statut:statut})});
-    if(!r.ok) throw new Error('Erreur serveur');
-    if(btn) btnSuccess(btn, labels[statut]||'OK');
-    toast('Statut mis à jour: '+statut);
-    setTimeout(function(){loadUsers();},800);
-  }catch(e){if(btn)btnError(btn,'Erreur');toast('Erreur: '+e.message,'err');}
-}
-
-async function bannirU(id, nom, btn){
-  if(!confirm('⚠️ Êtes-vous sûr de vouloir BANNIR '+nom+' ?\n\nCette action est définitive.'))return;
-  if(!confirm('DERNIÈRE CONFIRMATION: Bannir '+nom+' définitivement ?'))return;
-  if(btn) btnLoading(btn, 'Bannissement...');
-  try{
-    var r=await fetch('/api/admin/tenants/'+id+'/statut',{method:'PATCH',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({statut:'banni'})});
-    if(!r.ok) throw new Error('Erreur');
-    if(btn) btnSuccess(btn, 'Banni');
-    toast('☠️ Utilisateur banni définitivement');
-    setTimeout(function(){loadUsers();},800);
-  }catch(e){if(btn)btnError(btn,'Erreur');toast('Erreur: '+e.message,'err');}
-}
-
-async function activateU(id,btn){
-  setStatut(id,'actif',btn);
-}
-
-async function extendU(id,days,btn){
-  if(btn) btnLoading(btn, '+'+days+'j...');
-  try{
-    var r=await fetch('/api/admin/users/'+id+'/credits',{method:'POST',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({days:days})});
-    if(!r.ok) throw new Error('Erreur');
-    if(btn) btnSuccess(btn, '+'+days+'j OK');
-    toast(days+' jours ajoutés !');
-    setTimeout(function(){loadUsers();},800);
-  }catch(e){if(btn)btnError(btn,'Erreur');toast('Erreur','err');}
+    if(action === 'essai_reset'){
+      // Set status to essai + extend 14 days
+      var r1 = await fetch('/api/admin/tenants/'+id+'/statut',{method:'PATCH',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({statut:'essai'})});
+      if(!r1.ok) throw new Error('Erreur statut');
+      var r2 = await fetch('/api/admin/users/'+id+'/credits',{method:'POST',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({days:14})});
+      if(!r2.ok) throw new Error('Erreur jours');
+      toast('🔄 '+nom+' remis en essai (+14 jours)');
+    } else if(action === 'gratuit'){
+      // Set status to actif + extend 30 days
+      var r1 = await fetch('/api/admin/tenants/'+id+'/statut',{method:'PATCH',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({statut:'actif'})});
+      if(!r1.ok) throw new Error('Erreur statut');
+      var r2 = await fetch('/api/admin/users/'+id+'/credits',{method:'POST',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({days:30})});
+      if(!r2.ok) throw new Error('Erreur jours');
+      toast('🎁 Accès gratuit 30j accordé à '+nom);
+    } else {
+      var r = await fetch('/api/admin/tenants/'+id+'/statut',{method:'PATCH',headers:AH({'Content-Type':'application/json'}),body:JSON.stringify({statut:action})});
+      if(!r.ok) throw new Error('Erreur serveur');
+      var msg = {actif:'✅ '+nom+' activé',suspendu:'⏸️ '+nom+' suspendu',banni:'🚫 '+nom+' banni définitivement'};
+      toast(msg[action]||'Statut mis à jour');
+    }
+    setTimeout(function(){loadUsers();},600);
+  }catch(e){
+    toast('Erreur: '+e.message,'err');
+  }
 }
 
 function retirer(){
