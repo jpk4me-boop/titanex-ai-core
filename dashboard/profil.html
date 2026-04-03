@@ -496,13 +496,7 @@ fr:{
   stat_orgs:"Organisations",
   stat_agents_active:"Agents actifs",
   stat_agents_total:"Agents total",
-  title_shop:"Boutique",
-  form_shop_name:"Nom de la boutique",
-  form_preferred_lang:"Langue preferee",
-  form_shop_logo:"Logo de la boutique",
   btn_choose:"Choisir",
-  form_banner:"Banniere",
-  form_logo_hint:"200 × 200 px recommande",
   title_ai_script:"Script de vente IA",
   title_ai_script_sub:"Ce script guide automatiquement votre agent IA.",
   btn_reset:"Reinitialiser",
@@ -535,11 +529,6 @@ fr:{
   form_password_hint:"Minimum 8 caracteres avec majuscule et chiffre",
   btn_change:"Modifier",
   msg_profile_updated:"Profil mis a jour !",
-  msg_settings_saved:"Parametres sauvegardes !",
-  msg_logo_updated:"Logo mis a jour !",
-  msg_logo_deleted:"Logo supprime",
-  msg_banner_updated:"Banniere mise a jour !",
-  msg_banner_deleted:"Banniere supprimee",
   msg_profile_saved:"Profil sauvegardé ✅",
   msg_script_reset:"Script reinitialise",
   msg_password_changed:"Mot de passe modifie !",
@@ -555,7 +544,6 @@ fr:{
   confirm_delete:"SUPPRESSION DEFINITIVE — Toutes vos donnees seront effacees. Confirmer ?",
   member_since:"Membre depuis",
   loading:"chargement...",
-  placeholder_shop:"Utilise comme variable {merchant_name}",
   placeholder_script:"Decrivez comment votre agent doit se comporter..."
 },
 en:{
@@ -577,13 +565,7 @@ en:{
   stat_orgs:"Organizations",
   stat_agents_active:"Active agents",
   stat_agents_total:"Total agents",
-  title_shop:"Store",
-  form_shop_name:"Store name",
-  form_preferred_lang:"Preferred language",
-  form_shop_logo:"Store logo",
   btn_choose:"Choose",
-  form_banner:"Banner",
-  form_logo_hint:"200 × 200 px recommended",
   title_ai_script:"AI Sales Script",
   title_ai_script_sub:"This script automatically guides your AI agent.",
   btn_reset:"Reset",
@@ -616,11 +598,6 @@ en:{
   form_password_hint:"Minimum 8 characters with uppercase and number",
   btn_change:"Change",
   msg_profile_updated:"Profile updated!",
-  msg_settings_saved:"Settings saved!",
-  msg_logo_updated:"Logo updated!",
-  msg_logo_deleted:"Logo deleted",
-  msg_banner_updated:"Banner updated!",
-  msg_banner_deleted:"Banner deleted",
   msg_profile_saved:"Profile saved ✅",
   msg_script_reset:"Script reset",
   msg_password_changed:"Password changed!",
@@ -636,7 +613,6 @@ en:{
   confirm_delete:"PERMANENT DELETION — All your data will be erased. Confirm?",
   member_since:"Member since",
   loading:"loading...",
-  placeholder_shop:"Used as variable {merchant_name}",
   placeholder_script:"Describe how your agent should behave..."
 }
 };
@@ -779,37 +755,6 @@ async function changePassword(btn){
   btnLoad(btn,false);
 }
 
-function uploadLogo(input){
-  if(!input.files||!input.files[0])return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    fetch('/api/tenant/logo',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({logo_url:e.target.result})})
-    .then(function(){PROFILE.logo_url=e.target.result;populateUI(PROFILE);toast(t('msg_logo_updated'));})
-    .catch(function(){PROFILE.logo_url=e.target.result;populateUI(PROFILE);toast(t('msg_logo_updated'));});
-  };
-  reader.readAsDataURL(input.files[0]);
-}
-function deleteLogo(){
-  fetch('/api/tenant/logo',{method:'DELETE',headers:{Authorization:'Bearer '+TOKEN}}).catch(function(){});
-  PROFILE.logo_url=null;populateUI(PROFILE);toast(t('msg_logo_deleted'));
-}
-function uploadBanner(input){
-  if(!input.files||!input.files[0])return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    fetch('/api/tenant/banner',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({banner_url:e.target.result})})
-    .then(function(){PROFILE.banner_url=e.target.result;populateUI(PROFILE);toast(t('msg_banner_updated'));})
-    .catch(function(){PROFILE.banner_url=e.target.result;populateUI(PROFILE);toast(t('msg_banner_updated'));});
-  };
-  reader.readAsDataURL(input.files[0]);
-}
-function deleteBanner(){
-  fetch('/api/tenant/banner',{method:'DELETE',headers:{Authorization:'Bearer '+TOKEN}}).catch(function(){});
-  PROFILE.banner_url=null;populateUI(PROFILE);
-  document.getElementById('bannerEl').style.backgroundImage='';
-  document.getElementById('bannerPreview').style.backgroundImage='';
-  toast(t('msg_banner_deleted'));
-}
 function resetScript(){document.getElementById('aiScript').value=DEFAULT_SCRIPT;toast(t('msg_script_reset'));}
 
 async function deactivateAccount(){
