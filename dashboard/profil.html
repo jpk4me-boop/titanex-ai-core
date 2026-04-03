@@ -18,8 +18,7 @@
     }
     .sidebar {
       width: 230px;
-      background: #ffffff;
-      border-right: 1px solid #e2e8f0;
+      background: #15803D;
       display: flex;
       flex-direction: column;
       padding: 20px 12px;
@@ -30,7 +29,7 @@
     .sidebar-label {
       font-size: 10px;
       font-weight: 700;
-      color: #94a3b8;
+      color: rgba(255,255,255,.5);
       letter-spacing: .12em;
       text-transform: uppercase;
       padding: 0 10px;
@@ -45,7 +44,7 @@
       cursor: pointer;
       font-size: 13.5px;
       font-weight: 500;
-      color: #64748b;
+      color: rgba(255,255,255,.7);
       border: none;
       background: transparent;
       width: 100%;
@@ -53,8 +52,8 @@
       font-family: inherit;
       transition: all .15s;
     }
-    .nav-item:hover { background: #f8fafc; color: #1e293b; }
-    .nav-item.active { background: #f0fdf4; color: #22c55e; font-weight: 600; }
+    .nav-item:hover { background: rgba(255,255,255,.1); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,.15); color: #4ADE80; font-weight: 600; }
     .nav-item .icon { font-size: 15px; }
     .main {
       flex: 1;
@@ -82,7 +81,7 @@
     }
     .profile-banner {
       height: 120px;
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f0fdf4 100%);
+      background: linear-gradient(135deg, #15803D 0%, #22C55E 100%);
       position: relative;
       display: flex;
       align-items: center;
@@ -94,7 +93,7 @@
     .banner-text {
       font-size: 32px;
       font-weight: 900;
-      color: rgba(34,197,94,.15);
+      color: rgba(255,255,255,.2);
       letter-spacing: -1px;
       pointer-events: none;
       user-select: none;
@@ -123,7 +122,7 @@
       width: 76px;
       height: 76px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #22c55e, #22c55e);
+      background: linear-gradient(135deg, #22C55E, #15803D);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -146,7 +145,7 @@
       width: 26px;
       height: 26px;
       border-radius: 50%;
-      background: #22c55e;
+      background: #22C55E;
       border: 2.5px solid #fff;
       cursor: pointer;
       font-size: 12px;
@@ -155,7 +154,7 @@
       justify-content: center;
       transition: background .15s;
     }
-    .avatar-cam:hover { background: #16a34a; }
+    .avatar-cam:hover { background: #15803D; }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -194,27 +193,27 @@
       transition: border-color .15s, box-shadow .15s;
     }
     input:focus, textarea:focus, select:focus {
-      border-color: #22c55e;
+      border-color: #22C55E;
       box-shadow: 0 0 0 3px rgba(34,197,94,.1);
     }
     input:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; }
     textarea { resize: vertical; line-height: 1.6; }
     /* ── Boutons primaires indigo ── */
     .btn-primary {
-      background: #22c55e; color: #fff; border: none; border-radius: 10px;
+      background: #22C55E; color: #fff; border: none; border-radius: 10px;
       padding: 10px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer;
       font-family: inherit; transition: all .15s; display: inline-flex; align-items: center; gap: 7px;
     }
-    .btn-primary:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(34,197,94,.35); }
+    .btn-primary:hover { background: #15803D; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(34,197,94,.35); }
     .btn-primary:disabled { opacity:.5; pointer-events:none; }
     /* ── Bouton sauvegarder vert elegant ── */
     .btn-save {
-      background: linear-gradient(135deg, #16A34A, #22c55e); color: #fff; border: none;
+      background: #22C55E; color: #fff; border: none;
       border-radius: 12px; padding: 12px 24px; font-size: 14px; font-weight: 700;
       cursor: pointer; font-family: inherit; transition: all .2s; display: inline-flex;
       align-items: center; gap: 7px; box-shadow: 0 4px 16px rgba(34,197,94,.25);
     }
-    .btn-save:hover { background: linear-gradient(135deg, #047857, #16A34A); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34,197,94,.35); }
+    .btn-save:hover { background: #15803D; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34,197,94,.35); }
     .btn-save:disabled { opacity:.5; pointer-events:none; }
     /* ── Bouton secondaire ── */
     .btn-secondary {
@@ -225,18 +224,18 @@
     .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
     /* ── Bouton copier / exporter ── */
     .btn-copy, .btn-export {
-      background: #22c55e; color: #fff; border: none; border-radius: 10px;
+      background: #22C55E; color: #fff; border: none; border-radius: 10px;
       padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
       font-family: inherit; transition: all .15s; display: inline-flex; align-items: center; gap: 7px;
     }
-    .btn-copy:hover, .btn-export:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(34,197,94,.3); }
+    .btn-copy:hover, .btn-export:hover { background: #15803D; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(34,197,94,.3); }
     /* ── Bouton voir ── */
     .btn-voir {
       background: #fff; color: #374151; border: 1.5px solid #e2e8f0; border-radius: 10px;
       padding: 9px 18px; font-size: 13px; font-weight: 500; cursor: pointer;
       font-family: inherit; transition: all .15s; display: inline-flex; align-items: center; gap: 7px;
     }
-    .btn-voir:hover { background: #f8fafc; border-color: #22c55e; color: #22c55e; }
+    .btn-voir:hover { background: #f0fdf4; border-color: #22C55E; color: #22C55E; }
     /* ── Bouton suppression outline rouge ── */
     .btn-ghost-red {
       background: #fff; color: #ef4444; border: 1.5px solid #fecaca; border-radius: 9px;
@@ -250,26 +249,26 @@
     }
     .btn-danger:hover { background: #fef2f2; border-color: #f87171; }
     /* ── Stat cards couleurs ── */
-    .stat-card:nth-child(1) { border-left: 3px solid #22c55e; }
-    .stat-card:nth-child(2) { border-left: 3px solid #0ea5e9; }
-    .stat-card:nth-child(3) { border-left: 3px solid #22c55e; }
-    .stat-card:nth-child(4) { border-left: 3px solid #f59e0b; }
+    .stat-card:nth-child(1) { border-left: 3px solid #15803D; }
+    .stat-card:nth-child(2) { border-left: 3px solid #22C55E; }
+    .stat-card:nth-child(3) { border-left: 3px solid #4ADE80; }
+    .stat-card:nth-child(4) { border-left: 3px solid #86efac; }
     /* ── Documentation / code blocks ── */
     .doc-box { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; }
     .doc-box code, code.api-code {
-      background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0;
+      background: #dcfce7; color: #15803D; border: 1px solid #bbf7d0;
       border-radius: 6px; padding: 3px 8px; font-size: 12.5px; font-family: monospace;
     }
     /* ── Progress bar ── */
     .progress-bar {
-      background: linear-gradient(90deg, #22c55e, #22c55e);
+      background: linear-gradient(90deg, #22C55E, #4ADE80);
       border-radius: 99px; height: 6px; transition: width .5s ease;
     }
     .upload-zone {
       border: 2px dashed #e2e8f0; border-radius: 12px; padding: 24px;
       text-align: center; cursor: pointer; transition: all .15s; background: #f8fafc;
     }
-    .upload-zone:hover { border-color: #22c55e; background: #f0fdf4; }
+    .upload-zone:hover { border-color: #22C55E; background: #f0fdf4; }
     .success-banner {
       background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 13px;
       padding: 14px 20px; display: flex; align-items: center; gap: 12px;
@@ -289,7 +288,7 @@
       flex: 1; padding: 9px; border-radius: 9px; border: none; font-size: 13px; font-weight: 500;
       cursor: pointer; font-family: inherit; transition: all .15s; background: transparent; color: #64748b;
     }
-    .modal-tab.active { background: #22c55e; color: #fff; font-weight: 600; }
+    .modal-tab.active { background: #22C55E; color: #fff; font-weight: 600; }
     .modal-tab:not(.active):hover { background: #e2e8f0; color: #374151; }
     .toast {
       position: fixed; bottom: 24px; right: 24px; padding: 13px 20px; border-radius: 12px;
@@ -305,7 +304,7 @@
     .page-header h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
     .page-header p { font-size: 13.5px; color: #94a3b8; }
     .loader { display: flex; align-items: center; justify-content: center; min-height: 300px; }
-    .spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: #22c55e; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: #22C55E; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .pw-wrap { position: relative; }
     .pw-toggle { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 15px; color: #94a3b8; }
@@ -317,7 +316,7 @@
     .logo-row { display: flex; align-items: center; gap: 14px; }
     .logo-preview {
       width: 52px; height: 52px; border-radius: 12px;
-      background: linear-gradient(135deg,#22c55e,#22c55e);
+      background: linear-gradient(135deg,#22C55E,#15803D);
       display: flex; align-items: center; justify-content: center;
       color: #fff; font-weight: 800; font-size: 16px; flex-shrink: 0;
       background-size: cover; background-position: center; overflow: hidden;
@@ -328,7 +327,7 @@
     }
     .banner-preview {
       height: 80px; border-radius: 12px;
-      background: linear-gradient(135deg,#14532d,#22c55e);
+      background: linear-gradient(135deg,#15803D,#22C55E);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 10px; overflow: hidden;
       background-size: cover; background-position: center;
@@ -338,7 +337,7 @@
     .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
     @media(max-width:768px){
       body{flex-direction:column}
-      .sidebar{width:100%;flex-direction:row;padding:12px;overflow-x:auto;gap:6px;border-right:none;border-bottom:1px solid #e2e8f0}
+      .sidebar{width:100%;flex-direction:row;padding:12px;overflow-x:auto;gap:6px;border-right:none;border-bottom:1px solid rgba(255,255,255,.15)}
       .sidebar-label{display:none}
       .nav-item{white-space:nowrap;padding:8px 14px;font-size:12px}
       .main{padding:16px}
@@ -346,7 +345,7 @@
       .form-row{grid-template-columns:1fr}
     }
   </style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2322c55e'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
 <body>
 
@@ -398,45 +397,17 @@
           <div class="info-row">📅 <span data-i18n="member_since">Membre depuis</span> <span id="memberSince">...</span></div>
         </div>
         <div style="display:flex;gap:10px;margin-bottom:18px">
-          <button onclick="openModal('Infos')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#22c55e;color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(34,197,94,.3)" onmouseover="this.style.background='#16a34a';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(34,197,94,.4)'" onmouseout="this.style.background='#22c55e';this.style.transform='none';this.style.boxShadow='0 4px 14px rgba(34,197,94,.3)'">✏️ <span data-i18n="btn_edit_profile">Editer le profil</span></button>
+          <button onclick="openModal('Infos')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#fff;color:#22C55E;border:1.5px solid #22C55E;border-radius:11px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(34,197,94,.15)" onmouseover="this.style.background='#f0fdf4';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(34,197,94,.25)'" onmouseout="this.style.background='#fff';this.style.transform='none';this.style.boxShadow='0 4px 14px rgba(34,197,94,.15)'">✏️ <span data-i18n="btn_edit_profile">Editer le profil</span></button>
           <button onclick="openModal('MDP')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:11px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#f8fafc';this.style.borderColor='#cbd5e1'" onmouseout="this.style.background='#fff';this.style.borderColor='#e2e8f0'">🔒 <span data-i18n="btn_change_password">Changer le mot de passe</span></button>
         </div>
         <div class="stats-grid">
-          <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value" id="statCredits" style="color:#22c55e;">—</div><div class="stat-label" data-i18n="stat_credits">Credits</div></div>
-          <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-value" id="statOrgs" style="color:#0ea5e9;">1</div><div class="stat-label" data-i18n="stat_orgs">Organisations</div></div>
-          <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-value" id="statAgentsActifs" style="color:#22c55e;">—</div><div class="stat-label" data-i18n="stat_agents_active">Agents actifs</div></div>
-          <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value" id="statAgentsTotal" style="color:#f59e0b;">—</div><div class="stat-label" data-i18n="stat_agents_total">Agents total</div></div>
+          <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value" id="statCredits" style="color:#15803D;">—</div><div class="stat-label" data-i18n="stat_credits">Credits</div></div>
+          <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-value" id="statOrgs" style="color:#22C55E;">1</div><div class="stat-label" data-i18n="stat_orgs">Organisations</div></div>
+          <div class="stat-card"><div class="stat-icon">🤖</div><div class="stat-value" id="statAgentsActifs" style="color:#4ADE80;">—</div><div class="stat-label" data-i18n="stat_agents_active">Agents actifs</div></div>
+          <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value" id="statAgentsTotal" style="color:#86efac;">—</div><div class="stat-label" data-i18n="stat_agents_total">Agents total</div></div>
         </div>
       </div>
     </div>
-
-    <div class="card"><div class="card-body">
-      <div class="card-title">🏪 <span data-i18n="title_shop">Boutique</span></div>
-      <div class="form-group"><label class="lbl" data-i18n="form_shop_name">Nom de la boutique</label><input type="text" id="shopName" data-i18n-placeholder="placeholder_shop" placeholder="Utilise comme variable {merchant_name}"/></div>
-      <div class="form-group"><label class="lbl" data-i18n="form_preferred_lang">Langue preferee</label><select id="prefLang"><option value="fr">Francais</option><option value="en">English</option><option value="es">Espanol</option><option value="pt">Portugues</option><option value="ar">العربية</option></select></div>
-      <div class="form-group">
-        <label class="lbl" data-i18n="form_shop_logo">Logo de la boutique</label>
-        <div class="logo-row">
-          <div class="logo-preview" id="logoPreview">T</div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn-secondary" style="font-size:12.5px;padding:8px 14px;" onclick="document.getElementById('logoInput').click()">📁 <span data-i18n="btn_choose">Choisir</span></button>
-            <button class="btn-ghost-red" onclick="deleteLogo()">🗑️</button>
-          </div>
-        </div>
-        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="uploadLogo(this)"/>
-        <p style="font-size:11.5px;color:#94a3b8;margin-top:6px;" data-i18n="form_logo_hint">200 × 200 px recommande</p>
-      </div>
-      <div class="form-group">
-        <label class="lbl" data-i18n="form_banner">Banniere</label>
-        <div class="banner-preview" id="bannerPreview"><span class="banner-preview-text">TITANEX AI</span></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-secondary" style="font-size:12.5px;padding:8px 14px;" onclick="document.getElementById('bannerInput').click()">🖼️ <span data-i18n="btn_choose">Choisir</span></button>
-          <button class="btn-ghost-red" onclick="deleteBanner()">🗑️</button>
-        </div>
-        <input type="file" id="bannerInput" accept="image/*" style="display:none" onchange="uploadBanner(this)"/>
-      </div>
-      <div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-save" onclick="saveBoutique(this)">💾 <span data-i18n="btn_save">Enregistrer</span></button></div>
-    </div></div>
 
     <div class="card"><div class="card-body">
       <div class="section-header">
@@ -445,7 +416,7 @@
       </div>
       <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;" data-i18n="title_ai_script_sub">Ce script guide automatiquement votre agent IA.</p>
       <textarea id="aiScript" rows="6" data-i18n-placeholder="placeholder_script" placeholder="Decrivez comment votre agent doit se comporter..."></textarea>
-      <div style="display:flex;justify-content:flex-end;margin-top:14px;"><button class="btn-save" onclick="saveBoutique(this)">💾 <span data-i18n="btn_save">Enregistrer</span></button></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px;"><button class="btn-save" onclick="saveScript(this)">💾 <span data-i18n="btn_save">Enregistrer</span></button></div>
     </div></div>
 
     <div class="danger-zone">
@@ -478,7 +449,7 @@
     </div>
     <div id="panel-Photo" style="display:none;">
       <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8fafc;border-radius:13px;border:1px solid #e2e8f0;margin-bottom:14px;">
-        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#22c55e);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;overflow:hidden;background-size:cover;background-position:center" id="modalAvatarPreview">?</div>
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#22C55E,#15803D);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;overflow:hidden;background-size:cover;background-position:center" id="modalAvatarPreview">?</div>
         <div><p style="font-weight:600;font-size:13.5px;color:#1e293b;" data-i18n="photo_current">Photo actuelle</p><p style="font-size:12px;color:#94a3b8;margin-top:3px;" data-i18n="photo_hint">JPG, PNG — Max 5 Mo</p></div>
       </div>
       <div class="upload-zone" onclick="document.getElementById('logoInput').click()" style="margin-bottom:14px;">
@@ -569,6 +540,7 @@ fr:{
   msg_logo_deleted:"Logo supprime",
   msg_banner_updated:"Banniere mise a jour !",
   msg_banner_deleted:"Banniere supprimee",
+  msg_profile_saved:"Profil sauvegardé ✅",
   msg_script_reset:"Script reinitialise",
   msg_password_changed:"Mot de passe modifie !",
   msg_account_deactivated:"Compte desactive",
@@ -649,6 +621,7 @@ en:{
   msg_logo_deleted:"Logo deleted",
   msg_banner_updated:"Banner updated!",
   msg_banner_deleted:"Banner deleted",
+  msg_profile_saved:"Profile saved ✅",
   msg_script_reset:"Script reset",
   msg_password_changed:"Password changed!",
   msg_account_deactivated:"Account deactivated",
@@ -764,12 +737,7 @@ function populateUI(d){
   document.getElementById('statCredits').textContent=(d.credits||0).toLocaleString('fr-FR');
   document.getElementById('statAgentsActifs').textContent=d.agents_actifs||0;
   document.getElementById('statAgentsTotal').textContent=d.agents_total||0;
-  document.getElementById('shopName').value=d.shop_name||'';
-  document.getElementById('prefLang').value=d.preferred_lang||'fr';
   document.getElementById('aiScript').value=d.ai_script||DEFAULT_SCRIPT;
-  var lp=document.getElementById('logoPreview');
-  if(d.logo_url){lp.style.backgroundImage='url('+d.logo_url+')';lp.textContent='';}else{lp.style.backgroundImage='';lp.textContent=init;}
-  if(d.banner_url){document.getElementById('bannerPreview').style.backgroundImage='url('+d.banner_url+')';}
 }
 
 async function saveProfile(btn){
@@ -784,13 +752,13 @@ async function saveProfile(btn){
   btnLoad(btn,false);
 }
 
-async function saveBoutique(btn){
+async function saveScript(btn){
   btnLoad(btn,true);
-  var body={shop_name:document.getElementById('shopName').value.trim(),preferred_lang:document.getElementById('prefLang').value,ai_script:document.getElementById('aiScript').value.trim()};
+  var script=document.getElementById('aiScript').value.trim();
   try{
-    var r=await fetch('/api/tenant/shop',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify(body)});
+    var r=await fetch('/api/tenant/shop',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+TOKEN},body:JSON.stringify({ai_script:script})});
     if(!r.ok){var e=await r.json();throw new Error(e.error||t('error_server'));}
-    toast(t('msg_settings_saved'));
+    toast(t('msg_profile_saved'));
   }catch(e){toast(e.message||t('error_server'),'err');}
   btnLoad(btn,false);
 }
