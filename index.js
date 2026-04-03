@@ -73,6 +73,23 @@ app.post("/webhook",async(req,res)=>{
       debounceTimers.delete(coolKey);
       if(!msgs.length)return;
       const combinedText=msgs.join(". ");
+
+      // ─── Détection de langue via Groq ─────────────────────────────────
+      let clientLang = "français";
+      let clientLangCode = "fr";
+      try {
+        const langRes = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+          model: "llama-3.3-70b-versatile",
+          messages: [{role:"system",content:"Tu es un détecteur de langue. Réponds UNIQUEMENT avec le JSON: {\"code\":\"XX\",\"name\":\"Nom de la langue\"}. Codes: fr=Français, en=English, ar=Arabe, es=Español, pt=Português, de=Deutsch, zh=中文, sw=Swahili, ha=Hausa, yo=Yoruba, tr=Türkçe, it=Italiano, ru=Русский"},
+            {role:"user",content:"Détecte la langue: \""+combinedText.substring(0,200)+"\""}],
+          max_tokens:60, temperature:0
+        }, {headers:{Authorization:"Bearer "+process.env.GROQ_API_KEY}});
+        const langJson = JSON.parse(langRes.data.choices[0].message.content.trim());
+        clientLangCode = langJson.code || "fr";
+        clientLang = langJson.name || "français";
+      } catch(langErr) { console.log("[LANG DETECT] fallback fr:", langErr.message); }
+      console.log("[LANG]", clientLangCode, clientLang);
+
       // Vérifier mode agent global (tenant)
       const {data:tenantData}=await supabaseAdmin.from('tenants').select('agent_mode').eq('instance_name',instance).maybeSingle();
       if(tenantData && tenantData.agent_mode==='inactif'){console.log('[SKIP] agent désactivé pour',instance);return;}
@@ -91,7 +108,7 @@ app.post("/webhook",async(req,res)=>{
       const {data:produits}=await supabaseAdmin.from("catalogue").select("nom,description,prix,stock,image_url").eq("instance_name",instance);
       let catalogueTexte="";
       if(produits&&produits.length>0){
-        catalogueTexte=produits.map(p=>"- "+p.nom+": "+(p.description||"")+" | Prix: "+(p.prix?p.prix+" FCFA":"a demander")+" | Stock: "+(p.stock>0?"disponible":"epuise")).join("\n");
+        catalogueTexte=produits.map(p=>"- "+p.nom+": "+(p.description||"")+" | Prix: "+(p.prix?p.prix+" FCFA":"a demander")+" | Stock: "+(p.stock>0?"disponible":"epuise")+(p.image_url?" | 📸 Image disponible":"")).join("\n");
       } else {
         catalogueTexte=store.catalog_details||"Catalogue en cours de configuration.";
       }
@@ -134,6 +151,20 @@ app.post("/webhook",async(req,res)=>{
       const estNouvelleConv = nbMessages === 0;
 
       const sys = promptUniversel +
+        "\n\n=== LANGUE DU CLIENT ===" +
+        "\nLe client écrit en " + clientLang + " (code: " + clientLangCode + ")." +
+        "\nRÈGLE ABSOLUE: Réponds TOUJOURS dans la langue du client (" + clientLang + ")." +
+        "\nSi la langue est inconnue, réponds en français." +
+        "\nAdapte les noms de produits, descriptions et instructions de paiement dans la langue du client." +
+
+        "\n\n=== PRÉSENTATION DES PRODUITS ===" +
+        "\nQuand tu présentes un produit, utilise TOUJOURS ce format:" +
+        "\n*[Nom du produit]* (traduit dans la langue du client)" +
+        "\n💰 Prix: [montant] FCFA" +
+        "\n📝 [Description traduite dans la langue du client]" +
+        "\n➡️ [Call-to-action professionnel dans la langue du client]" +
+        "\nCite le NOM EXACT du produit (en français original) pour que l'image s'envoie automatiquement." +
+
         "\n\n=== CONTEXTE TEMPOREL ===" +
         "\nNous sommes le "+jourSemaine+" "+dateComplete+", il est "+heureFormatee+" (heure de Douala/Cameroun)." +
         "\nMoment de la journée: "+momentJournee+". Salutation correcte: "+salutationCorrecte+"." +
@@ -231,12 +262,27 @@ app.post("/webhook",async(req,res)=>{
         const {data:legacy} = await supabaseAdmin.from("conversations").select("id,messages").eq("phone",phoneClean).is("instance",null).single();
         if (legacy) existing = legacy;
       }
+      // Traduction française pour le dashboard (si client non francophone)
+      let translatedText = combinedText;
+      if (clientLangCode !== "fr") {
+        try {
+          const trRes = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+            model: "llama-3.3-70b-versatile",
+            messages: [{role:"system",content:"Traduis ce texte en français. Réponds UNIQUEMENT avec la traduction, rien d'autre."},
+              {role:"user",content:combinedText}],
+            max_tokens:300, temperature:0.1
+          }, {headers:{Authorization:"Bearer "+process.env.GROQ_API_KEY}});
+          translatedText = trRes.data.choices[0].message.content.trim();
+          console.log("[TRANSLATED]", translatedText.substring(0,60));
+        } catch(trErr) { console.log("[TRANSLATE ERR]", trErr.message); }
+      }
+
       if (existing) {
         const msgs = Array.isArray(existing.messages) ? existing.messages : [];
-        msgs.push({role:"user",content:combinedText},{role:"assistant",content:reply});
-        await supabaseAdmin.from("conversations").update({messages:msgs,instance,from:jid,user_message:combinedText,ai_reply:reply,updated_at:new Date().toISOString()}).eq("id",existing.id);
+        msgs.push({role:"user",content:combinedText,translated_text:translatedText,lang:clientLangCode},{role:"assistant",content:reply});
+        await supabaseAdmin.from("conversations").update({messages:msgs,instance,from:jid,user_message:combinedText,ai_reply:reply,client_language:clientLangCode,updated_at:new Date().toISOString()}).eq("id",existing.id);
       } else {
-        await supabaseAdmin.from("conversations").insert({phone:phoneClean,instance,from:jid,user_message:combinedText,ai_reply:reply,messages:[{role:"user",content:combinedText},{role:"assistant",content:reply}]});
+        await supabaseAdmin.from("conversations").insert({phone:phoneClean,instance,from:jid,user_message:combinedText,ai_reply:reply,client_language:clientLangCode,messages:[{role:"user",content:combinedText,translated_text:translatedText,lang:clientLangCode},{role:"assistant",content:reply}]});
         // Notification admin: nouveau prospect
         const heureDouala = moment().tz("Africa/Douala").format("DD/MM/YYYY HH:mm");
         const {data:tenantInfo} = await supabaseAdmin.from("tenants").select("nom").eq("instance_name",instance).maybeSingle();
