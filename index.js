@@ -25,6 +25,31 @@ const cooldowns=new Map();
 const pendingMsgs=new Map();
 const debounceTimers=new Map();
 
+// ── Envoi image produit via Evolution API ───────────────────────────────────
+async function sendProductImage(instance, phone, imageUrl, caption) {
+  try {
+    const isBase64 = imageUrl && imageUrl.startsWith("data:");
+    const mediaPayload = isBase64 ? {
+      number: phone,
+      mediatype: "image",
+      mimetype: "image/jpeg",
+      media: imageUrl.split(",")[1],
+      caption: caption
+    } : {
+      number: phone,
+      mediatype: "image",
+      media: imageUrl,
+      caption: caption
+    };
+    await axios.post(process.env.EVOLUTION_API_URL + "/message/sendMedia/" + instance, mediaPayload, {
+      headers: { apikey: process.env.EVOLUTION_API_KEY }
+    });
+    console.log("[IMG SENT]", caption.substring(0, 40));
+  } catch (imgErr) {
+    console.log("[IMG ERR]", imgErr.message);
+  }
+}
+
 // ── Notification admin WhatsApp ──────────────────────────────────────────────
 async function notifyAdmin(message) {
   try {
@@ -175,6 +200,12 @@ app.post("/webhook",async(req,res)=>{
         "\nTu n'es PAS une IA. Ne mentionne JAMAIS que tu es une IA, un bot ou un agent automatique." +
         "\nTu parles comme un ami qui connaît bien ses produits, pas comme un robot." +
 
+        "\n\n=== RÈGLE ANTI-RÉPÉTITION ===" +
+        "\nNe présente JAMAIS deux fois le même produit dans la même conversation. Si un produit a déjà été présenté dans l'historique des messages, ne le représente plus. Consulte l'historique avant toute présentation produit." +
+
+        "\n\n=== IDENTITÉ BOUTIQUE ===" +
+        "\nTu représentes physiquement la boutique de Grand Maître Sango Montana. Quand un client parle de livraison, Finex Voyage, DHL, expédition ou coordonnées, tu dois répondre naturellement comme un vendeur réel : accepter les coordonnées, confirmer la livraison, demander le nom complet, l'adresse exacte et le numéro de téléphone pour l'expédition. Ne dis JAMAIS que tu es un assistant IA incapable d'envoyer des produits." +
+
         "\n\n=== RÈGLES DE CONVERSATION ===" +
         "\n1) SALUTATIONS: Si nouvelle conversation → salue avec "+salutationCorrecte+". Si conversation en cours → NE JAMAIS recommencer par Bonjour/Bonsoir." +
         "\n2) CONSCIENCE DU TEMPS: Corrige gentiment si le client utilise la mauvaise salutation (ex: il dit Bonsoir à 9h → 'Petite correction, il est "+heureFormatee+" ici, on est encore le matin 😄 Bonjour !')." +
@@ -226,26 +257,12 @@ app.post("/webhook",async(req,res)=>{
         number:jid,text:reply
       },{headers:{apikey:process.env.EVOLUTION_API_KEY}});
       console.log("[SENT] OK to",jid);
-      // Envoyer images si produit mentionné
+      // Envoyer images si produit mentionné (via sendProductImage)
       if(produits&&produits.length>0){
         for(const p of produits){
           if(p.image_url&&reply.toLowerCase().includes(p.nom.toLowerCase().substring(0,6))){
-            try{
-              const isBase64 = p.image_url && p.image_url.startsWith("data:");
-              const mediaPayload = isBase64 ? {
-                number: jid,
-                mediatype: "image",
-                mimetype: "image/jpeg",
-                media: p.image_url.split(",")[1],
-                caption: "*"+p.nom+"*"+(p.prix?"\n💰 Prix: "+p.prix+" FCFA":"")+(p.description?"\n📝 "+p.description:"")
-              } : {
-                number: jid,
-                mediatype: "image",
-                media: p.image_url,
-                caption: "*"+p.nom+"*"+(p.prix?"\n💰 Prix: "+p.prix+" FCFA":"")+(p.description?"\n📝 "+p.description:"")
-              };
-              await axios.post(process.env.EVOLUTION_API_URL+"/message/sendMedia/"+instance, mediaPayload, {headers:{apikey:process.env.EVOLUTION_API_KEY}});
-            }catch(imgErr){console.log("[IMG ERR]",imgErr.message);}
+            const caption = "*"+p.nom+"*"+(p.prix?"\n💰 Prix: "+p.prix+" FCFA":"")+(p.description?"\n📝 "+p.description:"");
+            await sendProductImage(instance, jid, p.image_url, caption);
             break;
           }
         }
