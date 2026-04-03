@@ -15,7 +15,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Titanex AI - QR WhatsApp</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--r:#ef4444;--t:#f0f0f0;--t2:#888}body{background:var(--bg);color:var(--t);font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}@keyframes spin{to{transform:rotate(360deg)}}.card{background:var(--s);border:1px solid var(--br);border-radius:16px;padding:2rem;width:100%;max-width:400px;text-align:center}.logo{font-size:1.1rem;font-weight:800;margin-bottom:1.5rem}.logo em{color:var(--g);font-style:normal}.qr-wrap{background:#fff;border-radius:12px;padding:1rem;margin:0 auto 1.2rem;min-width:220px;min-height:220px;display:flex;align-items:center;justify-content:center}.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#22c55e;border-radius:50%;animation:spin 1s linear infinite}.status{font-size:.82rem;color:var(--t2);margin-bottom:.8rem}.status.err{color:var(--r)}.steps{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:1rem;text-align:left;margin-bottom:1.2rem}.step{display:flex;gap:8px;font-size:.78rem;color:var(--t2);margin-bottom:.5rem}.step-n{background:var(--g);color:#000;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0;margin-top:1px}.refresh-btn{background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:8px;padding:.55rem 1.2rem;cursor:pointer;font-size:.8rem;font-family:inherit;margin-bottom:.5rem}.refresh-btn:hover{border-color:var(--g);color:var(--g)}.timer{font-size:.72rem;color:var(--t2);margin-bottom:1rem}.connected-box{display:none}.go-btn{background:var(--g);color:#000;border:none;border-radius:8px;padding:.7rem 1.5rem;font-weight:800;cursor:pointer;font-size:.88rem;font-family:inherit}</style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2322c55e'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head><body><div class="card">
 <div class="logo">Titanex <em>AI</em></div>
 <div style="text-align:right;margin-bottom:8px"><button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:4px 10px;border-radius:6px;border:1.5px solid var(--br);background:var(--s2);color:var(--t2);font-size:11px;font-weight:700;cursor:pointer">FR</button></div>
@@ -35,7 +35,7 @@
   <div style="font-size:3rem;margin-bottom:.75rem">✅</div>
   <div style="font-size:1rem;font-weight:700;margin-bottom:.4rem" data-i18n="qr_connected">WhatsApp connecté !</div>
   <div style="font-size:.8rem;color:var(--t2);margin-bottom:1.2rem" data-i18n="qr_active">Votre agent IA est maintenant actif.</div>
-  <button class="go-btn" onclick="location.href='/dashboard/'">🏠 <span data-i18n="qr_dashboard">Dashboard</span></button>
+  <button class="go-btn" onclick="location.href='/dashboard/app/'">🏠 <span data-i18n="qr_dashboard">Dashboard</span></button>
 </div>
 </div>
 <script>

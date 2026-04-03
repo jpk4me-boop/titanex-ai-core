@@ -119,7 +119,7 @@ tr:hover td{background:#f0fdf4!important;}
 
 <div class="hdr">
   <div class="hdr-l">
-    <button class="back" onclick="location.href='/dashboard/'">&#8592;</button>
+    <button class="back" onclick="location.href='/dashboard/app/'">&#8592;</button>
     <span style="font-size:22px;">&#128737;&#65039;</span>
     <span class="hdr-title" data-i18n="sa_title">Command Center</span>
     <span class="badge-sa">SUPER ADMIN</span>
@@ -454,7 +454,7 @@ async function init(){
   if(SESSION.email) document.getElementById('admin-mail').textContent = SESSION.email;
   try{
     var r = await fetch('/api/admin/stats',{headers:AH()});
-    if(r.status===401||r.status===403){ location.href='/dashboard/'; return; }
+    if(r.status===401||r.status===403){ location.href='/dashboard/app/'; return; }
     var d = await r.json();
     fillStats(d);
     document.getElementById('admin-mail').textContent = d.admin_email||'';

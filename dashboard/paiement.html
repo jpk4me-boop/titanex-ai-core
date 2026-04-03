@@ -33,7 +33,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
 .delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}.delay-4{animation-delay:.4s}
 .check-pop{animation:checkPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
 </style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2322c55e'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
 <body class="bg-[#0a0a0a] text-white min-h-screen flex flex-col items-center px-4 py-8">
 
@@ -41,7 +41,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
 <div class="text-center mb-8 fade-in">
   <div class="flex items-center justify-center gap-2 mb-3">
     <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-green-600 flex items-center justify-center text-sm font-bold shadow-lg shadow-emerald-500/30">T</div>
-    <span class="text-xl font-bold">Titanex <span class="text-green-400">AI</span></span>
+    <span class="text-xl font-bold">Titanex <span class="text-emerald-400">AI</span></span>
     <button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px">FR</button>
   </div>
   <h1 class="text-2xl font-bold mb-1" data-i18n="pay_title">Choisissez votre plan</h1>
@@ -69,10 +69,10 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
               <span class="text-xs text-zinc-400" data-i18n="pay_per_month">XAF / mois</span>
             </div>
             <ul class="space-y-1.5">
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_starter_feat1">1 agent WhatsApp</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_starter_feat2">3 000 credits/mois</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_starter_feat3">Catalogue illimite</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_starter_feat4">Reponses 24h/24</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat1">1 agent WhatsApp</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat2">3 000 credits/mois</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat3">Catalogue illimite</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_starter_feat4">Reponses 24h/24</span></li>
             </ul>
           </div>
           <div id="check-starter" class="w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all"></div>
@@ -80,25 +80,25 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
       </div>
 
       <!-- Pro -->
-      <div onclick="selectPlan('pro',24900)" id="plan-pro" class="relative rounded-2xl border-2 border-green-500/50 bg-green-500/[.03] p-5 cursor-pointer transition-all duration-200 hover:border-green-400">
-        <span class="absolute -top-2.5 left-5 bg-green-500 text-black text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wide" data-i18n="pay_popular_badge">Populaire</span>
+      <div onclick="selectPlan('pro',24900)" id="plan-pro" class="relative rounded-2xl border-2 border-emerald-500/50 bg-emerald-500/[.03] p-5 cursor-pointer transition-all duration-200 hover:border-emerald-400">
+        <span class="absolute -top-2.5 left-5 bg-emerald-500 text-black text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wide" data-i18n="pay_popular_badge">Populaire</span>
         <div class="flex items-start justify-between">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
               <span class="text-sm font-semibold">Pro</span>
             </div>
             <div class="flex items-baseline gap-1 mb-3">
-              <span class="text-2xl font-bold text-green-400">24 900</span>
+              <span class="text-2xl font-bold text-emerald-400">24 900</span>
               <span class="text-xs text-zinc-400" data-i18n="pay_per_month">XAF / mois</span>
             </div>
             <ul class="space-y-1.5">
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_pro_feat1">2 agents WhatsApp</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_pro_feat2">10 000 credits/mois</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_pro_feat3">Analyses & rapports</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_pro_feat4">Support prioritaire</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat1">2 agents WhatsApp</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat2">10 000 credits/mois</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat3">Analyses & rapports</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_pro_feat4">Support prioritaire</span></li>
             </ul>
           </div>
-          <div id="check-pro" class="w-6 h-6 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all">
+          <div id="check-pro" class="w-6 h-6 rounded-full border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all">
             <i data-lucide="check" class="w-3.5 h-3.5 text-black"></i>
           </div>
         </div>
@@ -116,10 +116,10 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
               <span class="text-xs text-zinc-400" data-i18n="pay_per_month">XAF / mois</span>
             </div>
             <ul class="space-y-1.5">
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_business_feat1">4 agents WhatsApp</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_business_feat2">50 000 credits/mois</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_business_feat3">Marque blanche</span></li>
-              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i><span data-i18n="pay_plan_business_feat4">Accompagnement VIP</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat1">4 agents WhatsApp</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat2">50 000 credits/mois</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat3">Marque blanche</span></li>
+              <li class="flex items-center gap-2 text-xs text-zinc-400"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span data-i18n="pay_plan_business_feat4">Accompagnement VIP</span></li>
             </ul>
           </div>
           <div id="check-business" class="w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all"></div>
@@ -132,7 +132,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
       <!-- Phone -->
       <div>
         <label class="block text-xs font-medium text-zinc-400 mb-1.5" data-i18n="pay_phone">Numero de paiement *</label>
-        <div class="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2.5 focus-within:border-green-500/50 transition-colors">
+        <div class="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-2.5 focus-within:border-emerald-500/50 transition-colors">
           <span class="text-sm text-zinc-400 flex items-center gap-1.5 flex-shrink-0">
             <span class="text-base">🇨🇲</span> +237
           </span>
@@ -162,14 +162,14 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
         </div>
         <div class="flex items-center justify-between">
           <span class="text-xs text-zinc-400" data-i18n="pay_total">Total a payer</span>
-          <span id="sum-price" class="text-lg font-bold text-green-400">24 900 XAF</span>
+          <span id="sum-price" class="text-lg font-bold text-emerald-400">24 900 XAF</span>
         </div>
         <div class="text-[10px] text-zinc-500 mt-1" id="sum-op">via MTN MoMo</div>
       </div>
     </div>
 
     <!-- Pay Button -->
-    <button onclick="initierPaiement()" id="pay-btn" class="w-full py-3.5 rounded-2xl bg-green-500 text-black text-sm font-bold hover:bg-green-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 fade-in delay-3 disabled:opacity-50 disabled:cursor-not-allowed">
+    <button onclick="initierPaiement()" id="pay-btn" class="w-full py-3.5 rounded-2xl bg-emerald-500 text-black text-sm font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 fade-in delay-3 disabled:opacity-50 disabled:cursor-not-allowed">
       <span id="pay-btn-txt" data-i18n="pay_pay_btn">Payer maintenant</span>
       <span>💳</span>
     </button>
@@ -184,29 +184,29 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
 
   <!-- ═══ STEP 2: USSD Confirmation ═══ -->
   <div id="step-ussd" class="hidden">
-    <div class="rounded-2xl border border-green-500/20 bg-green-500/[.03] p-6 text-center space-y-5 fade-in">
-      <div class="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto">
-        <i data-lucide="smartphone" class="w-7 h-7 text-green-400"></i>
+    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[.03] p-6 text-center space-y-5 fade-in">
+      <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto">
+        <i data-lucide="smartphone" class="w-7 h-7 text-emerald-400"></i>
       </div>
       <div>
         <h2 class="text-lg font-bold mb-1" data-i18n="pay_confirm_title">Confirmez sur votre telephone</h2>
         <p class="text-sm text-zinc-400" data-i18n="pay_confirm_sub">Composez ce code USSD pour valider le paiement</p>
       </div>
-      <div id="ussd-code" onclick="copyUssd()" class="inline-block px-8 py-3 rounded-xl bg-zinc-900 border border-zinc-700 text-2xl font-bold tracking-widest cursor-pointer hover:border-green-500/50 transition-colors" title="Cliquer pour copier">
+      <div id="ussd-code" onclick="copyUssd()" class="inline-block px-8 py-3 rounded-xl bg-zinc-900 border border-zinc-700 text-2xl font-bold tracking-widest cursor-pointer hover:border-emerald-500/50 transition-colors" title="Cliquer pour copier">
         *126#
       </div>
       <div class="text-left space-y-2 px-2">
         <div class="flex items-start gap-3 text-sm text-zinc-400">
-          <span class="w-5 h-5 rounded-full bg-green-500/10 text-green-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+          <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
           <span data-i18n="pay_ussd_step1">Composez le code USSD sur votre telephone</span>
         </div>
         <div class="flex items-start gap-3 text-sm text-zinc-400">
-          <span class="w-5 h-5 rounded-full bg-green-500/10 text-green-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+          <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
           <span><span data-i18n="pay_ussd_step2">Suivez les instructions</span> <span id="ussd-op-name" class="font-semibold text-white">MTN</span></span>
         </div>
         <div class="flex items-start gap-3 text-sm text-zinc-400">
-          <span class="w-5 h-5 rounded-full bg-green-500/10 text-green-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-          <span><span data-i18n="pay_ussd_step3">Confirmez le paiement de</span> <span id="ussd-amount" class="font-semibold text-green-400">24 900 XAF</span></span>
+          <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+          <span><span data-i18n="pay_ussd_step3">Confirmez le paiement de</span> <span id="ussd-amount" class="font-semibold text-emerald-400">24 900 XAF</span></span>
         </div>
       </div>
       <div class="text-xs text-zinc-500" id="ussd-ref"><span data-i18n="pay_ussd_ref">Reference:</span> <span id="ussd-ref-val">—</span></div>
@@ -214,10 +214,10 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
       <!-- Progress bar -->
       <div class="space-y-2">
         <div class="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-          <div id="progress-bar" class="h-full rounded-full bg-green-500 transition-all duration-1000" style="width:0%"></div>
+          <div id="progress-bar" class="h-full rounded-full bg-emerald-500 transition-all duration-1000" style="width:0%"></div>
         </div>
         <div class="flex items-center justify-center gap-2 text-xs text-zinc-400">
-          <div class="w-3.5 h-3.5 border-2 border-green-400 border-t-transparent rounded-full" style="animation:spin 1s linear infinite"></div>
+          <div class="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full" style="animation:spin 1s linear infinite"></div>
           <span id="verify-txt" data-i18n="pay_waiting">En attente de confirmation...</span>
         </div>
       </div>
@@ -228,13 +228,13 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
 
   <!-- ═══ STEP 3: Success ═══ -->
   <div id="step-success" class="hidden">
-    <div class="rounded-2xl border border-green-500/20 bg-green-500/[.03] p-8 text-center space-y-5 fade-in">
+    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[.03] p-8 text-center space-y-5 fade-in">
       <!-- Confetti -->
       <div class="relative h-8 overflow-hidden">
         <div id="confetti" class="absolute inset-x-0 flex justify-center gap-2"></div>
       </div>
       <!-- Check -->
-      <div class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mx-auto check-pop">
+      <div class="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center mx-auto check-pop">
         <i data-lucide="check" class="w-8 h-8 text-black"></i>
       </div>
       <div>
@@ -246,7 +246,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
         <div class="flex justify-between text-zinc-400"><span data-i18n="pay_success_valid">Valide</span><span class="text-white font-semibold" data-i18n="pay_success_days">30 jours</span></div>
       </div>
       <p class="text-xs text-zinc-500"><span data-i18n="pay_redirect">Redirection vers le dashboard dans</span> <span id="countdown">3</span>s...</p>
-      <button onclick="location.href='/dashboard/'" class="w-full py-3 rounded-xl bg-green-500 text-black text-sm font-bold hover:bg-green-600 transition-all">
+      <button onclick="location.href='/dashboard/app/'" class="w-full py-3 rounded-xl bg-emerald-500 text-black text-sm font-bold hover:bg-emerald-600 transition-all">
         <span data-i18n="pay_go_dashboard">Acceder au Dashboard</span>
       </button>
     </div>
@@ -264,7 +264,7 @@ body.light-mode .rounded-2xl.border{background:#ffffff;border-color:#e2e8f0!impo
     <span class="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 font-semibold">MTN MoMo</span>
     <span class="px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 font-semibold">Orange Money</span>
   </div>
-  <a href="https://wa.me/237672482763" class="text-[11px] text-zinc-500 hover:text-green-400 transition-colors" data-i18n="pay_help">Besoin d'aide ? WhatsApp : +237 672 482 763</a>
+  <a href="https://wa.me/237672482763" class="text-[11px] text-zinc-500 hover:text-emerald-400 transition-colors" data-i18n="pay_help">Besoin d'aide ? WhatsApp : +237 672 482 763</a>
 </div>
 
 <!-- TOAST -->
@@ -437,11 +437,11 @@ function selectPlan(plan, prix) {
     var card = document.getElementById('plan-'+p);
     var check = document.getElementById('check-'+p);
     if (p === plan) {
-      card.className = card.className.replace(/border-zinc-800|border-zinc-600/g, 'border-green-500/50').replace('bg-zinc-900/80','bg-green-500/[.03]');
-      check.className = 'w-6 h-6 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all';
+      card.className = card.className.replace(/border-zinc-800|border-zinc-600/g, 'border-emerald-500/50').replace('bg-zinc-900/80','bg-emerald-500/[.03]');
+      check.className = 'w-6 h-6 rounded-full border-2 border-emerald-500 bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1 transition-all';
       check.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
     } else {
-      card.className = card.className.replace(/border-green-500\/50|border-green-400/g, 'border-zinc-800').replace('bg-green-500/[.03]','bg-zinc-900/80');
+      card.className = card.className.replace(/border-emerald-500\/50|border-emerald-400/g, 'border-zinc-800').replace('bg-emerald-500/[.03]','bg-zinc-900/80');
       check.className = 'w-6 h-6 rounded-full border-2 border-zinc-700 flex items-center justify-center flex-shrink-0 mt-1 transition-all';
       check.innerHTML = '';
     }
@@ -454,7 +454,7 @@ function selectPlan(plan, prix) {
   // Keep Pro card special border
   var proCard = document.getElementById('plan-pro');
   if (plan === 'pro') {
-    proCard.className = proCard.className.replace('border-zinc-800','border-green-500/50');
+    proCard.className = proCard.className.replace('border-zinc-800','border-emerald-500/50');
   }
 }
 
@@ -591,7 +591,7 @@ function showSuccess() {
   var ci = setInterval(function(){
     c--;
     document.getElementById('countdown').textContent = c;
-    if (c <= 0) { clearInterval(ci); location.href = '/dashboard/'; }
+    if (c <= 0) { clearInterval(ci); location.href = '/dashboard/app/'; }
   }, 1000);
 }
 
@@ -615,7 +615,7 @@ function toast(msg, type) {
   var t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg z-50 transition-all ' +
-    (type === 'error' ? 'bg-red-500/10 border border-red-500/30 text-red-400' : 'bg-green-500/10 border border-green-500/30 text-green-400');
+    (type === 'error' ? 'bg-red-500/10 border border-red-500/30 text-red-400' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400');
   t.classList.remove('hidden');
   setTimeout(function(){ t.classList.add('hidden'); }, 3500);
 }
