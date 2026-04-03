@@ -117,15 +117,16 @@ tr:hover td{background:#f0fdf4!important;}
 </head>
 <body>
 
-<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;flex-wrap:wrap;gap:8px">
+<button onclick="location.href='/dashboard/'" style="position:fixed;top:12px;left:16px;background:#15803D;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;display:flex;align-items:center;gap:6px;font-family:inherit;box-shadow:0 2px 8px rgba(21,128,61,.3)">← Dashboard</button>
+
+<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px 16px 140px;flex-wrap:wrap;gap:8px">
   <div style="display:flex;align-items:center;gap:10px">
-    <button class="back" onclick="location.href='/dashboard/'">&#8592;</button>
     <span style="font-size:22px">🛡️</span>
     <span style="font-size:18px;font-weight:800;color:#0f172a" data-i18n="sa_title">Command Center</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
-    <button id="sa-lang-btn" onclick="saSetLang(saLang==='fr'?'en':'fr')" style="padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
-    <button onclick="openPromo()" style="padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" data-i18n="sa_promos">🎟️ Codes Promos</button>
+    <button id="sa-lang-btn" onclick="saSetLang(saLang==='fr'?'en':'fr')" style="padding:6px 12px;border-radius:8px;border:none;background:#15803D;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
+    <button onclick="openPromo()" style="padding:6px 14px;border-radius:8px;border:none;background:#22C55E;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" data-i18n="sa_promos">🎟️ Codes Promos</button>
     <span class="admin-mail" id="admin-mail" style="font-size:12px;color:#94a3b8">&#8212;</span>
   </div>
 </div>
