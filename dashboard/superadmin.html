@@ -117,17 +117,16 @@ tr:hover td{background:#f0fdf4!important;}
 </head>
 <body>
 
-<div class="hdr">
-  <div class="hdr-l">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;flex-wrap:wrap;gap:8px">
+  <div style="display:flex;align-items:center;gap:10px">
     <button class="back" onclick="location.href='/dashboard/'">&#8592;</button>
-    <span style="font-size:22px;">&#128737;&#65039;</span>
-    <span class="hdr-title" data-i18n="sa_title">Command Center</span>
-    <span class="badge-sa">SUPER ADMIN</span>
+    <span style="font-size:22px">🛡️</span>
+    <span style="font-size:18px;font-weight:800;color:#0f172a" data-i18n="sa_title">Command Center</span>
   </div>
-  <div class="hdr-r">
-    <button id="sa-lang-btn" onclick="saSetLang(saLang==='fr'?'en':'fr')" class="btn-o" style="padding:7px 14px;font-size:13px;min-width:60px;justify-content:center">🇬🇧 EN</button>
-    <button class="btn-o" onclick="openPromo()" data-i18n="sa_promos">&#127903;&#65039; Codes Promos</button>
-    <span class="admin-mail" id="admin-mail">&#8212;</span>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button id="sa-lang-btn" onclick="saSetLang(saLang==='fr'?'en':'fr')" style="padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🇬🇧 EN</button>
+    <button onclick="openPromo()" style="padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" data-i18n="sa_promos">🎟️ Codes Promos</button>
+    <span class="admin-mail" id="admin-mail" style="font-size:12px;color:#94a3b8">&#8212;</span>
   </div>
 </div>
 
@@ -270,7 +269,7 @@ tr:hover td{background:#f0fdf4!important;}
         </select>
       </div>
     </div>
-    <button class="btn-full" onclick="retirer()">&#11015;&#65039; Retirer</button>
+    <div style="display:flex;justify-content:flex-end;margin-top:12px"><button onclick="retirer()" style="padding:8px 20px;border-radius:8px;border:none;background:#22C55E;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s">⬇️ Retirer</button></div>
   </div>
 
   <div class="card">
