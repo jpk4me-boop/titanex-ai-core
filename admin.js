@@ -9,31 +9,45 @@ const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABAS
 const ADMIN_KEY = process.env.ADMIN_SECRET_KEY;
 if (!ADMIN_KEY) { console.error("FATAL: ADMIN_SECRET_KEY env var is required"); process.exit(1); }
 const auth = (req, res, next) => { if (req.headers["x-admin-key"] !== ADMIN_KEY) return res.status(401).json({ error: "Non autorise" }); next(); };
+// Accepts admin key OR valid JWT (sets req.tenantInstance for scope checks)
+const authOrJWT = (req, res, next) => {
+  if (req.headers["x-admin-key"] === ADMIN_KEY) { req.isAdmin = true; return next(); }
+  const token = (req.headers.authorization || '').replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: "Non autorise" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.tenantInstance = decoded.instance_name;
+    req.isAdmin = false;
+    next();
+  } catch(e) { return res.status(401).json({ error: "Token invalide ou expire" }); }
+};
 router.get("/tenants", auth, async (req, res) => { const { data, error } = await supabaseAdmin.from("tenants").select("*").order("created_at", { ascending: false }); if (error) return res.status(500).json({ error: error.message }); res.json(data); });
 router.post("/tenants", auth, async (req, res) => { const { nom, email, telephone, instance_name, plan } = req.body; if (!nom || !email || !instance_name) return res.status(400).json({ error: "Champs requis manquants" }); const { data, error } = await supabaseAdmin.from("tenants").insert({ nom, email, telephone, instance_name, plan: plan || "basic", statut: "essai", date_debut: new Date().toISOString() }).select().single(); if (error) return res.status(500).json({ error: error.message }); await supabaseAdmin.from("stores").insert({ instance_name, tenant_id: data.id, system_prompt: "Tu es un agent de vente IA pour " + nom + ". Reponds en francais, sois poli et vends efficacement.", catalog_details: "Catalogue en cours de configuration." }); res.json({ success: true, tenant: data }); });
 router.patch("/tenants/:id/statut", auth, async (req, res) => { const { statut } = req.body; if (!["actif","inactif","suspendu","essai","bloqué","banni"].includes(statut)) return res.status(400).json({ error: "Statut invalide" }); const { data, error } = await supabaseAdmin.from("tenants").update({ statut }).eq("id", req.params.id).select().single(); if (error) return res.status(500).json({ error: error.message }); res.json({ success: true, tenant: data }); });
 router.delete("/tenants/:id", auth, async (req, res) => { const { error } = await supabaseAdmin.from("tenants").delete().eq("id", req.params.id); if (error) return res.status(500).json({ error: error.message }); res.json({ success: true }); });
 
-router.get("/catalogue/:instance", auth, async (req, res) => {
+router.get("/catalogue/:instance", authOrJWT, async (req, res) => {
+  if (!req.isAdmin && req.tenantInstance !== req.params.instance) return res.status(403).json({ error: "Acces interdit" });
   const { data, error } = await supabaseAdmin.from("catalogue").select("*").eq("instance_name", req.params.instance).order("created_at", { ascending: false });
   if (error) return res.status(500).json({ error: error.message });
   res.json(data || []);
 });
-router.post("/catalogue", auth, async (req, res) => {
+router.post("/catalogue", authOrJWT, async (req, res) => {
   const { instance_name, nom, description, prix, stock, image_url } = req.body;
   if (!instance_name || !nom) return res.status(400).json({ error: "instance_name et nom requis" });
+  if (!req.isAdmin && req.tenantInstance !== instance_name) return res.status(403).json({ error: "Acces interdit" });
   const { data, error } = await supabaseAdmin.from("catalogue").insert({ instance_name, nom, description, prix, stock: stock || 100, image_url }).select().single();
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true, produit: data });
 });
-router.delete("/catalogue/:id", auth, async (req, res) => {
+router.delete("/catalogue/:id", authOrJWT, async (req, res) => {
   const { error } = await supabaseAdmin.from("catalogue").delete().eq("id", req.params.id);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 
 
-router.post("/ai/description", auth, async (req, res) => {
+router.post("/ai/description", authOrJWT, async (req, res) => {
   const { nom, categorie } = req.body;
   if (!nom) return res.status(400).json({ error: "nom requis" });
   try {
@@ -47,7 +61,7 @@ router.post("/ai/description", auth, async (req, res) => {
 });
 
 
-router.patch("/catalogue/:id", auth, async (req, res) => {
+router.patch("/catalogue/:id", authOrJWT, async (req, res) => {
   const { nom, description, prix, stock, image_url } = req.body;
   const update = {};
   if(nom !== undefined) update.nom = nom;
@@ -60,7 +74,7 @@ router.patch("/catalogue/:id", auth, async (req, res) => {
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true, produit: data });
 });
-router.post("/catalogue/:id/dup", auth, async (req, res) => {
+router.post("/catalogue/:id/dup", authOrJWT, async (req, res) => {
   const { data: orig, error: e1 } = await supabaseAdmin.from("catalogue").select("*").eq("id", req.params.id).single();
   if (e1) return res.status(500).json({ error: e1.message });
   const { id, created_at, ...copy } = orig;
@@ -71,7 +85,7 @@ router.post("/catalogue/:id/dup", auth, async (req, res) => {
 });
 
 
-router.get("/catalogue/:id/get", auth, async (req, res) => {
+router.get("/catalogue/:id/get", authOrJWT, async (req, res) => {
   const { data, error } = await supabaseAdmin.from("catalogue").select("*").eq("id", req.params.id).single();
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);

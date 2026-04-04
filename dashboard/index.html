@@ -3644,6 +3644,8 @@ function toggleSidebar(open) {
 async function api(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json', ...opts.headers };
   if (ADMIN_KEY) headers['x-admin-key'] = ADMIN_KEY;
+  const tok = SESSION && SESSION.token;
+  if (tok && !headers['Authorization']) headers['Authorization'] = 'Bearer ' + tok;
   const res = await fetch(API + path, { ...opts, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Erreur reseau' }));
