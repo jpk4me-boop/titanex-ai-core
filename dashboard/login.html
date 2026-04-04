@@ -4,124 +4,133 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Titanex AI — Connexion</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{colors:{emerald:{50:'#f0fdf4',100:'#dcfce7',500:'#22c55e',600:'#16a34a',700:'#15803d'}}}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-height:100vh;font-size:15px;line-height:1.65}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-height:100vh;font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.65;display:flex;align-items:center;justify-content:center;padding:1rem}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .5s ease forwards}
-.btn-primary{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.875rem 1rem;border-radius:1rem;background:#10b981;color:#fff;font-weight:700;font-size:.9rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3);transition:all .2s}
-.btn-primary:hover{background:#059669;transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
-.inp{width:100%;border-radius:1rem;border:2px solid #e2e8f0;padding:.875rem 1rem .875rem 2.75rem;font-size:.9375rem;background:#f8fafc;color:#0f172a;outline:none;transition:all .2s}
+.card{background:#fff;border-radius:1.5rem;box-shadow:0 20px 60px rgba(100,116,139,.12);padding:2.5rem;max-width:28rem;width:100%}
+.logo-box{display:inline-flex;align-items:center;justify-content:center;width:4rem;height:4rem;border-radius:1.5rem;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 8px 24px rgba(16,185,129,.3);margin-bottom:1rem}
+.logo-box span{color:#fff;font-weight:900;font-size:1.5rem}
+h1{font-size:1.5rem;font-weight:900;color:#0f172a;letter-spacing:-.02em}
+h1 em{color:#10b981;font-style:normal}
+.subtitle{color:#64748b;font-size:.875rem;margin-top:.25rem}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:.75rem;width:100%;padding:.875rem 1.5rem;border-radius:1rem;border:2px solid #e2e8f0;background:#fff;font-weight:600;color:#374151;font-size:.875rem;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-google:hover{border-color:#6ee7b7;box-shadow:0 4px 12px rgba(16,185,129,.15)}
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.5rem 0}
+.divider span{font-size:.75rem;color:#94a3b8;font-weight:500}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0}
+.tabs{display:flex;background:#f1f5f9;border-radius:1rem;padding:4px;margin-bottom:1.5rem}
+.tab{flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.625rem;border-radius:.75rem;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .2s;background:transparent;color:#64748b;font-family:inherit}
+.tab.active{background:#fff;color:#0f172a;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.875rem;font-weight:600;color:#374151;margin-bottom:.5rem}
+.input-wrap{position:relative}
+.input-wrap .icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:1rem;line-height:1;pointer-events:none}
+.inp{width:100%;border-radius:1rem;border:2px solid #e2e8f0;padding:.875rem 1rem .875rem 2.75rem;font-size:.9375rem;background:#f8fafc;color:#0f172a;outline:none;transition:all .2s;font-family:inherit}
 .inp:focus{border-color:#10b981;background:#fff}
 .inp::placeholder{color:#94a3b8}
-#btn-login-email *, #btn-login-tel *, #gbtn * { pointer-events: none; }
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.875rem 1rem;border-radius:1rem;background:#10b981;color:#fff;font-weight:700;font-size:.9rem;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3);transition:all .2s;font-family:inherit}
+.btn-primary:hover{background:#059669;transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+.err-box{display:none;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;font-size:.875rem;border-radius:1rem;padding:.75rem 1rem;align-items:center;gap:.5rem;margin-bottom:1rem}
+.err-box.visible{display:flex}
+.footer{text-align:center;font-size:.875rem;color:#64748b;margin-top:1.5rem}
+.footer a{color:#10b981;font-weight:600;text-decoration:none}
+.footer a:hover{text-decoration:underline}
+.bottom-bar{text-align:center;margin-top:1.5rem;display:flex;align-items:center;justify-content:center;gap:.75rem}
+.bottom-bar a{color:#64748b;font-size:.875rem;text-decoration:none;transition:color .2s}
+.bottom-bar a:hover{text-decoration:underline}
+.lang-btn{padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.hidden{display:none!important}
 </style>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-<div class="w-full max-w-md fade-up">
+<body>
+<div class="fade-up" style="width:100%;max-width:28rem">
 
-  <!-- Logo -->
-  <div class="text-center mb-8">
-    <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl mb-4" style="background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 8px 24px rgba(16,185,129,.3)">
-      <span class="text-white font-black text-2xl">T</span>
-    </div>
-    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Titanex <span style="color:#10b981">AI</span></h1>
-    <p class="text-slate-500 text-sm mt-1" data-i18n="login_title">Connectez-vous à votre espace marchand</p>
+  <div style="text-align:center;margin-bottom:2rem">
+    <div class="logo-box"><span>T</span></div>
+    <h1>Titanex <em>AI</em></h1>
+    <p class="subtitle" data-i18n="login_title">Connectez-vous à votre espace marchand</p>
   </div>
 
-  <!-- Card -->
-  <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 p-10 space-y-6">
+  <div class="card">
 
-    <!-- Google -->
-    <button id="gbtn" class="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-2xl border-2 border-slate-200 bg-white hover:border-emerald-300 hover:shadow-md transition-all font-semibold text-slate-700 text-sm">
+    <button type="button" id="gbtn" class="btn-google">
       <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       <span data-i18n="login_google">Se connecter avec Google</span>
     </button>
 
-    <div class="flex items-center gap-3">
-      <div class="flex-1 h-px bg-slate-200"></div>
-      <span class="text-xs text-slate-400 font-medium" data-i18n="login_or">ou</span>
-      <div class="flex-1 h-px bg-slate-200"></div>
-    </div>
+    <div class="divider"><span data-i18n="login_or">ou</span></div>
 
-    <!-- Tabs -->
-    <div class="flex bg-slate-100 rounded-2xl p-1">
-      <button id="tab-email" onclick="switchTab('email')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold bg-white text-slate-900 shadow-sm transition-all">
-        <i data-lucide="mail" class="w-4 h-4"></i> <span data-i18n="login_tab_email">Email</span>
+    <div class="tabs">
+      <button type="button" id="tab-email" class="tab active">
+        <span>&#9993;</span> <span data-i18n="login_tab_email">Email</span>
       </button>
-      <button id="tab-tel" onclick="switchTab('tel')" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-slate-500 transition-all">
-        <i data-lucide="smartphone" class="w-4 h-4"></i> <span data-i18n="login_tab_phone">Téléphone</span>
+      <button type="button" id="tab-tel" class="tab">
+        <span>&#128241;</span> <span data-i18n="login_tab_phone">Telephone</span>
       </button>
     </div>
 
-    <!-- Error -->
-    <div id="err" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-2xl px-4 py-3 flex items-center gap-2">
-      <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+    <div id="err" class="err-box">
+      <span>&#9888;</span>
       <span id="err-msg"></span>
     </div>
 
-    <!-- Email form -->
-    <div id="form-email" class="space-y-4">
-      <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="login_email">Adresse email</label>
-        <div class="relative">
-          <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-          <input id="inp-email" type="email" placeholder="contact@maboutique.com" data-i18n="login_email_ph" class="inp" style="padding-left:2.75rem">
+    <div id="form-email">
+      <div class="form-group">
+        <label data-i18n="login_email">Adresse email</label>
+        <div class="input-wrap">
+          <span class="icon">&#9993;</span>
+          <input id="inp-email" type="email" placeholder="contact@maboutique.com" data-i18n="login_email_ph" class="inp">
         </div>
       </div>
-      <button type="button" id="btn-login-email" onclick="doLogin('email')" class="btn-primary">
-        <i data-lucide="log-in" class="w-4 h-4"></i> <span data-i18n="login_btn">Se connecter</span>
+      <button type="button" id="btn-login-email" class="btn-primary">
+        &#10140; <span data-i18n="login_btn">Se connecter</span>
       </button>
     </div>
 
-    <!-- Phone form -->
-    <div id="form-tel" class="space-y-4 hidden">
-      <div>
-        <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="login_phone">Numéro de téléphone</label>
-        <div class="relative">
-          <i data-lucide="smartphone" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-          <input id="inp-tel" type="tel" placeholder="237672482763" data-i18n="login_phone_ph" class="inp" style="padding-left:2.75rem">
+    <div id="form-tel" class="hidden">
+      <div class="form-group">
+        <label data-i18n="login_phone">Numero de telephone</label>
+        <div class="input-wrap">
+          <span class="icon">&#128241;</span>
+          <input id="inp-tel" type="tel" placeholder="237672482763" data-i18n="login_phone_ph" class="inp">
         </div>
       </div>
-      <button type="button" id="btn-login-tel" onclick="doLogin('tel')" class="btn-primary">
-        <i data-lucide="log-in" class="w-4 h-4"></i> <span data-i18n="login_btn">Se connecter</span>
+      <button type="button" id="btn-login-tel" class="btn-primary">
+        &#10140; <span data-i18n="login_btn">Se connecter</span>
       </button>
     </div>
 
-    <!-- Footer -->
-    <p class="text-center text-sm text-slate-500">
+    <p class="footer">
       <span data-i18n="login_no_account">Pas encore de compte ?</span>
-      <a href="/dashboard/inscription.html" style="color:#10b981" class="font-semibold hover:underline" data-i18n="login_create">Créer un compte gratuit</a>
+      <a href="/dashboard/inscription.html" data-i18n="login_create">Creer un compte gratuit</a>
     </p>
   </div>
 
-  <div class="text-center mt-6 flex items-center justify-center gap-3">
-    <a href="/" class="transition-colors hover:underline text-sm" style="color:#64748b" data-i18n="login_back">← Retour à l'accueil</a>
-    <button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer">FR</button>
+  <div class="bottom-bar">
+    <a href="/" data-i18n="login_back">&#8592; Retour a l'accueil</a>
+    <button type="button" id="lang-btn" class="lang-btn">FR</button>
   </div>
 </div>
 
 <script>
-// ─── i18n ────────────────────────────────────────────────────────────
+// ─── i18n ──────────────────────────────────────────────────────────────
 var TRANSLATIONS={
 fr:{
-  login_title:"Connectez-vous à votre espace",
-  login_email:"Adresse email",login_phone:"Numéro de téléphone",
+  login_title:"Connectez-vous \u00e0 votre espace",
+  login_email:"Adresse email",login_phone:"Num\u00e9ro de t\u00e9l\u00e9phone",
   login_email_ph:"contact@maboutique.com",login_phone_ph:"237672482763",
   login_btn:"Se connecter",login_no_account:"Pas encore de compte ?",
-  login_create:"Créer un compte gratuit",login_or:"ou",
-  login_forgot:"Mot de passe oublié ?",login_welcome:"Bon retour !",
-  login_google:"Se connecter avec Google",login_tab_email:"Email",login_tab_phone:"Téléphone",
-  login_back:"← Retour à l'accueil",
-  nav_login:"Se connecter",nav_trial:"Essai gratuit 🚀",
-  error_enter_email:"Veuillez saisir votre email",error_enter_phone:"Veuillez saisir votre téléphone",
-  error_network:"Erreur réseau. Réessayez.",error_google_email:"Email Google non disponible",error_email_unavail:"Email non disponible"
+  login_create:"Cr\u00e9er un compte gratuit",login_or:"ou",
+  login_google:"Se connecter avec Google",login_tab_email:"Email",login_tab_phone:"T\u00e9l\u00e9phone",
+  login_back:"\u2190 Retour \u00e0 l\u2019accueil",
+  error_enter_email:"Veuillez saisir votre email",error_enter_phone:"Veuillez saisir votre t\u00e9l\u00e9phone",
+  error_network:"Erreur r\u00e9seau. R\u00e9essayez.",error_google_email:"Email Google non disponible",error_email_unavail:"Email non disponible"
 },
 en:{
   login_title:"Sign in to your account",
@@ -129,17 +138,18 @@ en:{
   login_email_ph:"contact@mystore.com",login_phone_ph:"237672482763",
   login_btn:"Sign in",login_no_account:"No account yet?",
   login_create:"Create free account",login_or:"or",
-  login_forgot:"Forgot password?",login_welcome:"Welcome back!",
   login_google:"Sign in with Google",login_tab_email:"Email",login_tab_phone:"Phone",
-  login_back:"← Back to home",
-  nav_login:"Sign in",nav_trial:"Free trial 🚀",
+  login_back:"\u2190 Back to home",
   error_enter_email:"Please enter your email",error_enter_phone:"Please enter your phone number",
   error_network:"Network error. Please retry.",error_google_email:"Google email not available",error_email_unavail:"Email not available"
 }
 };
+
 var LANG=localStorage.getItem('titanex_lang')||'fr';
+var GCID='793316461529-1u1hdk079u85q9sjh4h13glgj8qhpib8.apps.googleusercontent.com';
+
 function t(key){return(TRANSLATIONS[LANG]&&TRANSLATIONS[LANG][key])||TRANSLATIONS.fr[key]||key;}
-function setLang(lang){LANG=lang;localStorage.setItem('titanex_lang',lang);applyTranslations();updateLangBtn();}
+
 function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var key=el.getAttribute('data-i18n');var val=t(key);
@@ -147,50 +157,47 @@ function applyTranslations(){
     else{el.textContent=val;}
   });
 }
-function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
-document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
 
-var MODE='email';
-var GCID='793316461529-1u1hdk079u85q9sjh4h13glgj8qhpib8.apps.googleusercontent.com';
+function updateLangBtn(){
+  var btn=document.getElementById('lang-btn');
+  if(btn) btn.textContent=LANG==='fr'?'EN':'FR';
+}
 
-function switchTab(t){
-  MODE=t;
-  var isEmail=(t==='email');
+function switchTab(mode){
+  var isEmail=(mode==='email');
   document.getElementById('form-email').classList.toggle('hidden',!isEmail);
   document.getElementById('form-tel').classList.toggle('hidden',isEmail);
-  var te=document.getElementById('tab-email'),tt=document.getElementById('tab-tel');
-  if(isEmail){
-    te.classList.add('bg-white','text-slate-900','shadow-sm');te.classList.remove('text-slate-500');
-    tt.classList.remove('bg-white','text-slate-900','shadow-sm');tt.classList.add('text-slate-500');
-  }else{
-    tt.classList.add('bg-white','text-slate-900','shadow-sm');tt.classList.remove('text-slate-500');
-    te.classList.remove('bg-white','text-slate-900','shadow-sm');te.classList.add('text-slate-500');
-  }
+  document.getElementById('tab-email').classList.toggle('active',isEmail);
+  document.getElementById('tab-tel').classList.toggle('active',!isEmail);
 }
 
 function showErr(msg){
-  var e=document.getElementById('err');
+  var box=document.getElementById('err');
   document.getElementById('err-msg').textContent=msg;
-  e.classList.remove('hidden');
+  box.classList.add('visible');
 }
 
-async function doLogin(type){
-  console.log('[doLogin] called with type:', type);
-  var val=(type==='email'?document.getElementById('inp-email'):document.getElementById('inp-tel')).value.trim();
-  console.log('[doLogin] value:', val);
+function hideErr(){
+  document.getElementById('err').classList.remove('visible');
+}
+
+function doLogin(type){
+  hideErr();
+  var inp=type==='email'?document.getElementById('inp-email'):document.getElementById('inp-tel');
+  var val=inp.value.trim();
   if(!val){showErr(t(type==='email'?'error_enter_email':'error_enter_phone'));return;}
-  try{
-    var body=type==='email'?{email:val}:{telephone:val};
-    console.log('[doLogin] sending:', JSON.stringify(body));
-    var r=await fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    console.log('[doLogin] response status:', r.status);
-    var d=await r.json();
-    console.log('[doLogin] response data:', JSON.stringify(d));
-    if(d.error){showErr(d.error);return;}
-    localStorage.setItem('titanex_session',JSON.stringify(d.session));
-    console.log('[doLogin] session stored, redirecting to /dashboard/');
-    window.location.href='/dashboard/';
-  }catch(e){console.error('[doLogin] ERROR:', e);showErr(t('error_network'));}
+  var body=type==='email'?{email:val}:{telephone:val};
+  fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){showErr(d.error);return;}
+      localStorage.setItem('titanex_session',JSON.stringify(d.session));
+      window.location.href='/dashboard/';
+    })
+    .catch(function(e){
+      console.error('[doLogin]',e);
+      showErr(t('error_network'));
+    });
 }
 
 function initGoogle(){
@@ -211,44 +218,51 @@ function initGoogle(){
         }).catch(function(){showErr(t('error_network'));});
     }
   });
-  document.getElementById('gbtn').onclick=function(){
-    google.accounts.oauth2.initTokenClient({
-      client_id:GCID,scope:'email profile',
-      callback:function(resp){
-        if(resp.access_token){
-          fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+resp.access_token}})
-            .then(function(r){return r.json();})
-            .then(function(u){
-              var em=u.email;
-              if(!em){showErr(t('error_email_unavail'));return;}
-              fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})})
-                .then(function(r){return r.json();})
-                .then(function(d){
-                  if(d.error){showErr(d.error);return;}
-                  localStorage.setItem('titanex_session',JSON.stringify(d.session));
-                  window.location.href='/dashboard/';
-                });
-            });
-        }
-      }
-    }).requestAccessToken();
-  };
 }
-window.addEventListener('load',function(){
-  try{lucide.createIcons();}catch(e){console.error('[LOGIN] lucide.createIcons() FAILED:',e);}
-  initGoogle();
-  console.log('[LOGIN] page fully loaded, doLogin is:', typeof doLogin);
+
+// ─── Wire up all event listeners ──────────────────────────────────────
+document.getElementById('btn-login-email').addEventListener('click',function(){doLogin('email');});
+document.getElementById('btn-login-tel').addEventListener('click',function(){doLogin('tel');});
+document.getElementById('tab-email').addEventListener('click',function(){switchTab('email');});
+document.getElementById('tab-tel').addEventListener('click',function(){switchTab('tel');});
+document.getElementById('lang-btn').addEventListener('click',function(){
+  LANG=LANG==='fr'?'en':'fr';
+  localStorage.setItem('titanex_lang',LANG);
+  applyTranslations();
+  updateLangBtn();
 });
-// Attach immediately — script is at bottom of body, DOM elements already exist
-(function(){
-  var btnE=document.getElementById('btn-login-email');
-  var btnT=document.getElementById('btn-login-tel');
-  if(btnE) btnE.addEventListener('click',function(){console.log('[CLICK] email btn clicked');doLogin('email');});
-  else console.error('[LOGIN] btn-login-email NOT FOUND');
-  if(btnT) btnT.addEventListener('click',function(){console.log('[CLICK] tel btn clicked');doLogin('tel');});
-  else console.error('[LOGIN] btn-login-tel NOT FOUND');
-  console.log('[LOGIN] listeners attached, doLogin=', typeof doLogin);
-})();
+document.getElementById('gbtn').addEventListener('click',function(){
+  if(typeof google==='undefined')return;
+  google.accounts.oauth2.initTokenClient({
+    client_id:GCID,scope:'email profile',
+    callback:function(resp){
+      if(resp.access_token){
+        fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+resp.access_token}})
+          .then(function(r){return r.json();})
+          .then(function(u){
+            var em=u.email;
+            if(!em){showErr(t('error_email_unavail'));return;}
+            fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})})
+              .then(function(r){return r.json();})
+              .then(function(d){
+                if(d.error){showErr(d.error);return;}
+                localStorage.setItem('titanex_session',JSON.stringify(d.session));
+                window.location.href='/dashboard/';
+              });
+          });
+      }
+    }
+  }).requestAccessToken();
+});
+
+// Enter key submits the visible form
+document.getElementById('inp-email').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin('email');});
+document.getElementById('inp-tel').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin('tel');});
+
+// Init
+applyTranslations();
+updateLangBtn();
+initGoogle();
 </script>
 </body>
 </html>
