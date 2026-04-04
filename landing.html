@@ -25,6 +25,8 @@
 }
 .slide-stick{animation:bookOpen .7s cubic-bezier(.23,1,.32,1) .2s forwards,floatHover 4s ease-in-out .9s infinite;opacity:0}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+@keyframes btn-pulse{0%{transform:scale(1)}30%{transform:scale(1.35)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+@keyframes btn-bounce{0%{transform:translateY(0)}25%{transform:translateY(-6px)}55%{transform:translateY(2px)}80%{transform:translateY(-3px)}100%{transform:translateY(0)}}
 @keyframes typing{0%,100%{opacity:.3}50%{opacity:1}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes waMsgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -153,21 +155,21 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
 #mobile-menu a:hover,#mobile-menu button:hover{background:#f1f5f9;color:#0f172a}
 #mobile-menu .mobile-cta{background:#22c55e;color:#fff;font-weight:700;text-align:center;margin-top:8px;border-radius:10px}
 </style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
 <body class="light-mode font-sans antialiased overflow-x-hidden">
 
 <!-- NAV -->
 <nav class="main-nav" style="position:sticky;top:0;z-index:100;height:60px;display:flex;align-items:center;padding:0 4%;gap:16px;border-bottom:1px solid #e2e8f0;background:rgba(255,255,255,.97);backdrop-filter:blur(12px)">
   <div style="display:flex;align-items:center;gap:8px;margin-right:24px;flex-shrink:0">
-    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px">🤖</div>
+    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#15803d);display:flex;align-items:center;justify-content:center;font-size:16px">🤖</div>
     <span class="nav-logo" style="font-weight:700;font-size:15px;letter-spacing:-.02em;color:#0f172a">Titanex <span class="brand-ai" style="color:#16a34a">AI</span></span>
   </div>
   <div class="nav-links" style="display:flex;align-items:center;gap:2px;flex:1">
     <button onclick="scrollSec('features')" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_features">Fonctionnalites</button>
     <button onclick="scrollSec('tarifs')" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_pricing">Tarifs</button>
     <button onclick="scrollSec('demo')" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_demo">Demo</button>
-    <button onclick="location.href='/dashboard/'" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_store">Boutique</button>
+    <button onclick="location.href='/dashboard/?page=catalogue'" class="nav-link" style="padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;transition:color .2s;color:#475569" data-i18n="nav_store">Boutique</button>
   </div>
   <div class="nav-icons" style="display:flex;align-items:center;gap:4px;margin-left:auto">
     <div class="search-box" style="display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer" onclick="scrollSec('demo')">
@@ -176,13 +178,13 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
       <kbd style="font-size:9px;background:#fff;border:1px solid #d1d5db;color:#94a3b8;padding:1px 5px;border-radius:4px;font-family:monospace">⌘K</kbd>
     </div>
     <div class="nav-sep" style="width:1px;height:16px;background:#e2e8f0;margin:0 4px"></div>
-    <button class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Partager">
+    <button id="btn-share" class="nav-icon" onclick="handleShare()" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Partager">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     </button>
-    <button class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Favoris">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <button id="btn-fav" class="nav-icon" onclick="handleFavorite()" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Favoris">
+      <svg id="icon-fav" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
-    <button class="nav-icon" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Panier">
+    <button id="btn-cart" class="nav-icon" onclick="handleCart()" style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:all .2s" title="Panier">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
     </button>
     <button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" class="nav-icon" style="padding:6px 12px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#374151;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;width:auto!important;height:auto!important">FR</button>
@@ -205,7 +207,7 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
   <button onclick="scrollSec('features')" data-i18n="nav_features">Fonctionnalites</button>
   <button onclick="scrollSec('tarifs')" data-i18n="nav_pricing">Tarifs</button>
   <button onclick="scrollSec('demo')" data-i18n="nav_demo">Demo</button>
-  <button onclick="location.href='/dashboard/'" data-i18n="nav_store">Boutique</button>
+  <button onclick="location.href='/dashboard/?page=catalogue'" data-i18n="nav_store">Boutique</button>
   <button onclick="toggleTheme()" data-i18n="theme_light">Mode Clair</button>
   <button onclick="setLang(LANG==='fr'?'en':'fr')">🌐 EN/FR</button>
   <button onclick="location.href='/dashboard/login.html'" data-i18n="nav_login">Se connecter</button>
@@ -248,6 +250,25 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
           <i data-lucide="message-circle" class="w-5 h-5"></i> <span data-i18n="hero_contact">Nous contacter</span>
         </button>
       </div>
+
+      <!-- ═══ MOBILE WHATSAPP DEMO ═══ -->
+      <div id="mobile-wa-demo" class="show-mobile" style="display:none;margin-top:1.5rem;width:100%">
+        <div class="rounded-2xl overflow-hidden shadow-xl" style="background:#ece5dd;border:1px solid #d5cec3">
+          <!-- WA Header -->
+          <div class="flex items-center gap-3 px-4 py-2.5" style="background:#075e54">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="font-size:13px;background:#25d366">T</div>
+            <div style="flex:1">
+              <div class="font-bold" style="font-size:13px;color:#fff">Agent Titanex IA</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.7)">● En ligne</div>
+            </div>
+            <div class="text-white font-bold px-2 py-0.5 rounded-full" style="font-size:10px;background:rgba(255,255,255,.18)">+340% 📈</div>
+          </div>
+          <!-- Messages -->
+          <div id="mobile-wa-msgs" class="px-3 py-3 flex flex-col gap-2" style="min-height:260px;max-height:340px;overflow-y:auto">
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- RIGHT COLUMN — WhatsApp Chat (vente avec images) -->
@@ -555,7 +576,7 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
       <div class="space-y-2">
         <button onclick="scrollSec('features')" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-i18n="nav_features">Fonctionnalites</button>
         <button onclick="scrollSec('tarifs')" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit" data-i18n="nav_pricing">Tarifs</button>
-        <button onclick="location.href='/dashboard/'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit">Dashboard</button>
+        <button onclick="location.href='/dashboard/?page=catalogue'" class="block text-sm text-muted hover:text-brand transition-colors" style="background:none;border:none;cursor:pointer;padding:0;font-family:inherit">Dashboard</button>
       </div>
     </div>
     <div>
@@ -738,6 +759,56 @@ function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.
     timers.push(setTimeout(function(){runHeroLoop();},16000));
   }
   setTimeout(runHeroLoop,900);
+})();
+
+// ─── Mobile WhatsApp Demo (hero, mobile only) ──────────────────────
+(function(){
+  var MI='border-radius:10px;width:100%;max-width:160px;height:110px;object-fit:cover;display:block;margin-bottom:5px;box-shadow:0 2px 6px rgba(0,0,0,.12)';
+  var mobileConv=[
+    {from:'client',text:'Bonjour ! Vous avez des Puma en stock ?',time:'08:11',delay:800},
+    {from:'agent',html:'Oui ! 👟 Voici notre Puma RS-X :<br><img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=200&h=150&fit=crop" alt="Puma RS-X" style="'+MI+'" onerror="this.style.display=\'none\'"><b>Puma RS-X Blanc/Rouge</b><br>💰 42 000 XAF ✅',time:'08:11',delay:2200,typing:1200},
+    {from:'client',text:'Vous avez aussi des vêtements ?',time:'08:12',delay:4500},
+    {from:'agent',html:'Absolument ! Regardez :<br><div style="display:flex;gap:6px;margin-bottom:5px"><div style="flex:1;text-align:center"><img src="/dashboard/img-homme.jpg" alt="Chemise Homme" style="width:100%;height:100px;object-fit:cover;object-position:top center;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.12)" onerror="this.src=\'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=150&h=200&fit=crop\'"><div style="font-size:11px;font-weight:700;margin-top:3px">👔 Chemise+Cravate</div><div style="font-size:11px;color:#075e54;font-weight:600">28 000 XAF</div></div><div style="flex:1;text-align:center"><img src="/dashboard/img-femme.jpg" alt="Robe Dashiki" style="width:100%;height:100px;object-fit:cover;object-position:top center;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.12)" onerror="this.src=\'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=150&h=200&fit=crop\'"><div style="font-size:11px;font-weight:700;margin-top:3px">👗 Robe Dashiki</div><div style="font-size:11px;color:#075e54;font-weight:600">32 000 XAF</div></div></div>',time:'08:12',delay:6000,typing:1200},
+    {from:'client',text:'C\'est livré jusqu\'à Douala ?',time:'08:13',delay:8500},
+    {from:'agent',text:'Oui ! 🚚 Livraison 24h à Douala. Paiement MTN MoMo ou Orange Money 💳',time:'08:13',delay:10000,typing:1000},
+    {from:'client',text:'Je prends la Puma et le vêtement !',time:'08:14',delay:12500},
+    {from:'agent',text:'🎉 Super choix ! Total : 70 000 XAF. Envoyez au *237 6XX XXX XX* via MTN MoMo → je confirme dès réception ✅',time:'08:14',delay:14000,typing:1500}
+  ];
+  function mwAdd(w,msg){
+    var d=document.createElement('div');
+    d.className='wa-msg';
+    if(msg.from==='client'){
+      d.innerHTML='<div style="background:#fff;color:#111b21;border-radius:14px 14px 14px 4px;padding:8px 12px;max-width:85%;font-size:14px;box-shadow:0 1px 1px rgba(0,0,0,.06)">'+msg.text+'<div style="font-size:10px;color:#667781;margin-top:2px">'+msg.time+'</div></div>';
+    } else {
+      d.style.cssText='display:flex;justify-content:flex-end';
+      var c=msg.html||msg.text;
+      d.innerHTML='<div style="background:#dcf8c6;color:#111b21;border-radius:14px 14px 4px 14px;padding:8px 12px;max-width:85%;font-size:14px;box-shadow:0 1px 1px rgba(0,0,0,.06)">'+c+'<div style="font-size:10px;color:#667781;margin-top:2px;text-align:right">'+msg.time+' <span style="color:#53bdeb">✓✓</span></div></div>';
+    }
+    w.appendChild(d);w.scrollTop=w.scrollHeight;
+  }
+  function mwTyping(w){
+    var d=document.createElement('div');d.id='mw-typing';
+    d.style.cssText='display:flex;justify-content:flex-end';
+    d.innerHTML='<div class="wa-typing" style="display:flex;align-items:center;gap:0;padding:8px 14px;background:#dcf8c6;border-radius:14px 14px 4px 14px;width:fit-content"><span></span><span></span><span></span></div>';
+    w.appendChild(d);w.scrollTop=w.scrollHeight;
+  }
+  function mwRemoveTyping(){var el=document.getElementById('mw-typing');if(el)el.remove();}
+  function mwRun(){
+    var w=document.getElementById('mobile-wa-msgs');
+    if(!w)return;
+    w.innerHTML='';
+    var timers=[];
+    mobileConv.forEach(function(msg){
+      if(msg.from==='agent'&&msg.typing){
+        timers.push(setTimeout(function(){mwTyping(w);},msg.delay-msg.typing));
+        timers.push(setTimeout(function(){mwRemoveTyping();mwAdd(w,msg);},msg.delay));
+      } else {
+        timers.push(setTimeout(function(){mwAdd(w,msg);},msg.delay));
+      }
+    });
+    timers.push(setTimeout(mwRun,19000));
+  }
+  setTimeout(mwRun,1200);
 })();
 
 // ─── Demo WhatsApp simulation (looping) ─────────────────────────────
@@ -940,7 +1011,81 @@ function scrollSec(id){
 window.addEventListener('load',function(){
   if(typeof lucide!=='undefined')lucide.createIcons();
 });
-document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
+document.addEventListener('DOMContentLoaded',function(){
+  applyTranslations();updateLangBtn();
+  initFavoriteBtn();
+  // Track visit (fire and forget)
+  fetch('/api/track/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userAgent:navigator.userAgent,referrer:document.referrer,langue:navigator.language})}).catch(function(){});
+});
+
+// --- Partager ---
+function handleShare(){
+  var data={title:'TitanexAI',text:'Découvrez TitanexAI — l\'assistant IA pour les commerçants africains',url:window.location.href};
+  if(navigator.share){
+    navigator.share(data).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(function(){
+      showNavToast('Lien copié !');
+    }).catch(function(){
+      showNavToast('Impossible de copier le lien');
+    });
+  }
+}
+
+// --- Favoris ---
+function initFavoriteBtn(){
+  var isFav=localStorage.getItem('titanex_fav')==='1';
+  setFavIcon(isFav);
+}
+function handleFavorite(){
+  var isFav=localStorage.getItem('titanex_fav')==='1';
+  isFav=!isFav;
+  localStorage.setItem('titanex_fav',isFav?'1':'0');
+  setFavIcon(isFav);
+  showNavToast(isFav?'❤️ Ajouté aux favoris':'Retiré des favoris');
+  var btn=document.getElementById('btn-fav');
+  if(btn){btn.style.animation='none';btn.offsetWidth;btn.style.animation='btn-pulse .4s ease';}
+}
+function setFavIcon(active){
+  var icon=document.getElementById('icon-fav');
+  var btn=document.getElementById('btn-fav');
+  if(!icon||!btn)return;
+  if(active){
+    icon.setAttribute('fill','#ef4444');
+    icon.setAttribute('stroke','#ef4444');
+    btn.style.color='#ef4444';
+  } else {
+    icon.setAttribute('fill','none');
+    icon.setAttribute('stroke','currentColor');
+    btn.style.color='#94a3b8';
+  }
+}
+
+// --- Panier ---
+function handleCart(){
+  var btn=document.getElementById('btn-cart');
+  if(btn){
+    btn.style.animation='none';btn.offsetWidth;btn.style.animation='btn-bounce .45s ease';
+    setTimeout(function(){window.location.href='/dashboard/inscription.html';},420);
+  } else {
+    window.location.href='/dashboard/inscription.html';
+  }
+}
+
+// --- Toast helper ---
+function showNavToast(msg){
+  var t=document.getElementById('nav-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='nav-toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#f8fafc;padding:8px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.18);pointer-events:none;opacity:0;transition:opacity .2s';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.style.opacity='1';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.style.opacity='0';},2200);
+}
 </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Titanex AI - Connexion...</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#f0f0f0;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}@keyframes spin{to{transform:rotate(360deg)}}.logo{font-size:1.3rem;font-weight:800;margin-bottom:1rem}.logo em{color:#22c55e;font-style:normal}.msg{color:#888;font-size:.85rem;margin-bottom:1rem}.spinner{width:28px;height:28px;border:3px solid #252525;border-top-color:#22c55e;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}</style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head><body>
 <div>
   <div class="logo">Titanex <em>AI</em></div>
@@ -43,8 +43,8 @@ sb.auth.getSession().then(function(r) {
   }).then(function(res){ return res.json(); })
   .then(function(d) {
     if (d.token) {
-      sessionStorage.setItem('titanex_token', d.token);
-      sessionStorage.setItem('titanex_user', JSON.stringify(d.tenant));
+      localStorage.setItem('titanex_token', d.token);
+      localStorage.setItem('titanex_user', JSON.stringify(d.tenant));
       setMsg('Connexion reussie ! Redirection...');
       setTimeout(function(){
         if (d.tenant.role === 'admin' || d.tenant.role === 'superadmin') {
@@ -61,8 +61,8 @@ sb.auth.getSession().then(function(r) {
       }).then(function(res){ return res.json(); })
       .then(function(d2) {
         if (d2.token) {
-          sessionStorage.setItem('titanex_token', d2.token);
-          sessionStorage.setItem('titanex_user', JSON.stringify(d2.tenant));
+          localStorage.setItem('titanex_token', d2.token);
+          localStorage.setItem('titanex_user', JSON.stringify(d2.tenant));
           setMsg('Connexion reussie !');
           setTimeout(function(){
             if (d2.tenant.role === 'admin' || d2.tenant.role === 'superadmin') {
