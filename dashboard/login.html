@@ -192,6 +192,7 @@ function doLogin(type){
     .then(function(d){
       if(d.error){showErr(d.error);return;}
       localStorage.setItem('titanex_session',JSON.stringify(d.session));
+      if(d.session&&d.session.token)localStorage.setItem('titanex_token',d.session.token);
       window.location.href='/dashboard/';
     })
     .catch(function(e){
@@ -214,6 +215,7 @@ function initGoogle(){
         .then(function(d){
           if(d.error){showErr(d.error);return;}
           localStorage.setItem('titanex_session',JSON.stringify(d.session));
+          if(d.session&&d.session.token)localStorage.setItem('titanex_token',d.session.token);
           window.location.href='/dashboard/';
         }).catch(function(){showErr(t('error_network'));});
     }
@@ -247,6 +249,7 @@ document.getElementById('gbtn').addEventListener('click',function(){
               .then(function(d){
                 if(d.error){showErr(d.error);return;}
                 localStorage.setItem('titanex_session',JSON.stringify(d.session));
+                if(d.session&&d.session.token)localStorage.setItem('titanex_token',d.session.token);
                 window.location.href='/dashboard/';
               });
           });

@@ -14,7 +14,7 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT:'#22c55e', foreground:'#fff' },
+        primary: { DEFAULT:'#16a34a', foreground:'#fff' },
         destructive: { DEFAULT:'#ef4444', foreground:'#fff' },
         border: '#27272a',
         card: '#18181b',
@@ -22,7 +22,7 @@ tailwind.config = {
         foreground: '#fafafa',
         muted: { DEFAULT:'#27272a', foreground:'#a1a1aa' },
         secondary: { DEFAULT:'#1c1c1e', foreground:'#e4e4e7' },
-        sidebar: { DEFAULT:'#0a0a0a', border:'#1f1f23', foreground:'#fafafa', primary:'#22c55e', accent:'#1a1a1e' },
+        sidebar: { DEFAULT:'#0a0a0a', border:'#1f1f23', foreground:'#fafafa', primary:'#16a34a', accent:'#1a1a1e' },
         popover: { DEFAULT:'#18181b', foreground:'#fafafa' },
         accent: '#1f1f23',
         electric:'#3b82f6',
@@ -62,12 +62,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;b
 .nav-item{transition:all .2s ease;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px!important}
 .nav-item:hover{background:#1a1a1e}
 .nav-item:active{transform:scale(.97);opacity:.8}
-.nav-item.active{background:rgba(34,197,94,.1);color:#22c55e;border-left:3px solid #10b981}
+.nav-item.active{background:rgba(22,163,74,.1);color:#16a34a;border-left:3px solid #15803d}
 /* ─── Cards ─── */
 .card-hover{transition:all .2s ease}.card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 28px -5px rgba(0,0,0,.12)}
 /* ─── Universal button styles ─── */
-.btn-primary{background:linear-gradient(135deg,#10b981,#059669)!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important;box-shadow:0 4px 14px rgba(16,185,129,.25)!important}
-.btn-primary:hover{transform:translateY(-1px)!important;box-shadow:0 6px 20px rgba(16,185,129,.35)!important}
+.btn-primary{background:linear-gradient(135deg,#16a34a,#15803d)!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important;box-shadow:0 4px 14px rgba(22,163,74,.25)!important}
+.btn-primary:hover{transform:translateY(-1px)!important;box-shadow:0 6px 20px rgba(22,163,74,.35)!important}
 .btn-danger{background:#ef4444!important;color:#fff!important;border:none!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important}
 .btn-danger:hover{background:#dc2626!important;transform:translateY(-1px)!important;box-shadow:0 4px 14px rgba(239,68,68,.3)!important}
 .btn-secondary{background:#fff!important;color:#374151!important;border:1.5px solid #e2e8f0!important;border-radius:10px!important;font-weight:600!important;transition:all .2s ease!important}

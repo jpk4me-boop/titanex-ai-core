@@ -45,12 +45,14 @@ sb.auth.getSession().then(function(r) {
     if (d.token) {
       localStorage.setItem('titanex_token', d.token);
       localStorage.setItem('titanex_user', JSON.stringify(d.tenant));
+      var sess = Object.assign({}, d.tenant, { token: d.token });
+      localStorage.setItem('titanex_session', JSON.stringify(sess));
       setMsg('Connexion reussie ! Redirection...');
       setTimeout(function(){
         if (d.tenant.role === 'admin' || d.tenant.role === 'superadmin') {
           location.href = '/dashboard/superadmin.html';
         } else {
-          location.href = '/dashboard/setup.html?instance=' + d.tenant.instance_name;
+          location.href = '/dashboard/';
         }
       }, 800);
     } else if (d.error && d.error.includes('deja inscrit')) {
@@ -63,6 +65,8 @@ sb.auth.getSession().then(function(r) {
         if (d2.token) {
           localStorage.setItem('titanex_token', d2.token);
           localStorage.setItem('titanex_user', JSON.stringify(d2.tenant));
+          var sess2 = Object.assign({}, d2.tenant, { token: d2.token });
+          localStorage.setItem('titanex_session', JSON.stringify(sess2));
           setMsg('Connexion reussie !');
           setTimeout(function(){
             if (d2.tenant.role === 'admin' || d2.tenant.role === 'superadmin') {
