@@ -89,6 +89,14 @@ router.post("/login-phone", (req, res) => {
   res.status(503).json({ error: "Login par telephone temporairement desactive. Utilisez email/mot de passe." });
 });
 
+// ─── Google OAuth via Supabase ───────────────────────────────────────────────
+router.get("/google", (req, res) => {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const redirectTo = (req.protocol + '://' + req.get('host')) + '/dashboard/auth-callback.html';
+  const url = supabaseUrl + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(redirectTo);
+  res.redirect(url);
+});
+
 router.get("/me", async (req, res) => {
   try {
     const auth = req.headers.authorization;
