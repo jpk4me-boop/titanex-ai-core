@@ -31,47 +31,67 @@ function getHashParams() {
 var hashParams = getHashParams();
 var initPromise;
 
+console.log('[AUTH-CB] 1. Raw hash:', window.location.hash ? window.location.hash.substring(0, 100) + '...' : '(empty)');
+console.log('[AUTH-CB] 2. Parsed hash keys:', Object.keys(hashParams).join(', ') || '(none)');
+console.log('[AUTH-CB] 2. access_token:', hashParams.access_token ? hashParams.access_token.substring(0, 20) + '...' : '(missing)');
+console.log('[AUTH-CB] 2. refresh_token:', hashParams.refresh_token ? hashParams.refresh_token.substring(0, 20) + '...' : '(missing)');
+console.log('[AUTH-CB] 2. type:', hashParams.type || '(missing)');
+
 if (hashParams.access_token && hashParams.refresh_token) {
-  // Establish Supabase session from URL hash tokens
+  console.log('[AUTH-CB] 3. Calling sb.auth.setSession()...');
   initPromise = sb.auth.setSession({
     access_token: hashParams.access_token,
     refresh_token: hashParams.refresh_token
   });
 } else {
-  // Fallback: maybe session already exists
+  console.log('[AUTH-CB] 3. No hash tokens, falling back to sb.auth.getSession()...');
   initPromise = sb.auth.getSession();
 }
 
 initPromise.then(function(r) {
+  console.log('[AUTH-CB] 4. setSession/getSession result:', JSON.stringify({
+    hasData: !!r.data,
+    hasSession: !!(r.data && r.data.session),
+    hasUser: !!(r.data && r.data.session && r.data.session.user),
+    error: r.error ? r.error.message : null
+  }));
+
   var session = r.data && r.data.session;
   if (!session) {
+    console.error('[AUTH-CB] FAIL: No session after setSession/getSession. Full result:', JSON.stringify(r));
     setMsg('Session introuvable, redirection...');
-    setTimeout(function(){ location.href = '/dashboard/login.html'; }, 2000);
+    setTimeout(function(){ location.href = '/dashboard/login.html'; }, 5000);
     return;
   }
   var user = session.user;
   var email = user.email || '';
   var nom = (user.user_metadata && user.user_metadata.full_name) || email.split('@')[0];
+  console.log('[AUTH-CB] 5. User extracted — email:', email, 'nom:', nom, 'supabase_uid:', user.id);
   setMsg('Compte Google detecte, configuration...');
+
+  var registerBody = {
+    nom: nom,
+    email: email,
+    telephone: '',
+    password: 'google_oauth_' + user.id,
+    plan: 'starter',
+    instance_name: 'boutique_' + Date.now()
+  };
+  console.log('[AUTH-CB] 6. POST /auth/register — email:', email);
 
   fetch(API + '/auth/register', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      nom: nom,
-      email: email,
-      telephone: '',
-      password: 'google_oauth_' + user.id,
-      plan: 'starter',
-      instance_name: 'boutique_' + Date.now()
-    })
-  }).then(function(res){ return res.json(); })
+    body: JSON.stringify(registerBody)
+  }).then(function(res){ console.log('[AUTH-CB] 7. /auth/register status:', res.status); return res.json(); })
   .then(function(d) {
+    console.log('[AUTH-CB] 8. /auth/register response:', JSON.stringify(d).substring(0, 200));
     if (d.token) {
       localStorage.setItem('titanex_token', d.token);
       localStorage.setItem('titanex_user', JSON.stringify(d.tenant));
       var sess = Object.assign({}, d.tenant, { token: d.token });
       localStorage.setItem('titanex_session', JSON.stringify(sess));
+      console.log('[AUTH-CB] 9. SUCCESS (new user) — stored session, redirecting to dashboard');
       setMsg('Connexion reussie ! Redirection...');
       setTimeout(function(){
         if (d.tenant.role === 'admin' || d.tenant.role === 'superadmin') {
@@ -81,17 +101,20 @@ initPromise.then(function(r) {
         }
       }, 800);
     } else if (d.error && d.error.includes('deja inscrit')) {
+      console.log('[AUTH-CB] 8b. Already registered, trying /auth/login...');
       fetch(API + '/auth/login', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({ email: email, password: 'google_oauth_' + user.id })
-      }).then(function(res){ return res.json(); })
+      }).then(function(res){ console.log('[AUTH-CB] 9. /auth/login status:', res.status); return res.json(); })
       .then(function(d2) {
+        console.log('[AUTH-CB] 10. /auth/login response:', JSON.stringify(d2).substring(0, 200));
         if (d2.token) {
           localStorage.setItem('titanex_token', d2.token);
           localStorage.setItem('titanex_user', JSON.stringify(d2.tenant));
           var sess2 = Object.assign({}, d2.tenant, { token: d2.token });
           localStorage.setItem('titanex_session', JSON.stringify(sess2));
+          console.log('[AUTH-CB] 11. SUCCESS (existing user) — stored session, redirecting to dashboard');
           setMsg('Connexion reussie !');
           setTimeout(function(){
             if (d2.tenant.role === 'admin' || d2.tenant.role === 'superadmin') {
@@ -101,18 +124,25 @@ initPromise.then(function(r) {
             }
           }, 800);
         } else {
+          console.error('[AUTH-CB] FAIL at /auth/login:', JSON.stringify(d2));
           setMsg('Erreur: ' + (d2.error || 'Connexion echouee'));
-          setTimeout(function(){ location.href = '/dashboard/login.html'; }, 3000);
+          setTimeout(function(){ location.href = '/dashboard/login.html'; }, 5000);
         }
       });
     } else {
+      console.error('[AUTH-CB] FAIL at /auth/register:', JSON.stringify(d));
       setMsg('Erreur: ' + (d.error || 'Inconnue'));
-      setTimeout(function(){ location.href = '/dashboard/login.html'; }, 3000);
+      setTimeout(function(){ location.href = '/dashboard/login.html'; }, 5000);
     }
   }).catch(function(e) {
+    console.error('[AUTH-CB] FETCH ERROR:', e.message, e.stack);
     setMsg('Erreur serveur: ' + e.message);
-    setTimeout(function(){ location.href = '/dashboard/login.html'; }, 3000);
+    setTimeout(function(){ location.href = '/dashboard/login.html'; }, 5000);
   });
+}).catch(function(e) {
+  console.error('[AUTH-CB] setSession/getSession THREW:', e.message, e.stack);
+  setMsg('Erreur session: ' + e.message);
+  setTimeout(function(){ location.href = '/dashboard/login.html'; }, 5000);
 });
 </script>
 </body></html>
