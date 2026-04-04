@@ -80,15 +80,10 @@ router.post("/login", async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-router.post("/login-phone", async (req, res) => {
-  try {
-    const { telephone } = req.body;
-    if (!telephone) return res.status(400).json({ error: "telephone requis" });
-    const { data: tenant } = await supabaseAdmin.from("tenants").select("*").eq("telephone", telephone).single();
-    if (!tenant) return res.status(404).json({ error: "Aucun compte avec ce numero. Inscrivez-vous." });
-    const token = jwt.sign({ id: tenant.id, email: tenant.email||"", instance_name: tenant.instance_name, role: tenant.role||"client", nom: tenant.nom }, JWT_SECRET, { expiresIn: "30d" });
-    res.json({ success: true, token, tenant: { id: tenant.id, nom: tenant.nom, email: tenant.email||"", instance_name: tenant.instance_name, role: tenant.role||"client", statut: tenant.statut } });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+// DISABLED: Phone login without OTP verification is a security vulnerability.
+// TODO: Implement proper OTP (SMS code) verification before re-enabling.
+router.post("/login-phone", (req, res) => {
+  res.status(503).json({ error: "Login par telephone temporairement desactive. Utilisez email/mot de passe." });
 });
 
 router.get("/me", async (req, res) => {
@@ -433,4 +428,5 @@ router.get("/stats", authJWT, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+router.authJWT = authJWT;
 module.exports = router;

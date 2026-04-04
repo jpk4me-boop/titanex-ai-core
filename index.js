@@ -360,7 +360,7 @@ app.post("/webhook",async(req,res)=>{
 });
 
 
-app.post('/qr/create', async (req, res) => {
+app.post('/qr/create', adminAuthIdx, async (req, res) => {
   const { instance_name } = req.body;
   if (!instance_name) return res.status(400).json({error:'instance_name requis'});
   try {
@@ -372,7 +372,7 @@ app.post('/qr/create', async (req, res) => {
     res.json({ waiting: true });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
-app.get('/qr/status', async (req, res) => {
+app.get('/qr/status', adminAuthIdx, async (req, res) => {
   const { instance } = req.query;
   if (!instance) return res.status(400).json({error:'instance requis'});
   try {
@@ -389,6 +389,12 @@ app.get('/qr/status', async (req, res) => {
 const authRouter = require("./auth");
 app.use("/auth", authRouter);
 app.use("/api/tenant", authRouter);
+const authJWT = authRouter.authJWT;
+const ADMIN_KEY_IDX = process.env.ADMIN_SECRET_KEY;
+const adminAuthIdx = (req, res, next) => {
+  if (req.headers["x-admin-key"] !== ADMIN_KEY_IDX) return res.status(401).json({ error: "Non autorise" });
+  next();
+};
 
 // ─── Tracking visites (public, fire-and-forget) ─────────────────────────────
 app.post("/api/track/visit", async (req, res) => {
@@ -437,7 +443,7 @@ app.post("/api/track/visit", async (req, res) => {
 app.use("/api/admin", adminRouter);
 
 // ─── Route /api/tenant/whatsapp/qr ───────────────────────────────────────────
-app.get('/api/tenant/whatsapp/qr', async (req, res) => {
+app.get('/api/tenant/whatsapp/qr', authJWT, async (req, res) => {
   try {
     const instance = req.query.instance;
     if (!instance) return res.status(400).json({ error: 'instance requis' });
@@ -455,7 +461,7 @@ app.get('/api/tenant/whatsapp/qr', async (req, res) => {
 });
 
 // ─── Routes /api/conversations ───────────────────────────────────────────────
-app.patch('/api/conversations/:phone/mode', async (req, res) => {
+app.patch('/api/conversations/:phone/mode', authJWT, async (req, res) => {
   try {
     const phone = req.params.phone.replace(/\D/g, '');
     const { mode } = req.body;
@@ -482,7 +488,7 @@ app.patch('/api/conversations/:phone/mode', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/conversations/:phone/messages', async (req, res) => {
+app.get('/api/conversations/:phone/messages', authJWT, async (req, res) => {
   try {
     const phone = req.params.phone.replace(/\D/g, '');
     const jid = phone + '@s.whatsapp.net';
@@ -498,7 +504,7 @@ app.get('/api/conversations/:phone/messages', async (req, res) => {
 });
 
 // ─── Route /payment/history ───────────────────────────────────────────────────
-app.get('/payment/history', async (req, res) => {
+app.get('/payment/history', authJWT, async (req, res) => {
   try {
     const tenant_id = req.query.tenant_id;
     if (!tenant_id) return res.json([]);
