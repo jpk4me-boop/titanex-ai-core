@@ -133,7 +133,7 @@ router.post("/initiate", adminAuth, async (req, res) => {
     });
   } catch (e) {
     console.error("[INITIATE ERROR]", e.response?.data || e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -308,7 +308,7 @@ router.post("/check-expirations", adminAuth, async (req, res) => {
     res.json({ message: "Expirations traitées", count: desactives });
   } catch (e) {
     console.error("[EXPIRATION ERROR]", e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -322,7 +322,8 @@ router.get("/status/:reference", async (req, res) => {
     );
     res.json(r.data);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -368,7 +369,7 @@ router.post("/inscription", async (req, res) => {
     res.json({ success: true, tenant_id: data.id });
   } catch (e) {
     console.error("[INSCRIPTION ERROR]", e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -396,7 +397,8 @@ router.post("/admin/toggle", adminAuth, async (req, res) => {
       res.json({ success: true, message: "Instance désactivée: " + tenant.instance_name });
     }
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 

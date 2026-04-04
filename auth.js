@@ -62,7 +62,7 @@ router.post("/register", async (req, res) => {
       "📦 Plan: " + (plan || "starter") + "\n" +
       "🕐 " + heureDouala
     ).catch(() => {});
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.post("/login", async (req, res) => {
@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
     const expiresIn = remember ? "30d" : "24h";
     const token = jwt.sign({ id: tenant.id, email, instance_name: tenant.instance_name, role: tenant.role || "client", nom: tenant.nom }, JWT_SECRET, { expiresIn });
     res.json({ success: true, token, tenant: { id: tenant.id, nom: tenant.nom, email, instance_name: tenant.instance_name, role: tenant.role || "client", statut: tenant.statut, plan: tenant.plan } });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // DISABLED: Phone login without OTP verification is a security vulnerability.
@@ -126,7 +126,7 @@ router.get("/profile", authJWT, async (req, res) => {
       instance_name: t.instance_name,
       agent_mode: t.agent_mode || 'actif'
     });
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 
 // ─── PATCH /agent-mode — Toggle agent IA global ─────────────────────────────
@@ -138,7 +138,7 @@ router.patch("/agent-mode", authJWT, async (req, res) => {
     if (error) throw new Error(error.message);
     console.log('[AGENT MODE]', req.user.instance_name, '->', agent_mode);
     res.json({ success: true, agent_mode });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── PUT /auth/profile ───────────────────────────────────────────────────────
@@ -151,7 +151,7 @@ router.put("/profile", authJWT, async (req, res) => {
     }).eq("id", req.user.id);
     if(error) throw error;
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 
 // ─── PUT /auth/shop ──────────────────────────────────────────────────────────
@@ -162,7 +162,7 @@ router.put("/shop", authJWT, async (req, res) => {
     const { data: s } = await supabaseAdmin.from("stores").select("id").eq("tenant_id",req.user.id).single();
     if(s && ai_script!==undefined) await supabaseAdmin.from("stores").update({system_prompt:ai_script}).eq("id",s.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 
 // ─── POST /auth/change-password ──────────────────────────────────────────────
@@ -177,7 +177,7 @@ router.post("/change-password", authJWT, async (req, res) => {
     const hash = await bcrypt.hash(new_password, 10);
     await supabaseAdmin.from("tenants").update({password_hash:hash}).eq("id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 
 // ─── PUT /auth/logo & /auth/banner ───────────────────────────────────────────
@@ -186,26 +186,26 @@ router.put("/logo", authJWT, async (req, res) => {
     const { logo_url } = req.body;
     await supabaseAdmin.from("stores").update({logo_url:logo_url||null}).eq("tenant_id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 router.delete("/logo", authJWT, async (req, res) => {
   try {
     await supabaseAdmin.from("stores").update({logo_url:null}).eq("tenant_id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 router.put("/banner", authJWT, async (req, res) => {
   try {
     const { banner_url } = req.body;
     await supabaseAdmin.from("stores").update({banner_url:banner_url||null}).eq("tenant_id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 router.delete("/banner", authJWT, async (req, res) => {
   try {
     await supabaseAdmin.from("stores").update({banner_url:null}).eq("tenant_id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 
 // ─── POST /auth/deactivate & DELETE /auth/account ────────────────────────────
@@ -213,14 +213,14 @@ router.post("/deactivate", authJWT, async (req, res) => {
   try {
     await supabaseAdmin.from("tenants").update({statut:'inactif'}).eq("id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 router.delete("/account", authJWT, async (req, res) => {
   try {
     await supabaseAdmin.from("stores").delete().eq("tenant_id",req.user.id);
     await supabaseAdmin.from("tenants").delete().eq("id",req.user.id);
     res.json({success:true});
-  } catch(e) { res.status(500).json({error:e.message}); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });
 
 // ─── GET /transactions — transactions du tenant connecté (JWT) ────────────────
@@ -232,7 +232,7 @@ router.get("/transactions", authJWT, async (req, res) => {
       .limit(100);
     if (error) throw new Error(error.message);
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── CATALOGUE CRUD (JWT tenant) ─────────────────────────────────────────────
@@ -243,7 +243,7 @@ router.get("/catalogue", authJWT, async (req, res) => {
       .order("created_at", { ascending: false });
     if (error) throw error;
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.post("/catalogue", authJWT, async (req, res) => {
@@ -257,7 +257,7 @@ router.post("/catalogue", authJWT, async (req, res) => {
     }).select().single();
     if (error) throw error;
     res.json({ success: true, produit: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.patch("/catalogue/:id", authJWT, async (req, res) => {
@@ -275,7 +275,7 @@ router.patch("/catalogue/:id", authJWT, async (req, res) => {
       .select().single();
     if (error) throw error;
     res.json({ success: true, produit: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.delete("/catalogue/:id", authJWT, async (req, res) => {
@@ -284,7 +284,7 @@ router.delete("/catalogue/:id", authJWT, async (req, res) => {
       .eq("id", req.params.id).eq("instance_name", req.user.instance_name);
     if (error) throw error;
     res.json({ success: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── STORE CONFIG (JWT tenant) ──────────────────────────────────────────────
@@ -305,7 +305,7 @@ router.get("/store", authJWT, async (req, res) => {
       timezone: tenant?.timezone || "Africa/Douala",
       preferred_lang: tenant?.preferred_lang || "fr"
     });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.patch("/store", authJWT, async (req, res) => {
@@ -327,7 +327,7 @@ router.patch("/store", authJWT, async (req, res) => {
       await supabaseAdmin.from("stores").update(storeUpdate).eq("tenant_id", req.user.id);
     }
     res.json({ success: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── ONBOARDING ─────────────────────────────────────────────────────────────
@@ -336,14 +336,14 @@ router.get("/onboarding-status", authJWT, async (req, res) => {
     const { data } = await supabaseAdmin.from("tenants")
       .select("onboarding_done").eq("id", req.user.id).single();
     res.json({ onboarding_done: data?.onboarding_done || false });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.post("/onboarding-done", authJWT, async (req, res) => {
   try {
     await supabaseAdmin.from("tenants").update({ onboarding_done: true }).eq("id", req.user.id);
     res.json({ success: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── TENANT STATS (JWT) ────────────────────────────────────────────────────
@@ -425,7 +425,7 @@ router.get("/stats", authJWT, async (req, res) => {
       total_revenue: totalRevenue,
       total_products: (products || []).length
     });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.authJWT = authJWT;

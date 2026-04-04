@@ -370,7 +370,7 @@ app.post('/qr/create', adminAuthIdx, async (req, res) => {
     if (qr.data.base64) return res.json({ qr: qr.data.base64 });
     if (qr.data.instance && qr.data.instance.state === 'open') return res.json({ connected: true });
     res.json({ waiting: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 app.get('/qr/status', adminAuthIdx, async (req, res) => {
   const { instance } = req.query;
@@ -384,7 +384,7 @@ app.get('/qr/status', adminAuthIdx, async (req, res) => {
       if (qr.data && qr.data.base64) return res.json({ connected: false, qr: qr.data.base64 });
     } catch(e2) {}
     res.json({ connected: false });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 const authRouter = require("./auth");
 app.use("/auth", authRouter);
@@ -456,7 +456,8 @@ app.get('/api/tenant/whatsapp/qr', authJWT, async (req, res) => {
     res.json({ qr: null, state });
   } catch(e) {
     if (e.response && e.response.status === 404) return res.json({ error: 'Instance inexistante', qr: null });
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -485,7 +486,7 @@ app.patch('/api/conversations/:phone/mode', authJWT, async (req, res) => {
     }
     console.log('[MODE]', phone, '->', mode, '(' + data.length + ' rows)');
     res.json({ success: true, updated: data.length, mode });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 app.get('/api/conversations/:phone/messages', authJWT, async (req, res) => {
@@ -500,7 +501,7 @@ app.get('/api/conversations/:phone/messages', authJWT, async (req, res) => {
       .limit(200);
     if (error) throw error;
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── Route /payment/history ───────────────────────────────────────────────────
@@ -516,7 +517,7 @@ app.get('/payment/history', authJWT, async (req, res) => {
       .limit(100);
     if (error) throw error;
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── Route /api/health ────────────────────────────────────────────────────────
@@ -647,7 +648,8 @@ app.post('/api/admin/send-bilans', async (req, res) => {
     }
     res.json({message: `Bilans envoyés à ${count} tenant(s)`, count});
   } catch(e) {
-    res.status(500).json({error: e.message});
+    console.error('[ERROR]', e.message);
+    res.status(500).json({error: 'Erreur interne'});
   }
 });
 

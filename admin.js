@@ -43,7 +43,7 @@ router.post("/ai/description", auth, async (req, res) => {
       max_tokens: 150
     }, { headers: { Authorization: "Bearer " + process.env.GROQ_API_KEY } });
     res.json({ text: r.data.choices[0].message.content.trim() });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 
@@ -88,7 +88,7 @@ router.patch('/tenants/:id/setup', auth, async (req, res) => {
       await supabaseAdmin.from('stores').update({ system_prompt }).eq('instance_name', data.instance_name);
     }
     res.json({ success: true, tenant: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── Routes /api/admin/* (superadmin dashboard) ──────────────────────────────
@@ -105,7 +105,7 @@ router.get('/stats', auth, async (req, res) => {
       referrals: 0,
       visites: (convs||[]).length
     });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Liste utilisateurs
@@ -131,7 +131,7 @@ router.get('/users', auth, async (req, res) => {
       prix_mensuel: t.prix_mensuel,
       moyen_paiement: t.moyen_paiement || '—'
     })));
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Suspendre utilisateur
@@ -140,7 +140,7 @@ router.post('/users/:id/suspend', auth, async (req, res) => {
     const { error } = await supabaseAdmin.from('tenants').update({ statut: 'suspendu' }).eq('id', req.params.id);
     if (error) throw error;
     res.json({ success: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Ajouter des crédits (statut actif + prolongation date_fin)
@@ -151,7 +151,7 @@ router.post('/users/:id/credits', auth, async (req, res) => {
     const { error } = await supabaseAdmin.from('tenants').update({ statut: 'actif', date_fin: dateFin.toISOString().split('T')[0] }).eq('id', req.params.id);
     if (error) throw error;
     res.json({ success: true, date_fin: dateFin.toISOString().split('T')[0] });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Codes promos
@@ -169,7 +169,7 @@ router.post('/promo-codes', auth, async (req, res) => {
     const { data, error } = await supabaseAdmin.from('promo_codes').insert({ code: code.toUpperCase(), reduction: Number(reduction), expiration: expiration||null, max: max||null, used: 0 }).select().single();
     if (error) throw error;
     res.json({ success: true, promo: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.delete('/promo-codes/:id', auth, async (req, res) => {
@@ -177,7 +177,7 @@ router.delete('/promo-codes/:id', auth, async (req, res) => {
     const { error } = await supabaseAdmin.from('promo_codes').delete().eq('id', req.params.id);
     if (error) throw error;
     res.json({ success: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Activer un tenant (statut actif + date_fin +30j)
@@ -190,7 +190,7 @@ router.post('/users/:id/activate', auth, async (req, res) => {
     }).eq('id', req.params.id);
     if (error) throw error;
     res.json({ success: true, statut: 'actif', date_fin: dateFin.toISOString().split('T')[0] });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── Stats visites (données réelles) ────────────────────────────────────────
@@ -232,7 +232,8 @@ router.get('/stats/visits', auth, async (req, res) => {
 
     res.json({ total, byDevice, bySource, byOS, byDay });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -312,7 +313,8 @@ router.get('/stats/pays', auth, async (req, res) => {
 
     res.json(result);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -360,7 +362,8 @@ router.get('/stats/social', auth, async (req, res) => {
       updated_at: new Date().toISOString()
     });
   } catch(e) {
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -378,7 +381,8 @@ router.get('/tenant/:id', auth, async (req, res) => {
     if (error || !data) return res.status(404).json({ error: 'Introuvable' });
     res.json(data);
   } catch(e) {
-    res.status(500).json({ error: e.message });
+    console.error('[ERROR]', e.message);
+    res.status(500).json({ error: 'Erreur interne' });
   }
 });
 
@@ -546,7 +550,7 @@ router.get('/stats', auth, async (req, res) => {
       total_month_revenue: totalMonthRevenue,
       total_month_transactions: monthTxns.length
     });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Toutes les conversations
@@ -555,7 +559,7 @@ router.get('/conversations', auth, async (req, res) => {
     const { data, error } = await supabaseAdmin.from('conversations').select('*').order('created_at', { ascending: false }).limit(500);
     if (error) throw new Error(error.message);
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Conversations par instance (dashboard client) — "all" renvoie toutes les instances
@@ -572,7 +576,7 @@ router.get('/conversations/:instance', async (req, res) => {
     const { data, error } = await query;
     if (error) throw new Error(error.message);
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Envoyer message WhatsApp depuis admin
@@ -584,7 +588,7 @@ router.post('/send-message', auth, async (req, res) => {
     const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
     await require('axios').post(EVO_URL + '/message/sendText/' + instance, { number: number.includes('@') ? number : number + '@s.whatsapp.net', text }, { headers: { apikey: EVO_KEY } });
     res.json({ success: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Changer mode agent/humain
@@ -595,7 +599,7 @@ router.patch('/tenants/:id/mode', auth, async (req, res) => {
     const { data, error } = await supabaseAdmin.from('tenants').update({ mode }).eq('id', req.params.id).select().single();
     if (error) throw new Error(error.message);
     res.json({ success: true, tenant: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Infos tenant par ID (page paiement)
@@ -604,7 +608,7 @@ router.get('/tenant/:id', auth, async (req, res) => {
     const { data, error } = await supabaseAdmin.from('tenants').select('id,nom,telephone,instance_name,plan,statut,date_fin').eq('id', req.params.id).single();
     if (error || !data) return res.status(404).json({ error: 'Introuvable' });
     res.json(data);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 
@@ -618,7 +622,7 @@ router.patch('/tenants/:id/setup', auth, async (req, res) => {
       await supabaseAdmin.from('stores').update({ system_prompt }).eq('instance_name', data.instance_name);
     }
     res.json({ success: true, tenant: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 module.exports = router;
@@ -637,7 +641,7 @@ router.post('/auth/login', async (req, res) => {
     if (data.statut === 'suspendu') return res.status(403).json({ error: 'Compte suspendu. Contactez le support.' });
     const token = jwt.sign({ id: data.id, email: data.email || "", instance_name: data.instance_name, role: data.role || "client", nom: data.nom }, JWT_SECRET, { expiresIn: "30d" });
     res.json({ success: true, session: { ...data, token } });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ── Stats tenant (pour dashboard marchand) ────────────────────────────────
@@ -652,7 +656,7 @@ router.get('/tenant-stats/:instance', async (req, res) => {
       conversations: convs.count || 0,
       produits: prods.count || 0
     });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Auth admin
@@ -680,7 +684,7 @@ router.get('/transactions', async (req, res) => {
     const { data, error } = await supabaseAdmin.from('transactions').select('*').order('created_at', { ascending: false }).limit(500);
     if (error) throw new Error(error.message);
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Comptage conversations
@@ -699,7 +703,7 @@ router.get('/instances', auth, async (req, res) => {
       headers: { apikey: process.env.EVOLUTION_API_KEY }
     });
     res.json(r.data);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // Instances WhatsApp
@@ -710,7 +714,7 @@ router.get('/instances', auth, async (req, res) => {
       headers: { apikey: process.env.EVOLUTION_API_KEY }
     });
     res.json(r.data);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 router.get('/instances', auth, async (req, res) => {
@@ -718,7 +722,7 @@ router.get('/instances', auth, async (req, res) => {
     const axios = require('axios');
     const r = await axios.get(process.env.EVOLUTION_API_URL + '/instance/fetchInstances', { headers: { apikey: process.env.EVOLUTION_API_KEY } });
     res.json(r.data);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── POST /stores — Update system_prompt for an instance ─────────────────────
@@ -729,7 +733,7 @@ router.post('/stores', async (req, res) => {
     const { data, error } = await supabaseAdmin.from('stores').update({ system_prompt }).eq('instance_name', instance_name).select().single();
     if (error) throw new Error(error.message);
     res.json({ success: true, store: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── GET /stores — List all stores ───────────────────────────────────────────
@@ -738,7 +742,7 @@ router.get('/stores', async (req, res) => {
     const { data, error } = await supabaseAdmin.from('stores').select('*');
     if (error) throw new Error(error.message);
     res.json(data || []);
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── POST /chat — Playground: send message to Groq with custom prompt ────────
@@ -764,7 +768,7 @@ router.post('/chat', async (req, res) => {
     }, { headers: { Authorization: 'Bearer ' + GROQ_KEY } });
     const reply = groqRes.data.choices[0].message.content.trim();
     res.json({ reply });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
 // ─── PUT /tenant/:id — Save settings (profil marchand) ─────────────────────
@@ -780,5 +784,5 @@ router.put('/tenant/:id', async (req, res) => {
     const { data, error } = await supabaseAdmin.from('tenants').update(update).eq('id', req.params.id).select().single();
     if (error) throw new Error(error.message);
     res.json({ success: true, tenant: data });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
