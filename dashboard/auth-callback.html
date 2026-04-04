@@ -17,7 +17,32 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 function setMsg(m){ document.getElementById('msg').textContent = m; }
 
-sb.auth.getSession().then(function(r) {
+// Parse tokens from URL hash (#access_token=...&refresh_token=...&...)
+function getHashParams() {
+  var hash = window.location.hash.substring(1);
+  var params = {};
+  hash.split('&').forEach(function(part) {
+    var kv = part.split('=');
+    if (kv.length === 2) params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+  });
+  return params;
+}
+
+var hashParams = getHashParams();
+var initPromise;
+
+if (hashParams.access_token && hashParams.refresh_token) {
+  // Establish Supabase session from URL hash tokens
+  initPromise = sb.auth.setSession({
+    access_token: hashParams.access_token,
+    refresh_token: hashParams.refresh_token
+  });
+} else {
+  // Fallback: maybe session already exists
+  initPromise = sb.auth.getSession();
+}
+
+initPromise.then(function(r) {
   var session = r.data && r.data.session;
   if (!session) {
     setMsg('Session introuvable, redirection...');
