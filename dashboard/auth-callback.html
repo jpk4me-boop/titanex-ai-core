@@ -73,7 +73,7 @@ initPromise.then(function(r) {
     nom: nom,
     email: email,
     telephone: '',
-    password: 'google_oauth_' + user.id,
+    oauth: true,
     plan: 'starter',
     instance_name: 'boutique_' + Date.now()
   };
@@ -102,29 +102,27 @@ initPromise.then(function(r) {
       }, 800);
     } else if (d.error && d.error.includes('deja inscrit')) {
       console.log('[AUTH-CB] 8b. Already registered, trying /auth/login...');
-      fetch(API + '/auth/login', {
+      fetch(API + '/admin/auth/login', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ email: email, password: 'google_oauth_' + user.id })
-      }).then(function(res){ console.log('[AUTH-CB] 9. /auth/login status:', res.status); return res.json(); })
+        body: JSON.stringify({ email: email })
+      }).then(function(res){ console.log('[AUTH-CB] 9. /admin/auth/login status:', res.status); return res.json(); })
       .then(function(d2) {
-        console.log('[AUTH-CB] 10. /auth/login response:', JSON.stringify(d2).substring(0, 200));
-        if (d2.token) {
-          localStorage.setItem('titanex_token', d2.token);
-          localStorage.setItem('titanex_user', JSON.stringify(d2.tenant));
-          var sess2 = Object.assign({}, d2.tenant, { token: d2.token });
-          localStorage.setItem('titanex_session', JSON.stringify(sess2));
+        console.log('[AUTH-CB] 10. /admin/auth/login response:', JSON.stringify(d2).substring(0, 200));
+        if (d2.session && d2.session.token) {
+          localStorage.setItem('titanex_token', d2.session.token);
+          localStorage.setItem('titanex_session', JSON.stringify(d2.session));
           console.log('[AUTH-CB] 11. SUCCESS (existing user) — stored session, redirecting to dashboard');
           setMsg('Connexion reussie !');
           setTimeout(function(){
-            if (d2.tenant.role === 'admin' || d2.tenant.role === 'superadmin') {
+            if (d2.session.role === 'admin' || d2.session.role === 'superadmin') {
               location.href = '/dashboard/superadmin.html';
             } else {
               location.href = '/dashboard/';
             }
           }, 800);
         } else {
-          console.error('[AUTH-CB] FAIL at /auth/login:', JSON.stringify(d2));
+          console.error('[AUTH-CB] FAIL at /admin/auth/login:', JSON.stringify(d2));
           setMsg('Erreur: ' + (d2.error || 'Connexion echouee'));
           setTimeout(function(){ location.href = '/dashboard/login.html'; }, 5000);
         }

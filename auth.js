@@ -29,16 +29,20 @@ async function notifyAdmin(message) {
 
 router.post("/register", async (req, res) => {
   try {
-    const { nom, email, telephone, password, plan, instance_name } = req.body;
-    if (!nom || !password) return res.status(400).json({ error: "Nom et mot de passe requis" });
-    if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
-      return res.status(400).json({ error: "Mot de passe: 8 caracteres minimum, 1 majuscule, 1 chiffre" });
+    const { nom, email, telephone, password, plan, instance_name, oauth } = req.body;
+    const isOAuth = oauth === true;
+    if (!nom) return res.status(400).json({ error: "Nom requis" });
+    if (!isOAuth) {
+      if (!password) return res.status(400).json({ error: "Mot de passe requis" });
+      if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+        return res.status(400).json({ error: "Mot de passe: 8 caracteres minimum, 1 majuscule, 1 chiffre" });
+      }
     }
     if (email) {
       const { data: existing } = await supabaseAdmin.from("tenants").select("id").eq("email", email).single();
       if (existing) return res.status(409).json({ error: "Cet email est deja inscrit" });
     }
-    const hash = await bcrypt.hash(password, 10);
+    const hash = isOAuth ? null : await bcrypt.hash(password, 10);
     const instance = instance_name || ("boutique_" + Date.now());
     const { data, error } = await supabaseAdmin.from("tenants").insert({
       nom, email: email || "", telephone: telephone || "",
