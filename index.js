@@ -19,7 +19,19 @@ const groq=new OpenAI({apiKey:process.env.GROQ_API_KEY,baseURL:"https://api.groq
 const app=express();
 
 // Security headers
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.tailwindcss.com", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://accounts.google.com", "https://apis.google.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "https://api.groq.com", "https://www.googleapis.com", "https://accounts.google.com"],
+      frameSrc: ["https://accounts.google.com"],
+    }
+  }
+}));
 
 // CORS — restrict to your domain
 app.use(cors({
