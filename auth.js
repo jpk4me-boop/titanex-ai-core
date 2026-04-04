@@ -31,6 +31,9 @@ router.post("/register", async (req, res) => {
   try {
     const { nom, email, telephone, password, plan, instance_name } = req.body;
     if (!nom || !password) return res.status(400).json({ error: "Nom et mot de passe requis" });
+    if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return res.status(400).json({ error: "Mot de passe: 8 caracteres minimum, 1 majuscule, 1 chiffre" });
+    }
     if (email) {
       const { data: existing } = await supabaseAdmin.from("tenants").select("id").eq("email", email).single();
       if (existing) return res.status(409).json({ error: "Cet email est deja inscrit" });
@@ -170,6 +173,9 @@ router.post("/change-password", authJWT, async (req, res) => {
   try {
     const { current_password, new_password } = req.body;
     if(!current_password||!new_password) return res.status(400).json({error:'Champs requis'});
+    if (new_password.length < 8 || !/[A-Z]/.test(new_password) || !/[0-9]/.test(new_password)) {
+      return res.status(400).json({ error: "Mot de passe: 8 caracteres minimum, 1 majuscule, 1 chiffre" });
+    }
     const { data: t } = await supabaseAdmin.from("tenants").select("password_hash").eq("id",req.user.id).single();
     if(!t||!t.password_hash) return res.status(400).json({error:'Compte sans mot de passe'});
     const valid = await bcrypt.compare(current_password, t.password_hash);
