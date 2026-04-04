@@ -8,7 +8,7 @@
 <script>tailwind.config={theme:{extend:{colors:{emerald:{50:'#f0fdf4',100:'#dcfce7',500:'#22c55e',600:'#16a34a',700:'#15803d'}}}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-height:100vh;font-size:15px;line-height:1.65}
@@ -74,7 +74,7 @@ body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-
           <input id="inp-email" type="email" placeholder="contact@maboutique.com" data-i18n="login_email_ph" class="inp" style="padding-left:2.75rem">
         </div>
       </div>
-      <button onclick="doLogin('email')" class="btn-primary">
+      <button type="button" id="btn-login-email" class="btn-primary">
         <i data-lucide="log-in" class="w-4 h-4"></i> <span data-i18n="login_btn">Se connecter</span>
       </button>
     </div>
@@ -88,7 +88,7 @@ body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-
           <input id="inp-tel" type="tel" placeholder="237672482763" data-i18n="login_phone_ph" class="inp" style="padding-left:2.75rem">
         </div>
       </div>
-      <button onclick="doLogin('tel')" class="btn-primary">
+      <button type="button" id="btn-login-tel" class="btn-primary">
         <i data-lucide="log-in" class="w-4 h-4"></i> <span data-i18n="login_btn">Se connecter</span>
       </button>
     </div>
@@ -174,16 +174,22 @@ function showErr(msg){
 }
 
 async function doLogin(type){
+  console.log('[doLogin] called with type:', type);
   var val=(type==='email'?document.getElementById('inp-email'):document.getElementById('inp-tel')).value.trim();
+  console.log('[doLogin] value:', val);
   if(!val){showErr(t(type==='email'?'error_enter_email':'error_enter_phone'));return;}
   try{
     var body=type==='email'?{email:val}:{telephone:val};
+    console.log('[doLogin] sending:', JSON.stringify(body));
     var r=await fetch('/admin/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    console.log('[doLogin] response status:', r.status);
     var d=await r.json();
+    console.log('[doLogin] response data:', JSON.stringify(d));
     if(d.error){showErr(d.error);return;}
     localStorage.setItem('titanex_session',JSON.stringify(d.session));
+    console.log('[doLogin] session stored, redirecting to /dashboard/');
     window.location.href='/dashboard/';
-  }catch(e){showErr(t('error_network'));}
+  }catch(e){console.error('[doLogin] ERROR:', e);showErr(t('error_network'));}
 }
 
 function initGoogle(){
@@ -227,7 +233,20 @@ function initGoogle(){
     }).requestAccessToken();
   };
 }
-window.addEventListener('load',function(){lucide.createIcons();initGoogle();});
+window.addEventListener('load',function(){
+  try{lucide.createIcons();}catch(e){console.error('[LOGIN] lucide.createIcons() FAILED:',e);}
+  initGoogle();
+  console.log('[LOGIN] page fully loaded, doLogin is:', typeof doLogin);
+});
+document.addEventListener('DOMContentLoaded',function(){
+  var btnE=document.getElementById('btn-login-email');
+  var btnT=document.getElementById('btn-login-tel');
+  if(btnE) btnE.addEventListener('click',function(){console.log('[CLICK] email btn clicked');doLogin('email');});
+  else console.error('[LOGIN] btn-login-email NOT FOUND');
+  if(btnT) btnT.addEventListener('click',function(){console.log('[CLICK] tel btn clicked');doLogin('tel');});
+  else console.error('[LOGIN] btn-login-tel NOT FOUND');
+  console.log('[LOGIN] DOMContentLoaded — listeners attached, doLogin=', typeof doLogin);
+});
 </script>
 </body>
 </html>
