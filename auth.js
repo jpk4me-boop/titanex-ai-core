@@ -2,10 +2,30 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const moment = require("moment-timezone");
+const axios = require("axios");
 const { createClient } = require("@supabase/supabase-js");
 const router = express.Router();
 const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY);
-const JWT_SECRET = process.env.JWT_SECRET || "titanex-jwt-secret-2026";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) { console.error("FATAL: JWT_SECRET env var is required"); process.exit(1); }
+const EVO_URL = (process.env.EVOLUTION_API_URL || "").replace(/\/$/, "");
+const EVO_KEY = process.env.EVOLUTION_API_KEY;
+
+async function notifyAdmin(message) {
+  try {
+    const adminPhone = process.env.ADMIN_PHONE;
+    const adminInstance = process.env.WHATSAPP_INSTANCE || "prospect_1774206371368";
+    if (!adminPhone || !EVO_URL) return;
+    await axios.post(
+      EVO_URL + "/message/sendText/" + adminInstance,
+      { number: adminPhone + "@s.whatsapp.net", text: message, delay: 1000 },
+      { headers: { apikey: EVO_KEY } }
+    );
+  } catch (e) {
+    console.error("[NOTIFY ADMIN ERROR]", e.message);
+  }
+}
 
 router.post("/register", async (req, res) => {
   try {
@@ -32,6 +52,16 @@ router.post("/register", async (req, res) => {
     }).catch(() => {});
     const token = jwt.sign({ id: data.id, email: email||"", instance_name: instance, role: "client", nom }, JWT_SECRET, { expiresIn: "30d" });
     res.json({ success: true, token, tenant: { id: data.id, nom, email: email||"", instance_name: instance, role: "client", statut: "essai" } });
+    // Notification admin: nouveau client inscrit
+    const heureDouala = moment().tz("Africa/Douala").format("DD/MM/YYYY HH:mm");
+    notifyAdmin(
+      "🎉 Nouveau client inscrit !\n" +
+      "👤 Nom: " + nom + "\n" +
+      "📧 Email: " + (email || "N/A") + "\n" +
+      "📱 Téléphone: " + (telephone || "N/A") + "\n" +
+      "📦 Plan: " + (plan || "starter") + "\n" +
+      "🕐 " + heureDouala
+    ).catch(() => {});
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -86,7 +116,7 @@ router.get("/profile", authJWT, async (req, res) => {
   try {
     const { data: t } = await supabaseAdmin.from("tenants").select("*").eq("id", req.user.id).single();
     if(!t) return res.status(404).json({error:'Compte introuvable'});
-    const { data: s } = await supabaseAdmin.from("stores").select("*").eq("tenant_id", t.id).single().catch(()=>({data:null}));
+    const { data: s } = await supabaseAdmin.from("stores").select("*").eq("tenant_id", t.id).maybeSingle();
     const parts = (t.nom||'').split(' ');
     res.json({
       prenom: parts[0]||'', nom: parts.slice(1).join(' ')||'',
@@ -98,9 +128,22 @@ router.get("/profile", authJWT, async (req, res) => {
       member_since: t.created_at || t.date_debut || '',
       logo_url: s?.logo_url||null, banner_url: s?.banner_url||null,
       plan: t.plan||'starter', statut: t.statut||'essai',
-      instance_name: t.instance_name
+      instance_name: t.instance_name,
+      agent_mode: t.agent_mode || 'actif'
     });
   } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── PATCH /agent-mode — Toggle agent IA global ─────────────────────────────
+router.patch("/agent-mode", authJWT, async (req, res) => {
+  try {
+    const { agent_mode } = req.body;
+    if (!['actif', 'inactif'].includes(agent_mode)) return res.status(400).json({ error: 'agent_mode invalide (actif ou inactif)' });
+    const { error } = await supabaseAdmin.from("tenants").update({ agent_mode }).eq("id", req.user.id);
+    if (error) throw new Error(error.message);
+    console.log('[AGENT MODE]', req.user.instance_name, '->', agent_mode);
+    res.json({ success: true, agent_mode });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ─── PUT /auth/profile ───────────────────────────────────────────────────────
@@ -183,6 +226,211 @@ router.delete("/account", authJWT, async (req, res) => {
     await supabaseAdmin.from("tenants").delete().eq("id",req.user.id);
     res.json({success:true});
   } catch(e) { res.status(500).json({error:e.message}); }
+});
+
+// ─── GET /transactions — transactions du tenant connecté (JWT) ────────────────
+router.get("/transactions", authJWT, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin.from("transactions").select("*")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    res.json(data || []);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── CATALOGUE CRUD (JWT tenant) ─────────────────────────────────────────────
+router.get("/catalogue", authJWT, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin.from("catalogue").select("*")
+      .eq("instance_name", req.user.instance_name)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    res.json(data || []);
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.post("/catalogue", authJWT, async (req, res) => {
+  try {
+    const { nom, description, prix, stock, image_url, category } = req.body;
+    if (!nom) return res.status(400).json({ error: "Nom requis" });
+    const { data, error } = await supabaseAdmin.from("catalogue").insert({
+      instance_name: req.user.instance_name, nom, description: description || "",
+      prix: parseFloat(prix) || 0, stock: parseInt(stock) || 100,
+      image_url: image_url || null, category: category || "Autre"
+    }).select().single();
+    if (error) throw error;
+    res.json({ success: true, produit: data });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.patch("/catalogue/:id", authJWT, async (req, res) => {
+  try {
+    const { nom, description, prix, stock, image_url, category } = req.body;
+    const update = { updated_at: new Date().toISOString() };
+    if (nom !== undefined) update.nom = nom;
+    if (description !== undefined) update.description = description;
+    if (prix !== undefined) update.prix = parseFloat(prix) || 0;
+    if (stock !== undefined) update.stock = parseInt(stock) || 0;
+    if (image_url !== undefined) update.image_url = image_url;
+    if (category !== undefined) update.category = category;
+    const { data, error } = await supabaseAdmin.from("catalogue").update(update)
+      .eq("id", req.params.id).eq("instance_name", req.user.instance_name)
+      .select().single();
+    if (error) throw error;
+    res.json({ success: true, produit: data });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.delete("/catalogue/:id", authJWT, async (req, res) => {
+  try {
+    const { error } = await supabaseAdmin.from("catalogue").delete()
+      .eq("id", req.params.id).eq("instance_name", req.user.instance_name);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── STORE CONFIG (JWT tenant) ──────────────────────────────────────────────
+router.get("/store", authJWT, async (req, res) => {
+  try {
+    const { data: tenant } = await supabaseAdmin.from("tenants")
+      .select("nom,telephone,merchant_name,timezone,preferred_lang,orange_money,mtn_momo")
+      .eq("id", req.user.id).single();
+    const { data: store } = await supabaseAdmin.from("stores")
+      .select("logo_url,system_prompt,catalog_details,description")
+      .eq("tenant_id", req.user.id).single().catch(() => ({ data: null }));
+    res.json({
+      shop_name: tenant?.merchant_name || tenant?.nom || "",
+      logo_url: store?.logo_url || null,
+      description: store?.description || "",
+      orange_money: tenant?.orange_money || "",
+      mtn_momo: tenant?.mtn_momo || "",
+      timezone: tenant?.timezone || "Africa/Douala",
+      preferred_lang: tenant?.preferred_lang || "fr"
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.patch("/store", authJWT, async (req, res) => {
+  try {
+    const { shop_name, logo_url, description, orange_money, mtn_momo, timezone, preferred_lang } = req.body;
+    const tenantUpdate = {};
+    if (shop_name !== undefined) tenantUpdate.merchant_name = shop_name;
+    if (orange_money !== undefined) tenantUpdate.orange_money = orange_money;
+    if (mtn_momo !== undefined) tenantUpdate.mtn_momo = mtn_momo;
+    if (timezone !== undefined) tenantUpdate.timezone = timezone;
+    if (preferred_lang !== undefined) tenantUpdate.preferred_lang = preferred_lang;
+    if (Object.keys(tenantUpdate).length > 0) {
+      await supabaseAdmin.from("tenants").update(tenantUpdate).eq("id", req.user.id);
+    }
+    const storeUpdate = {};
+    if (logo_url !== undefined) storeUpdate.logo_url = logo_url;
+    if (description !== undefined) storeUpdate.description = description;
+    if (Object.keys(storeUpdate).length > 0) {
+      await supabaseAdmin.from("stores").update(storeUpdate).eq("tenant_id", req.user.id);
+    }
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── ONBOARDING ─────────────────────────────────────────────────────────────
+router.get("/onboarding-status", authJWT, async (req, res) => {
+  try {
+    const { data } = await supabaseAdmin.from("tenants")
+      .select("onboarding_done").eq("id", req.user.id).single();
+    res.json({ onboarding_done: data?.onboarding_done || false });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.post("/onboarding-done", authJWT, async (req, res) => {
+  try {
+    await supabaseAdmin.from("tenants").update({ onboarding_done: true }).eq("id", req.user.id);
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ─── TENANT STATS (JWT) ────────────────────────────────────────────────────
+router.get("/stats", authJWT, async (req, res) => {
+  try {
+    const instance = req.user.instance_name;
+    const now = new Date();
+    const sevenDaysAgo = new Date(now - 7 * 86400000).toISOString();
+    const thirtyDaysAgo = new Date(now - 30 * 86400000).toISOString();
+
+    // Conversations last 30 days with dates
+    const { data: convs } = await supabaseAdmin.from("conversations")
+      .select("id,created_at,updated_at,phone").eq("instance", instance)
+      .gte("created_at", thirtyDaysAgo).order("created_at", { ascending: true });
+
+    // Products
+    const { data: products } = await supabaseAdmin.from("catalogue")
+      .select("id,nom").eq("instance_name", instance);
+
+    // Transactions
+    const { data: txns } = await supabaseAdmin.from("transactions")
+      .select("id,amount,created_at,status").eq("user_id", req.user.id)
+      .gte("created_at", thirtyDaysAgo).order("created_at", { ascending: true });
+
+    // Group by day for charts
+    const salesByDay = {};
+    const convsByDay = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now - i * 86400000);
+      const key = d.toISOString().slice(0, 10);
+      salesByDay[key] = 0;
+      convsByDay[key] = 0;
+    }
+    (txns || []).filter(t => t.status === "SUCCESSFUL").forEach(t => {
+      const day = (t.created_at || "").slice(0, 10);
+      if (salesByDay[day] !== undefined) salesByDay[day] += parseFloat(t.amount) || 0;
+    });
+    (convs || []).forEach(c => {
+      const day = (c.created_at || "").slice(0, 10);
+      if (convsByDay[day] !== undefined) convsByDay[day]++;
+    });
+
+    // Top products mentioned in conversations (count occurrences in ai_reply)
+    const { data: recentConvs } = await supabaseAdmin.from("conversations")
+      .select("ai_reply").eq("instance", instance).order("updated_at", { ascending: false }).limit(200);
+    const prodCounts = {};
+    (products || []).forEach(p => { prodCounts[p.nom] = 0; });
+    (recentConvs || []).forEach(c => {
+      const reply = (c.ai_reply || "").toLowerCase();
+      (products || []).forEach(p => {
+        if (reply.includes((p.nom || "").toLowerCase().substring(0, 6))) {
+          prodCounts[p.nom] = (prodCounts[p.nom] || 0) + 1;
+        }
+      });
+    });
+    const topProducts = Object.entries(prodCounts).sort((a, b) => b[1] - a[1]).slice(0, 3)
+      .map(([nom, count]) => ({ nom, mentions: count }));
+
+    // Best day
+    const bestDay = Object.entries(salesByDay).sort((a, b) => b[1] - a[1])[0];
+
+    // Conversion rate
+    const totalConvs = (convs || []).length;
+    const totalOrders = (txns || []).filter(t => t.status === "SUCCESSFUL").length;
+    const conversionRate = totalConvs > 0 ? Math.round((totalOrders / totalConvs) * 100) : 0;
+
+    // Total revenue
+    const totalRevenue = (txns || []).filter(t => t.status === "SUCCESSFUL")
+      .reduce((s, t) => s + (parseFloat(t.amount) || 0), 0);
+
+    res.json({
+      sales_by_day: salesByDay,
+      convs_by_day: convsByDay,
+      top_products: topProducts,
+      best_day: bestDay ? { date: bestDay[0], amount: bestDay[1] } : null,
+      conversion_rate: conversionRate,
+      total_conversations: totalConvs,
+      total_orders: totalOrders,
+      total_revenue: totalRevenue,
+      total_products: (products || []).length
+    });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
 module.exports = router;

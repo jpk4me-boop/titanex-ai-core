@@ -4,6 +4,9 @@ const {processIncomingMessage,processOutgoingMessage}=require("./translationMidd
 const express=require("express"),axios=require("axios"),{createClient}=require("@supabase/supabase-js"),OpenAI=require("openai");
 const cron = require('node-cron');
 const moment = require('moment-timezone');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const REQUIRED=["SUPABASE_URL","SUPABASE_KEY","GROQ_API_KEY","EVOLUTION_API_URL","EVOLUTION_API_KEY"];
 const miss=REQUIRED.filter(k=>!process.env[k]?.trim());
 if(miss.length){console.error("Variables manquantes:",miss.join(", "));process.exit(1);}
@@ -14,8 +17,45 @@ const supabase=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_KEY);
 const supabaseAdmin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_KEY||process.env.SUPABASE_KEY);
 const groq=new OpenAI({apiKey:process.env.GROQ_API_KEY,baseURL:"https://api.groq.com/openai/v1"});
 const app=express();
-app.use(express.json({limit:'50mb'}));
-app.use(express.urlencoded({extended:true,limit:'50mb'}));
+
+// Security headers
+app.use(helmet());
+
+// CORS — restrict to your domain
+app.use(cors({
+  origin: [
+    'https://titanexai.com',
+    'https://www.titanexai.com',
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
+  credentials: true
+}));
+
+// Global rate limit: 100 requests per 15 minutes per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Trop de requetes, reessayez plus tard' }
+});
+app.use('/auth', globalLimiter);
+app.use('/payment', globalLimiter);
+
+// Strict rate limit on auth endpoints: 10 attempts per 15 min
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Trop de tentatives, reessayez dans 15 minutes' }
+});
+app.use('/auth/login', authLimiter);
+app.use('/auth/login-phone', authLimiter);
+app.use('/auth/register', authLimiter);
+
+app.use(express.json({limit:'5mb'}));
+app.use(express.urlencoded({extended:true,limit:'5mb'}));
 app.use("/dashboard", require("express").static(__dirname + "/dashboard"));
 const adminRouter = require("./admin");
 app.use("/admin", adminRouter);
@@ -585,7 +625,7 @@ console.log('[CRON] Vérification bilans quotidiens activée (chaque minute)');
 // ─── Route test envoi bilans ─────────────────────────────────────────────────
 app.post('/api/admin/send-bilans', async (req, res) => {
   const apikey = req.headers['x-admin-key'] || req.body.adminKey || req.query.adminKey;
-  if (apikey !== 'titanex-admin-2026') return res.status(403).json({error: 'Non autorisé'});
+  if (!process.env.ADMIN_SECRET_KEY || apikey !== process.env.ADMIN_SECRET_KEY) return res.status(403).json({error: 'Non autorise'});
 
   try {
     const {data: tenants} = await supabaseAdmin
