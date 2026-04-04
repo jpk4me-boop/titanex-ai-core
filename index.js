@@ -29,6 +29,7 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       connectSrc: ["'self'", "https://api.groq.com", "https://www.googleapis.com", "https://accounts.google.com"],
       frameSrc: ["https://accounts.google.com"],
+      scriptSrcAttr: ["'unsafe-inline'"],
     }
   }
 }));
