@@ -360,6 +360,12 @@ app.post("/webhook",async(req,res)=>{
 });
 
 
+const ADMIN_KEY_IDX = process.env.ADMIN_SECRET_KEY;
+const adminAuthIdx = (req, res, next) => {
+  if (req.headers["x-admin-key"] !== ADMIN_KEY_IDX) return res.status(401).json({ error: "Non autorise" });
+  next();
+};
+
 app.post('/qr/create', adminAuthIdx, async (req, res) => {
   const { instance_name } = req.body;
   if (!instance_name) return res.status(400).json({error:'instance_name requis'});
@@ -390,11 +396,6 @@ const authRouter = require("./auth");
 app.use("/auth", authRouter);
 app.use("/api/tenant", authRouter);
 const authJWT = authRouter.authJWT;
-const ADMIN_KEY_IDX = process.env.ADMIN_SECRET_KEY;
-const adminAuthIdx = (req, res, next) => {
-  if (req.headers["x-admin-key"] !== ADMIN_KEY_IDX) return res.status(401).json({ error: "Non autorise" });
-  next();
-};
 
 // ─── Tracking visites (public, fire-and-forget) ─────────────────────────────
 app.post("/api/track/visit", async (req, res) => {
