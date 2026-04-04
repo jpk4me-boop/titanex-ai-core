@@ -1,3 +1,11 @@
 node_modules/
 .env
 *.save
+*.backup
+*.backup2
+*.bak
+*.broken
+cron.log
+rewrite*.py
+migrate*.js
+debug_*.js

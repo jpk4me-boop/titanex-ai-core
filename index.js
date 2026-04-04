@@ -25,9 +25,10 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.tailwindcss.com", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://accounts.google.com", "https://apis.google.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+      styleSrcElem: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://accounts.google.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://api.groq.com", "https://www.googleapis.com", "https://accounts.google.com"],
+      connectSrc: ["'self'", "https://api.groq.com", "https://www.googleapis.com", "https://accounts.google.com", "https://unpkg.com"],
       frameSrc: ["https://accounts.google.com"],
       scriptSrcAttr: ["'unsafe-inline'"],
     }
