@@ -70,6 +70,13 @@ tailwind.config = {
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
 <body>
+<script>
+['titanex_token','titanex_user','titanex_session'].forEach(function(k){
+  if (!localStorage.getItem(k) && sessionStorage.getItem(k)) {
+    localStorage.setItem(k, sessionStorage.getItem(k)); sessionStorage.removeItem(k);
+  }
+});
+</script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!-- HEADER STICKY                                                          -->

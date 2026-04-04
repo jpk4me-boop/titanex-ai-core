@@ -116,6 +116,13 @@ tr:hover td{background:#f0fdf4!important;}
 </style>
 </head>
 <body>
+<script>
+['titanex_token','titanex_user','titanex_session'].forEach(function(k){
+  if (!localStorage.getItem(k) && sessionStorage.getItem(k)) {
+    localStorage.setItem(k, sessionStorage.getItem(k)); sessionStorage.removeItem(k);
+  }
+});
+</script>
 
 <button onclick="location.href='/dashboard/'" style="position:fixed;top:12px;left:16px;background:#15803D;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;display:flex;align-items:center;gap:6px;font-family:inherit;box-shadow:0 2px 8px rgba(21,128,61,.3)">← Dashboard</button>
 

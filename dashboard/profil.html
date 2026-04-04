@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-v="2">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -352,6 +352,15 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head>
 <body>
+<script>
+// One-time migration: sessionStorage → localStorage (Phase 2 compat)
+['titanex_token','titanex_user','titanex_session'].forEach(function(k){
+  if (!localStorage.getItem(k) && sessionStorage.getItem(k)) {
+    localStorage.setItem(k, sessionStorage.getItem(k));
+    sessionStorage.removeItem(k);
+  }
+});
+</script>
 
 <aside class="sidebar">
   <div class="sidebar-label" data-i18n="nav_settings">Parametres</div>
