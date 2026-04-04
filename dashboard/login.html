@@ -74,7 +74,7 @@ body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-
           <input id="inp-email" type="email" placeholder="contact@maboutique.com" data-i18n="login_email_ph" class="inp" style="padding-left:2.75rem">
         </div>
       </div>
-      <button type="button" id="btn-login-email" class="btn-primary">
+      <button type="button" id="btn-login-email" onclick="doLogin('email')" class="btn-primary">
         <i data-lucide="log-in" class="w-4 h-4"></i> <span data-i18n="login_btn">Se connecter</span>
       </button>
     </div>
@@ -88,7 +88,7 @@ body{background:linear-gradient(135deg,#f8fafc 0%,#f0fdf4 50%,#f1f5f9 100%);min-
           <input id="inp-tel" type="tel" placeholder="237672482763" data-i18n="login_phone_ph" class="inp" style="padding-left:2.75rem">
         </div>
       </div>
-      <button type="button" id="btn-login-tel" class="btn-primary">
+      <button type="button" id="btn-login-tel" onclick="doLogin('tel')" class="btn-primary">
         <i data-lucide="log-in" class="w-4 h-4"></i> <span data-i18n="login_btn">Se connecter</span>
       </button>
     </div>
@@ -238,15 +238,16 @@ window.addEventListener('load',function(){
   initGoogle();
   console.log('[LOGIN] page fully loaded, doLogin is:', typeof doLogin);
 });
-document.addEventListener('DOMContentLoaded',function(){
+// Attach immediately — script is at bottom of body, DOM elements already exist
+(function(){
   var btnE=document.getElementById('btn-login-email');
   var btnT=document.getElementById('btn-login-tel');
   if(btnE) btnE.addEventListener('click',function(){console.log('[CLICK] email btn clicked');doLogin('email');});
   else console.error('[LOGIN] btn-login-email NOT FOUND');
   if(btnT) btnT.addEventListener('click',function(){console.log('[CLICK] tel btn clicked');doLogin('tel');});
   else console.error('[LOGIN] btn-login-tel NOT FOUND');
-  console.log('[LOGIN] DOMContentLoaded — listeners attached, doLogin=', typeof doLogin);
-});
+  console.log('[LOGIN] listeners attached, doLogin=', typeof doLogin);
+})();
 </script>
 </body>
 </html>
