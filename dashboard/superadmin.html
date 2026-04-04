@@ -617,7 +617,7 @@ function renderUsers(list){
   tb.innerHTML=list.map(function(u){
     var isA=u.role==='admin';
     var sc = u.statut==='actif'?['#d1fae5','#065f46'] : u.statut==='essai'?['#fef3c7','#92400e'] : u.statut==='suspendu'?['#fee2e2','#991b1b'] : u.statut==='bloqué'?['#fecaca','#7f1d1d'] : u.statut==='banni'?['#7f1d1d','#fff'] : ['#f1f5f9','#64748b'];
-    var pc = u.plan==='business'?['#ede9fe','#6d28d9'] : u.plan==='pro'?['#dbeafe','#1d4ed8'] : ['#f1f5f9','#475569'];
+    var pc = u.plan==='business'?['#f0fdf4','#16a34a'] : u.plan==='pro'?['#dbeafe','#1d4ed8'] : ['#f1f5f9','#475569'];
     var expired = u.date_fin && new Date(u.date_fin) < new Date();
     return '<tr>'+
       '<td style="font-weight:600;color:#1e293b;">'+(u.nom||'&mdash;')+'</td>'+
