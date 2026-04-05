@@ -4809,12 +4809,15 @@ function mytxPage(dir) {
 }
 
 async function cvCheckConnection() {
-  const inst = (JSON.parse(localStorage.getItem('titanex_session')||'{}')).instance_name||'';
+  const ses = JSON.parse(localStorage.getItem('titanex_session')||'{}');
+  const inst = ses.instance_name||'';
   if (!inst) return;
   const dot = document.getElementById('cv-conn-dot');
   const txt = document.getElementById('cv-conn-text');
   try {
-    const res = await fetch('/admin/qr/'+inst+'/status');
+    const tok = ses.token || ses.access_token || '';
+    const hdrs = tok ? {'Authorization':'Bearer '+tok} : {};
+    const res = await fetch('/admin/qr/'+inst+'/status', {headers:hdrs});
     const data = await res.json();
     const ok = data.status==='open'||data.state==='open'||data.connected===true;
     if (dot) { dot.style.background = ok?'#22c55e':'#f87171'; dot.style.animation = ok?'ppPulse 2s ease-in-out infinite':''; }
@@ -6945,7 +6948,8 @@ async function connGenerateQR() {
   if (loading) loading.classList.remove('hidden');
 
   try {
-    const res = await fetch('/admin/qr/' + INSTANCE);
+    const _tokQR = SESSION.token || SESSION.access_token || '';
+    const res = await fetch('/admin/qr/' + INSTANCE, {headers: _tokQR?{'Authorization':'Bearer '+_tokQR}:{}});
     const data = await res.json();
     if (data.qr || data.qrCode || data.qr_code) {
       const qrSrc = data.qr || data.qrCode || data.qr_code;
@@ -6988,7 +6992,9 @@ function connStartPolling(instance) {
   if (_connPollTimer) clearInterval(_connPollTimer);
   _connPollTimer = setInterval(async () => {
     try {
-      const res = await fetch('/admin/qr/' + instance + '/status');
+      const _ses2 = JSON.parse(localStorage.getItem('titanex_session')||'{}');
+      const _tok2 = _ses2.token || _ses2.access_token || '';
+      const res = await fetch('/admin/qr/' + instance + '/status', {headers: _tok2?{'Authorization':'Bearer '+_tok2}:{}});
       const data = await res.json();
       if (data.status === 'open' || data.state === 'open' || data.connected === true) {
         clearInterval(_connPollTimer);
@@ -7566,6 +7572,11 @@ function initPromptPage() {
   const agent = allAgents[0] || null;
   _ppAgentId  = agent?.id || null;
 
+  // Restore deployed state
+  if (localStorage.getItem('titanex_deployed_' + INSTANCE)) {
+    setTimeout(markDeployBtn, 100);
+  }
+
   // Header
   const name = agent?.name || SESSION?.nom || 'Agent';
   const init = name.slice(0,2).toUpperCase();
@@ -7667,6 +7678,27 @@ function updateCharCount() {
   if (count)   { count.textContent = len.toLocaleString('fr-FR'); count.className = pct > 80 ? 'text-amber-400' : 'text-emerald-400'; }
   if (bar)     { bar.style.width = pct + '%'; bar.style.background = pct > 80 ? '#f59e0b' : '#22c55e'; }
   if (scoreEl) { const s = calculatePromptScore(ta.value); scoreEl.textContent = s; scoreEl.style.color = s >= 8 ? '#4ade80' : s >= 5 ? '#fbbf24' : '#f87171'; }
+  // Reset deploy button when prompt is edited
+  if (localStorage.getItem('titanex_deployed_' + INSTANCE)) {
+    localStorage.removeItem('titanex_deployed_' + INSTANCE);
+    document.querySelectorAll('button[onclick="deployAgent()"]').forEach(function(btn) {
+      btn.disabled = false;
+      btn.style.background = '#25D366';
+      btn.style.color = '#fff';
+      btn.style.boxShadow = '0 4px 14px rgba(37,211,102,.3)';
+      btn.style.cursor = 'pointer';
+      btn.textContent = '';
+      var ico = document.createElement('i');
+      ico.setAttribute('data-lucide', 'rocket');
+      ico.className = 'w-3 h-3';
+      ico.style.display = 'inline-block';
+      ico.style.verticalAlign = 'middle';
+      ico.style.marginRight = '4px';
+      btn.appendChild(ico);
+      btn.appendChild(document.createTextNode(' Déployer'));
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+  }
 }
 
 function calculatePromptScore(prompt) {
@@ -7733,6 +7765,57 @@ function deployAgent() {
   localStorage.setItem('titanex_agent_mode', 'actif');
 
   showToast('Agent déployé avec succès ! 🚀');
+  launchConfetti();
+  markDeployBtn();
+  localStorage.setItem('titanex_deployed_' + INSTANCE, 'true');
+}
+
+function markDeployBtn() {
+  document.querySelectorAll('button[onclick="deployAgent()"]').forEach(function(btn) {
+    btn.disabled = true;
+    btn.style.background = '#e2e8f0';
+    btn.style.color = '#64748b';
+    btn.style.boxShadow = 'none';
+    btn.style.cursor = 'not-allowed';
+    btn.textContent = '';
+    var ico = document.createElement('i');
+    ico.setAttribute('data-lucide', 'check-circle');
+    ico.className = 'w-3 h-3';
+    ico.style.display = 'inline-block';
+    ico.style.verticalAlign = 'middle';
+    ico.style.marginRight = '4px';
+    btn.appendChild(ico);
+    btn.appendChild(document.createTextNode(' Déployé'));
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  });
+}
+
+function launchConfetti() {
+  var colors = ['#25D366','#128C57','#0A5C36','#fff','#FFD700'];
+  var count = 0;
+  var interval = setInterval(function() {
+    count++;
+    if (count > 80) { clearInterval(interval); return; }
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;width:10px;height:10px;border-radius:2px;z-index:99999;pointer-events:none;';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.left = Math.random()*100+'vw';
+    el.style.top = '-10px';
+    el.style.transform = 'rotate('+Math.random()*360+'deg)';
+    document.body.appendChild(el);
+    var duration = 1500 + Math.random()*1500;
+    var startTime = Date.now();
+    var startLeft = parseFloat(el.style.left);
+    (function fall() {
+      var elapsed = Date.now() - startTime;
+      var progress = elapsed / duration;
+      if (progress >= 1) { el.remove(); return; }
+      el.style.top = (progress * 110) + 'vh';
+      el.style.left = (startLeft + Math.sin(progress*10)*3) + 'vw';
+      el.style.opacity = progress > 0.8 ? (1-progress)*5 : 1;
+      requestAnimationFrame(fall);
+    })();
+  }, 30);
 }
 
 async function loadPPProducts() {
@@ -7973,6 +8056,7 @@ function copyReferral() {
 
 function logout() {
   localStorage.removeItem('titanex_session');
+  localStorage.removeItem('titanex_deployed_' + INSTANCE);
   location.href = '/dashboard/login.html';
 }
 
