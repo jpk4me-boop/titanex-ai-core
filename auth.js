@@ -11,6 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) { console.error("FATAL: JWT_SECRET env var is required"); process.exit(1); }
 const EVO_URL = (process.env.EVOLUTION_API_URL || "").replace(/\/$/, "");
 const EVO_KEY = process.env.EVOLUTION_API_KEY;
+const { sendWelcomeEmail } = require("./mailer");
 
 async function notifyAdmin(message) {
   try {
@@ -49,7 +50,8 @@ router.post("/register", async (req, res) => {
       instance_name: instance, plan: plan || "starter",
       statut: "essai", role: "client", password_hash: hash,
       date_debut: new Date().toISOString(),
-      date_fin: new Date(Date.now() + 7*24*60*60*1000).toISOString()
+      date_fin: new Date(Date.now() + 7*24*60*60*1000).toISOString(),
+      credits: 500, credits_max: 500, credits_used: 0
     }).select().single();
     if (error) throw new Error(error.message);
     await supabaseAdmin.from("stores").insert({
@@ -58,7 +60,9 @@ router.post("/register", async (req, res) => {
       catalog_details: "Catalogue en cours de configuration."
     }).catch(() => {});
     const token = jwt.sign({ id: data.id, email: email||"", instance_name: instance, role: "client", nom }, JWT_SECRET, { expiresIn: "30d" });
-    res.json({ success: true, token, tenant: { id: data.id, nom, email: email||"", instance_name: instance, role: "client", statut: "essai" } });
+    res.json({ success: true, token, tenant: { id: data.id, nom, email: email||"", instance_name: instance, role: "client", statut: "essai", date_fin: data.date_fin, credits: 500, credits_max: 500, credits_used: 0 } });
+    // Email de bienvenue (non-bloquant)
+    sendWelcomeEmail({ nom, email, instance_name: instance, plan: plan || "starter", credits: 500 }).catch(() => {});
     // Notification admin: nouveau client inscrit
     const heureDouala = moment().tz("Africa/Douala").format("DD/MM/YYYY HH:mm");
     notifyAdmin(
@@ -83,7 +87,7 @@ router.post("/login", async (req, res) => {
     if (!valid) return res.status(401).json({ error: "Email ou mot de passe incorrect" });
     const expiresIn = remember ? "30d" : "24h";
     const token = jwt.sign({ id: tenant.id, email, instance_name: tenant.instance_name, role: tenant.role || "client", nom: tenant.nom }, JWT_SECRET, { expiresIn });
-    res.json({ success: true, token, tenant: { id: tenant.id, nom: tenant.nom, email, instance_name: tenant.instance_name, role: tenant.role || "client", statut: tenant.statut, plan: tenant.plan } });
+    res.json({ success: true, token, tenant: { id: tenant.id, nom: tenant.nom, email, instance_name: tenant.instance_name, role: tenant.role || "client", statut: tenant.statut, plan: tenant.plan, date_fin: tenant.date_fin, credits: tenant.credits, credits_max: tenant.credits_max, credits_used: tenant.credits_used } });
   } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
@@ -134,7 +138,8 @@ router.get("/profile", authJWT, async (req, res) => {
       shop_name: t.merchant_name || s?.instance_name || '',
       preferred_lang: 'fr',
       ai_script: s?.system_prompt||'',
-      credits: 0, agents_actifs: 0, agents_total: 0,
+      credits: t.credits || 0, credits_max: t.credits_max || 3000, credits_used: t.credits_used || 0,
+      agents_actifs: 0, agents_total: 0,
       member_since: t.created_at || t.date_debut || '',
       logo_url: s?.logo_url||null, banner_url: s?.banner_url||null,
       plan: t.plan||'starter', statut: t.statut||'essai',

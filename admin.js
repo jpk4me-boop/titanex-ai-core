@@ -23,7 +23,7 @@ const authOrJWT = (req, res, next) => {
 };
 router.get("/tenants", auth, async (req, res) => { const { data, error } = await supabaseAdmin.from("tenants").select("*").order("created_at", { ascending: false }); if (error) return res.status(500).json({ error: error.message }); res.json(data); });
 router.post("/tenants", auth, async (req, res) => { const { nom, email, telephone, instance_name, plan } = req.body; if (!nom || !email || !instance_name) return res.status(400).json({ error: "Champs requis manquants" }); const { data, error } = await supabaseAdmin.from("tenants").insert({ nom, email, telephone, instance_name, plan: plan || "basic", statut: "essai", date_debut: new Date().toISOString() }).select().single(); if (error) return res.status(500).json({ error: error.message }); await supabaseAdmin.from("stores").insert({ instance_name, tenant_id: data.id, system_prompt: "Tu es un agent de vente IA pour " + nom + ". Reponds en francais, sois poli et vends efficacement.", catalog_details: "Catalogue en cours de configuration." }); res.json({ success: true, tenant: data }); });
-router.patch("/tenants/:id/statut", auth, async (req, res) => { const { statut } = req.body; if (!["actif","inactif","suspendu","essai","bloqué","banni"].includes(statut)) return res.status(400).json({ error: "Statut invalide" }); const { data, error } = await supabaseAdmin.from("tenants").update({ statut }).eq("id", req.params.id).select().single(); if (error) return res.status(500).json({ error: error.message }); res.json({ success: true, tenant: data }); });
+router.patch("/tenants/:id/statut", auth, async (req, res) => { const { statut } = req.body; if (!["actif","inactif","suspendu","essai","expiré","bloqué","banni"].includes(statut)) return res.status(400).json({ error: "Statut invalide" }); const { data, error } = await supabaseAdmin.from("tenants").update({ statut }).eq("id", req.params.id).select().single(); if (error) return res.status(500).json({ error: error.message }); res.json({ success: true, tenant: data }); });
 router.delete("/tenants/:id", auth, async (req, res) => { const { error } = await supabaseAdmin.from("tenants").delete().eq("id", req.params.id); if (error) return res.status(500).json({ error: error.message }); res.json({ success: true }); });
 
 router.get("/catalogue/:instance", authOrJWT, async (req, res) => {
@@ -150,24 +150,12 @@ router.patch('/tenants/:id/setup', auth, async (req, res) => {
 // ─── Routes /api/admin/* (superadmin dashboard) ──────────────────────────────
 
 // Stats globales
-router.get('/stats', auth, async (req, res) => {
-  try {
-    const { data: tenants } = await supabaseAdmin.from('tenants').select('id,email,statut,plan');
-    const { data: convs } = await supabaseAdmin.from('conversations').select('id');
-    res.json({
-      users: (tenants||[]).length,
-      points_used: 0,
-      points_total: 0,
-      referrals: 0,
-      visites: (convs||[]).length
-    });
-  } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
-});
+// Route /stats legacy supprimée — voir route complète plus bas
 
 // Liste utilisateurs
 router.get('/users', auth, async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin.from('tenants').select('id,email,telephone,created_at,updated_at,nom,statut,plan,role,instance_name,date_debut,date_fin,prix_mensuel,moyen_paiement').order('created_at', { ascending: false });
+    const { data, error } = await supabaseAdmin.from('tenants').select('id,email,telephone,created_at,updated_at,nom,statut,plan,role,instance_name,date_debut,date_fin,prix_mensuel,moyen_paiement,credits,credits_max,credits_used').order('created_at', { ascending: false });
     if (error) throw error;
     res.json((data||[]).map(t => ({
       id: t.id,
@@ -176,7 +164,9 @@ router.get('/users', auth, async (req, res) => {
       nom: t.nom || '',
       created_at: t.created_at,
       last_login: t.updated_at || t.created_at,
-      credits: 0,
+      credits: t.credits || 0,
+      credits_max: t.credits_max || 3000,
+      credits_used: t.credits_used || 0,
       agents: 1,
       plan: t.plan || 'starter',
       role: t.role === 'admin' ? 'admin' : 'user',
@@ -593,6 +583,21 @@ router.get('/stats', auth, async (req, res) => {
     const monthTxns = (txns || []).filter(tx => tx.status === 'SUCCESSFUL');
     const totalMonthRevenue = monthTxns.reduce((s, tx) => s + (parseFloat(tx.amount) || 0), 0);
 
+    // Inscriptions par jour (90 derniers jours)
+    const signupsByDay = {};
+    for (let i = 89; i >= 0; i--) {
+      const d = new Date(now - i * 86400000);
+      signupsByDay[d.toISOString().slice(0, 10)] = 0;
+    }
+    t.forEach(tenant => {
+      const day = (tenant.created_at || '').slice(0, 10);
+      if (signupsByDay[day] !== undefined) signupsByDay[day] += 1;
+    });
+
+    // Credits totaux
+    const totalCreditsUsed = t.reduce((s, x) => s + (x.credits_used || 0), 0);
+    const totalCredits = t.reduce((s, x) => s + (x.credits || 0), 0);
+
     res.json({
       tenants_total: t.length, actifs: actifs.length,
       essais: t.filter(x => x.statut === 'essai').length,
@@ -602,6 +607,9 @@ router.get('/stats', auth, async (req, res) => {
       conversations_ce_mois: thisMonth,
       tenants: t,
       revenue_by_day: revenueByDay,
+      signups_by_day: signupsByDay,
+      credits_used_total: totalCreditsUsed,
+      credits_remaining_total: totalCredits,
       top5_tenants: top5Tenants,
       total_month_revenue: totalMonthRevenue,
       total_month_transactions: monthTxns.length
@@ -689,7 +697,7 @@ router.post('/auth/login', async (req, res) => {
   const { email, telephone } = req.body;
   if (!email && !telephone) return res.status(400).json({ error: 'Email ou téléphone requis' });
   try {
-    let query = supabaseAdmin.from('tenants').select('id,nom,email,telephone,instance_name,plan,statut,date_fin');
+    let query = supabaseAdmin.from('tenants').select('id,nom,email,telephone,instance_name,plan,statut,date_fin,credits,credits_max,credits_used');
     if (email) query = query.ilike('email', email.trim());
     else query = query.eq('telephone', telephone.trim());
     const { data, error } = await query.single();

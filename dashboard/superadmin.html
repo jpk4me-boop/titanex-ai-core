@@ -163,13 +163,27 @@ tr:hover td{background:#f0fdf4!important;}
     </div>
   </div>
 
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div></div>
+    <button onclick="refreshAll()" style="padding:8px 18px;border-radius:10px;font-size:13px;font-weight:600;color:#128C57;background:#f0fdf4;border:1px solid #a7f3d0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">&#128260; Actualiser</button>
+  </div>
   <div class="g2">
     <div class="card">
-      <div class="ct" data-i18n="sa_chart_signups">&#128101; Inscriptions (30 derniers jours)</div>
+      <div class="ct" data-i18n="sa_chart_signups">&#128101; Inscriptions</div>
+      <div class="filter-btns">
+        <button class="fb" onclick="setSignupFilter(7,this)">7j</button>
+        <button class="fb active" onclick="setSignupFilter(30,this)">30j</button>
+        <button class="fb" onclick="setSignupFilter(90,this)">90j</button>
+      </div>
       <canvas id="ci" height="200"></canvas>
     </div>
     <div class="card">
-      <div class="ct" data-i18n="sa_chart_points">&#128200; Points Titan (30 derniers jours)</div>
+      <div class="ct" data-i18n="sa_chart_points">&#128200; Credits consommes</div>
+      <div class="filter-btns">
+        <button class="fb" onclick="setCreditsFilter(7,this)">7j</button>
+        <button class="fb active" onclick="setCreditsFilter(30,this)">30j</button>
+        <button class="fb" onclick="setCreditsFilter(90,this)">90j</button>
+      </div>
       <canvas id="cp" height="200"></canvas>
     </div>
   </div>
@@ -463,7 +477,10 @@ async function init(){
     var r = await fetch('/api/admin/stats',{headers:AH()});
     if(r.status===401||r.status===403){ location.href='/dashboard/'; return; }
     var d = await r.json();
+    _statsData = d;
     fillStats(d);
+    renderSignupsChart(SIGNUP_DAYS);
+    renderCreditsChart(CREDITS_DAYS);
     document.getElementById('admin-mail').textContent = d.admin_email||'';
   }catch(e){
     fillStats({users:0,points_used:0,points_total:0,referrals:0,visites:0});
@@ -526,12 +543,82 @@ function setF(days, btn) {
   loadVisits(days);
 }
 
+var chartCi = null, chartCp = null;
+var _statsData = null;
+var SIGNUP_DAYS = 30, CREDITS_DAYS = 30;
+
 function initCharts() {
-  var lb = [];
-  for (var i = 29; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i); lb.push(d.getDate() + '/' + (d.getMonth() + 1)); }
-  new Chart(document.getElementById('ci'), { type: 'bar', data: { labels: lb, datasets: [{ data: lb.map(function() { return 0; }), backgroundColor: '#22C55E', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } } } } });
-  new Chart(document.getElementById('cp'), { type: 'line', data: { labels: lb, datasets: [{ data: lb.map(function() { return 0; }), borderColor: '#22C55E', backgroundColor: 'rgba(34,197,94,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#22C55E', pointRadius: 3 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } } } } });
-  // Donut and bar will be initialized in loadVisits
+  // Charts are initialized when stats data arrives
+}
+
+function renderSignupsChart(days) {
+  if (!_statsData || !_statsData.signups_by_day) return;
+  var all = _statsData.signups_by_day;
+  var keys = Object.keys(all).slice(-days);
+  var labels = keys.map(function(dt) { var p = dt.split('-'); return p[2] + '/' + p[1]; });
+  var values = keys.map(function(k) { return all[k] || 0; });
+  var ctx = document.getElementById('ci');
+  if (!ctx) return;
+  if (chartCi) chartCi.destroy();
+  chartCi = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: values, backgroundColor: '#22C55E', borderRadius: 6 }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } } } }
+  });
+}
+
+function renderCreditsChart(days) {
+  if (!_statsData || !_statsData.tenants) return;
+  var now = new Date();
+  // Group credits_used by tenant created_at date as proxy (real usage tracking would need a dedicated table)
+  var byDay = {};
+  for (var i = days - 1; i >= 0; i--) {
+    var d = new Date(now - i * 86400000);
+    byDay[d.toISOString().slice(0, 10)] = 0;
+  }
+  (_statsData.tenants || []).forEach(function(t) {
+    var day = (t.created_at || '').slice(0, 10);
+    if (byDay[day] !== undefined) byDay[day] += (t.credits_used || 0);
+  });
+  var keys = Object.keys(byDay);
+  var labels = keys.map(function(dt) { var p = dt.split('-'); return p[2] + '/' + p[1]; });
+  var values = keys.map(function(k) { return byDay[k]; });
+  var ctx = document.getElementById('cp');
+  if (!ctx) return;
+  if (chartCp) chartCp.destroy();
+  chartCp = new Chart(ctx, {
+    type: 'line',
+    data: { labels: labels, datasets: [{ data: values, borderColor: '#22C55E', backgroundColor: 'rgba(34,197,94,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#22C55E', pointRadius: 3 }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } } } }
+  });
+}
+
+function setSignupFilter(days, btn) {
+  document.querySelectorAll('.card .filter-btns .fb').forEach(function(b) { if (b.closest('.card') === btn.closest('.card')) b.classList.remove('active'); });
+  btn.classList.add('active');
+  SIGNUP_DAYS = days;
+  renderSignupsChart(days);
+}
+
+function setCreditsFilter(days, btn) {
+  document.querySelectorAll('.card .filter-btns .fb').forEach(function(b) { if (b.closest('.card') === btn.closest('.card')) b.classList.remove('active'); });
+  btn.classList.add('active');
+  CREDITS_DAYS = days;
+  renderCreditsChart(days);
+}
+
+async function refreshAll() {
+  try {
+    var r = await fetch('/api/admin/stats', { headers: AH() });
+    var d = await r.json();
+    _statsData = d;
+    fillStats(d);
+    renderSignupsChart(SIGNUP_DAYS);
+    renderCreditsChart(CREDITS_DAYS);
+    loadVisits(VISIT_DAYS);
+    loadPays(30);
+    loadUsers();
+  } catch(e) { console.error('[REFRESH]', e); }
 }
 
 var SOURCE_COLORS = {

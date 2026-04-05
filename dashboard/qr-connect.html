@@ -1,33 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr"><head>
-<script>
-// One-time migration: sessionStorage → localStorage (Phase 2 compat)
-['titanex_token','titanex_user','titanex_session'].forEach(function(k){
-  if (!localStorage.getItem(k) && sessionStorage.getItem(k)) {
-    localStorage.setItem(k, sessionStorage.getItem(k));
-    sessionStorage.removeItem(k);
-  }
-});
-</script>
-<script>
-(function(){
-  var token = localStorage.getItem('titanex_token');
-  if (!token) { location.href = '/dashboard/login.html'; return; }
-  fetch(window.location.protocol+'//'+window.location.hostname+'/auth/me', {
-    headers: {'Authorization': 'Bearer ' + token}
-  }).then(function(r){ return r.json(); })
-  .then(function(d){
-    if (!d.tenant) { localStorage.removeItem('titanex_token'); location.href = '/dashboard/login.html'; }
-  }).catch(function(){});
-})();
-</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Titanex AI - QR WhatsApp</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--r:#ef4444;--t:#f0f0f0;--t2:#888}body{background:var(--bg);color:var(--t);font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}@keyframes spin{to{transform:rotate(360deg)}}.card{background:var(--s);border:1px solid var(--br);border-radius:16px;padding:2rem;width:100%;max-width:400px;text-align:center}.logo{font-size:1.1rem;font-weight:800;margin-bottom:1.5rem}.logo em{color:var(--g);font-style:normal}.qr-wrap{background:#fff;border-radius:12px;padding:1rem;margin:0 auto 1.2rem;min-width:220px;min-height:220px;display:flex;align-items:center;justify-content:center}.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#22c55e;border-radius:50%;animation:spin 1s linear infinite}.status{font-size:.82rem;color:var(--t2);margin-bottom:.8rem}.status.err{color:var(--r)}.steps{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:1rem;text-align:left;margin-bottom:1.2rem}.step{display:flex;gap:8px;font-size:.78rem;color:var(--t2);margin-bottom:.5rem}.step-n{background:var(--g);color:#000;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0;margin-top:1px}.refresh-btn{background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:8px;padding:.55rem 1.2rem;cursor:pointer;font-size:.8rem;font-family:inherit;margin-bottom:.5rem}.refresh-btn:hover{border-color:var(--g);color:var(--g)}.timer{font-size:.72rem;color:var(--t2);margin-bottom:1rem}.connected-box{display:none}.go-btn{background:var(--g);color:#000;border:none;border-radius:8px;padding:.7rem 1.5rem;font-weight:800;cursor:pointer;font-size:.88rem;font-family:inherit}</style>
+<style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--br:#252525;--g:#22c55e;--r:#ef4444;--t:#f0f0f0;--t2:#888}body{background:var(--bg);color:var(--t);font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}@keyframes spin{to{transform:rotate(360deg)}}.card{background:var(--s);border:1px solid var(--br);border-radius:16px;padding:2rem;width:100%;max-width:400px;text-align:center}.logo{font-size:1.1rem;font-weight:800;margin-bottom:1.5rem}.logo em{color:var(--g);font-style:normal}.qr-wrap{background:#fff;border-radius:12px;padding:1rem;margin:0 auto 1.2rem;min-width:220px;min-height:220px;display:flex;align-items:center;justify-content:center}.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#22c55e;border-radius:50%;animation:spin 1s linear infinite}.status{font-size:.82rem;color:var(--t2);margin-bottom:.8rem}.status.err{color:var(--r)}.steps{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:1rem;text-align:left;margin-bottom:1.2rem}.step{display:flex;gap:8px;font-size:.78rem;color:var(--t2);margin-bottom:.5rem}.step-n{background:var(--g);color:#000;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0;margin-top:1px}.refresh-btn{background:transparent;border:1px solid var(--br);color:var(--t2);border-radius:8px;padding:.55rem 1.2rem;cursor:pointer;font-size:.8rem;font-family:inherit;margin-bottom:.5rem}.refresh-btn:hover{border-color:var(--g);color:var(--g)}.timer{font-size:.72rem;color:var(--t2);margin-bottom:1rem}.connected-box{display:none}.go-btn{background:var(--g);color:#000;border:none;border-radius:8px;padding:.7rem 1.5rem;font-weight:800;cursor:pointer;font-size:.88rem;font-family:inherit}.no-auth{text-align:center;padding:2rem}.no-auth-icon{font-size:2.5rem;margin-bottom:.8rem}.no-auth-msg{font-size:.9rem;color:var(--t2);margin-bottom:.5rem}.no-auth-sub{font-size:.75rem;color:#555}</style>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2315803D'/><text y='.9em' font-size='70' x='15' fill='white' font-weight='900'>T</text></svg>"/>
 </head><body><div class="card">
 <div class="logo">Titanex <em>AI</em></div>
 <div style="text-align:right;margin-bottom:8px"><button id="lang-btn" onclick="setLang(LANG==='fr'?'en':'fr')" style="padding:4px 10px;border-radius:6px;border:1.5px solid var(--br);background:var(--s2);color:var(--t2);font-size:11px;font-weight:700;cursor:pointer">FR</button></div>
+
+<!-- No-auth message (hidden by default) -->
+<div id="no-auth" style="display:none" class="no-auth">
+  <div class="no-auth-icon">🔒</div>
+  <div class="no-auth-msg" id="no-auth-msg">Connectez-vous d'abord au dashboard</div>
+  <div class="no-auth-sub" id="no-auth-sub">Redirection automatique...</div>
+</div>
+
 <div id="main-area">
   <div class="qr-wrap"><div class="spinner" id="sp"></div><div id="qrc" style="display:none"></div></div>
   <div class="status" id="st" data-i18n="qr_generating">Génération du QR code...</div>
@@ -61,7 +48,9 @@ fr:{
   qr_dashboard:"Dashboard",
   qr_scan:"Scannez ce code avec WhatsApp",
   qr_expired:"Expiré — cliquez Regénérer",
-  qr_valid:"Valide encore"
+  qr_valid:"Valide encore",
+  no_auth:"Connectez-vous d'abord au dashboard",
+  no_auth_sub:"Redirection automatique..."
 },
 en:{
   qr_generating:"Generating QR code...",
@@ -75,7 +64,9 @@ en:{
   qr_dashboard:"Dashboard",
   qr_scan:"Scan this code with WhatsApp",
   qr_expired:"Expired — click Regenerate",
-  qr_valid:"Valid for"
+  qr_valid:"Valid for",
+  no_auth:"Please log in to the dashboard first",
+  no_auth_sub:"Redirecting automatically..."
 }
 };
 var LANG=localStorage.getItem('titanex_lang')||'fr';
@@ -87,31 +78,131 @@ function applyTranslations(){
     if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
     else{el.textContent=val;}
   });
+  var noAuthMsg=document.getElementById('no-auth-msg');
+  if(noAuthMsg)noAuthMsg.textContent=t('no_auth');
+  var noAuthSub=document.getElementById('no-auth-sub');
+  if(noAuthSub)noAuthSub.textContent=t('no_auth_sub');
 }
 function updateLangBtn(){var btn=document.getElementById('lang-btn');if(btn)btn.textContent=LANG==='fr'?'EN':'FR';}
 document.addEventListener('DOMContentLoaded',function(){applyTranslations();updateLangBtn();});
 </script>
 <script>
-var API='';
-var INST=new URLSearchParams(window.location.search).get('instance')||'boutique1';
-var cd=null,pt=null;
-function loadQR(){
-  clearInterval(cd);clearInterval(pt);
-  document.getElementById('sp').style.display='block';
-  document.getElementById('qrc').style.display='none';
-  document.getElementById('qrc').innerHTML='';
-  document.getElementById('st').textContent=t('qr_generating');
-  document.getElementById('st').className='status';
-  document.getElementById('tm').textContent='';
-  fetch(API+'/admin/qr/'+INST).then(function(r){return r.json();}).then(function(d){
-    if(d.error)throw new Error(d.error);
-    document.getElementById('sp').style.display='none';
-    var c=document.getElementById('qrc');c.style.display='block';
-    new QRCode(c,{text:d.code,width:200,height:200,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
-    document.getElementById('st').textContent='📱 '+t('qr_scan');
-    var s=60;cd=setInterval(function(){s--;document.getElementById('tm').innerHTML=t('qr_valid')+' <b style="color:#f59e0b">'+s+'s</b>';if(s<=0){clearInterval(cd);document.getElementById('qrc').style.display='none';document.getElementById('tm').textContent=t('qr_expired');}},1000);
-    var a=0;pt=setInterval(function(){a++;fetch(API+'/admin/qr/'+INST+'/status').then(function(r){return r.json();}).then(function(d){if(d.connected){clearInterval(pt);clearInterval(cd);document.getElementById('main-area').style.display='none';document.getElementById('ok').style.display='block';}}).catch(function(){});if(a>=40)clearInterval(pt);},3000);
-  }).catch(function(e){document.getElementById('sp').style.display='none';document.getElementById('st').textContent='❌ '+(e.message||'Erreur');document.getElementById('st').className='status err';});
+// ─── Auth: resolve token and instance SYNCHRONOUSLY before any fetch ─────────
+var _urlParams = new URLSearchParams(window.location.search);
+
+// Migration: sessionStorage → localStorage
+['titanex_token','titanex_user','titanex_session'].forEach(function(k){
+  if (!localStorage.getItem(k) && sessionStorage.getItem(k)) {
+    localStorage.setItem(k, sessionStorage.getItem(k));
+    sessionStorage.removeItem(k);
+  }
+});
+
+// 1. Try URL params first (?token=xxx&instance=yyy)
+// 2. Fall back to localStorage session
+// 3. Fall back to localStorage token
+var SESSION = JSON.parse(localStorage.getItem('titanex_session') || 'null');
+var TOK = _urlParams.get('token')
+        || (SESSION && (SESSION.token || SESSION.access_token))
+        || localStorage.getItem('titanex_token')
+        || '';
+var INST = _urlParams.get('instance')
+        || (SESSION && SESSION.instance_name)
+        || '';
+var AUTH_HDRS = TOK ? {'Authorization': 'Bearer ' + TOK} : {};
+
+// ─── No token or no instance → show friendly message and redirect ────────────
+function showNoAuth() {
+  document.getElementById('main-area').style.display = 'none';
+  document.getElementById('no-auth').style.display = 'block';
+  setTimeout(function(){ location.href = '/dashboard/'; }, 2000);
 }
-loadQR();
+
+if (!TOK || !INST) {
+  showNoAuth();
+} else {
+  // Validate token with backend before loading QR
+  fetch('/auth/me', {headers: AUTH_HDRS})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (!d.tenant) { showNoAuth(); return; }
+      // Token valid — use instance from session if not explicitly set
+      if (!INST && d.tenant.instance_name) INST = d.tenant.instance_name;
+      loadQR();
+    })
+    .catch(function(){ showNoAuth(); });
+}
+
+// ─── QR Loading ──────────────────────────────────────────────────────────────
+var cd = null, pt = null;
+function loadQR(){
+  clearInterval(cd); clearInterval(pt);
+  document.getElementById('sp').style.display = 'block';
+  document.getElementById('qrc').style.display = 'none';
+  while(document.getElementById('qrc').firstChild) document.getElementById('qrc').removeChild(document.getElementById('qrc').firstChild);
+  document.getElementById('st').textContent = t('qr_generating');
+  document.getElementById('st').className = 'status';
+  document.getElementById('tm').textContent = '';
+
+  fetch('/admin/qr/' + INST, {headers: AUTH_HDRS})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.error) throw new Error(d.error);
+      document.getElementById('sp').style.display = 'none';
+      var c = document.getElementById('qrc'); c.style.display = 'block';
+
+      // Support base64 image or text QR code
+      if (d.base64) {
+        var img = document.createElement('img');
+        img.src = d.base64.startsWith('data:') ? d.base64 : 'data:image/png;base64,' + d.base64;
+        img.style.cssText = 'width:200px;height:200px';
+        c.appendChild(img);
+      } else if (d.code) {
+        new QRCode(c, {text: d.code, width: 200, height: 200, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M});
+      } else {
+        throw new Error('QR non disponible');
+      }
+
+      document.getElementById('st').textContent = '📱 ' + t('qr_scan');
+
+      // Countdown timer (120s)
+      var s = 120;
+      cd = setInterval(function(){
+        s--;
+        document.getElementById('tm').textContent = t('qr_valid') + ' ' + s + 's';
+        if (s <= 0) {
+          clearInterval(cd);
+          document.getElementById('qrc').style.display = 'none';
+          document.getElementById('tm').textContent = t('qr_expired');
+        }
+      }, 1000);
+
+      // Poll connection status every 3s (max 40 attempts = 2min)
+      var a = 0;
+      pt = setInterval(function(){
+        a++;
+        fetch('/admin/qr/' + INST + '/status', {headers: AUTH_HDRS})
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (d.connected || d.status === 'open' || d.state === 'open') {
+              clearInterval(pt); clearInterval(cd);
+              document.getElementById('main-area').style.display = 'none';
+              document.getElementById('ok').style.display = 'block';
+            }
+          }).catch(function(){});
+        if (a >= 40) clearInterval(pt);
+      }, 3000);
+    })
+    .catch(function(e){
+      document.getElementById('sp').style.display = 'none';
+      // If auth error, redirect to dashboard
+      var msg = e.message || 'Erreur';
+      if (msg === 'Non autorise' || msg === 'Token invalide ou expire') {
+        showNoAuth();
+      } else {
+        document.getElementById('st').textContent = '❌ ' + msg;
+        document.getElementById('st').className = 'status err';
+      }
+    });
+}
 </script></body></html>

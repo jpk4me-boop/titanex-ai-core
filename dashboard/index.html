@@ -393,6 +393,8 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <!-- PAGE: HOME (Dashboard Overview) -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <div id="page-home" class="page-content">
+      <!-- Trial / Expiration / Credits Banner -->
+      <div id="trial-banner" style="display:none;margin-bottom:16px;padding:14px 20px;border-radius:14px;font-size:14px;font-weight:600;display:none;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap"></div>
       <!-- Loading skeleton -->
       <div id="home-loading" class="space-y-6">
         <div class="space-y-3 animate-pulse"><div class="h-8 w-64 bg-zinc-800 rounded-lg"></div><div class="h-5 w-80 bg-zinc-800 rounded"></div></div>
@@ -3118,7 +3120,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 </div>
 
 <!-- Toast container -->
-<div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-2"></div>
+<div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none;"></div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <!-- JAVASCRIPT -->
@@ -3456,6 +3458,17 @@ function loadAgentMode() {
       syncAgentModeUI(d.agent_mode);
       localStorage.setItem('titanex_agent_mode', d.agent_mode);
     }
+    if (d && d.credits !== undefined) {
+      SESSION.credits = d.credits;
+      SESSION.credits_max = d.credits_max || 3000;
+      SESSION.credits_used = d.credits_used || 0;
+      localStorage.setItem('titanex_session', JSON.stringify(SESSION));
+      updateCreditsUI(d.credits, d.credits_max || 3000);
+      var bc = document.getElementById('badge-credits');
+      if (bc) bc.textContent = d.credits;
+      var hc = document.getElementById('header-credits-count');
+      if (hc) hc.textContent = d.credits + ' credits';
+    }
   }).catch(function() {});
 }
 
@@ -3500,6 +3513,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   loadDashboard();
   loadAgentMode();
+  showTrialBanner();
   // Check onboarding
   setTimeout(function() { checkOnboarding(); }, 1500);
   // Load tenant stats for charts
@@ -3770,6 +3784,65 @@ function updateCreditsUI(current, total) {
   document.getElementById('credits-bar').style.width = pct + '%';
   if (pct <= 10) document.getElementById('credits-warning').classList.remove('hidden');
   else document.getElementById('credits-warning').classList.add('hidden');
+}
+
+// ─── Trial / Expiration Banner ───────────────────────────────────────────────
+function showTrialBanner() {
+  var banner = document.getElementById('trial-banner');
+  if (!banner || !SESSION) return;
+  var statut = SESSION.statut || '';
+  var dateFin = SESSION.date_fin ? new Date(SESSION.date_fin) : null;
+  var credits = typeof SESSION.credits === 'number' ? SESSION.credits : 500;
+  var now = new Date();
+
+  banner.style.display = 'none';
+
+  if (statut === 'expiré' || statut === 'expire' || (statut === 'essai' && dateFin && dateFin < now)) {
+    // Expired trial
+    banner.style.display = 'flex';
+    banner.style.background = 'linear-gradient(135deg, #7f1d1d, #991b1b)';
+    banner.style.border = '1px solid #dc2626';
+    banner.style.color = '#fecaca';
+    banner.textContent = '';
+    var msg = document.createElement('span');
+    msg.textContent = LANG === 'en'
+      ? '⛔ Your free trial has expired. Choose a plan to continue using your AI agent.'
+      : '⛔ Votre essai gratuit a expiré. Choisissez un plan pour continuer à utiliser votre agent IA.';
+    var btn = document.createElement('button');
+    btn.textContent = LANG === 'en' ? 'Upgrade now' : 'Recharger maintenant';
+    btn.style.cssText = 'background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap';
+    btn.onclick = function(){ showPage('credits'); };
+    banner.appendChild(msg);
+    banner.appendChild(btn);
+  } else if (statut === 'essai' && dateFin && dateFin >= now) {
+    var daysLeft = Math.ceil((dateFin - now) / (1000 * 60 * 60 * 24));
+    // Trial active
+    banner.style.display = 'flex';
+    banner.style.background = 'linear-gradient(135deg, #78350f, #92400e)';
+    banner.style.border = '1px solid #f59e0b';
+    banner.style.color = '#fde68a';
+    banner.textContent = '';
+    var msg2 = document.createElement('span');
+    msg2.textContent = LANG === 'en'
+      ? '🕐 Free trial — ' + daysLeft + ' day' + (daysLeft > 1 ? 's' : '') + ' remaining. Upgrade to unlock full features.'
+      : '🕐 Essai gratuit — Il vous reste ' + daysLeft + ' jour' + (daysLeft > 1 ? 's' : '') + '. Passez au plan payant pour débloquer toutes les fonctionnalités.';
+    var btn2 = document.createElement('button');
+    btn2.textContent = LANG === 'en' ? 'See plans' : 'Voir les plans';
+    btn2.style.cssText = 'background:#f59e0b;color:#000;border:none;border-radius:8px;padding:8px 18px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap';
+    btn2.onclick = function(){ showPage('credits'); };
+    banner.appendChild(msg2);
+    banner.appendChild(btn2);
+
+    // Credits warning for trial users
+    if (credits <= 50 && credits > 0) {
+      var credBanner = document.createElement('div');
+      credBanner.style.cssText = 'width:100%;margin-top:8px;font-size:13px;color:#fed7aa';
+      credBanner.textContent = LANG === 'en'
+        ? '⚡ Credits almost exhausted (' + credits + ' remaining). Buy credits to keep your agent active.'
+        : '⚡ Crédits presque épuisés (' + credits + ' restants). Achetez des crédits pour garder votre agent actif.';
+      banner.appendChild(credBanner);
+    }
+  }
 }
 
 // ─── Leads Chart (Canvas) ────────────────────────────────────────────────────
@@ -6671,7 +6744,9 @@ function startQRPolling(instance) {
   qrPollInterval = setInterval(function() {
     const SESSION = JSON.parse(localStorage.getItem('titanex_session') || '{}');
     if (!SESSION.instance_name) return;
-    fetch('/admin/qr/' + SESSION.instance_name + '/status')
+    var pollTok = SESSION.token || SESSION.access_token || '';
+    var pollHdrs = pollTok ? {'Authorization': 'Bearer ' + pollTok} : {};
+    fetch('/admin/qr/' + SESSION.instance_name + '/status', {headers: pollHdrs})
       .then(function(r) { return r.json(); })
       .then(function(d) {
         if (d.status === 'open' || d.connected === true || d.state === 'open') {
@@ -7014,10 +7089,13 @@ function connWAAction() {
 
 // ─── WhatsApp Test Message ────────────────────────────────────────────────────
 async function connWATest(ev) {
+  console.log('[TEST RÉSEAU] instance:', INSTANCE, 'session:', !!SESSION);
   var sess = JSON.parse(localStorage.getItem('titanex_session') || '{}');
   var inst = sess.instance_name || INSTANCE || '';
+  if (!inst) { showToast('❌ Aucune instance WhatsApp configurée', 'error'); return; }
   var tok = sess.token || sess.access_token || '';
-  var testBtn = ev ? (ev.target.closest ? ev.target.closest('button') : ev.target) : null;
+  var testBtn = null;
+  try { testBtn = ev && ev.currentTarget ? ev.currentTarget : (ev && ev.target ? (ev.target.closest ? ev.target.closest('button') : ev.target) : null); } catch(e) {}
   if (testBtn) { testBtn.disabled = true; testBtn.style.opacity = '0.5'; }
   try {
     var t0 = Date.now();
@@ -7026,12 +7104,16 @@ async function connWATest(ev) {
     });
     var latency = Date.now() - t0;
     var data = await res.json();
+    console.log('[TEST RÉSEAU] response:', JSON.stringify(data), 'latency:', latency);
     if (data.connected) {
       showToast('✅ Connecté — latence ' + latency + 'ms');
     } else {
-      showToast('❌ Non connecté — vérifiez WhatsApp', 'error');
+      showToast('⚠️ Non connecté — scannez le QR code WhatsApp', 'error');
     }
-  } catch(e) { showToast('❌ Erreur réseau: ' + e.message, 'error'); }
+  } catch(e) {
+    console.error('[TEST RÉSEAU] error:', e);
+    showToast('❌ Erreur réseau: ' + e.message, 'error');
+  }
   if (testBtn) { testBtn.disabled = false; testBtn.style.opacity = '1'; }
 }
 

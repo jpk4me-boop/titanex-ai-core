@@ -211,6 +211,17 @@ router.post("/webhook", verifyCampayWebhook, async (req, res) => {
       return;
     }
 
+    // Recharger crédits selon le montant du pack
+    const amt = parseInt(amount) || 0;
+    let creditsToAdd = 0;
+    if (amt >= 15000) creditsToAdd = 15000;       // Pack Titan
+    else if (amt >= 5000) creditsToAdd = 5000;     // Pack Argent
+    else if (amt >= 2500) creditsToAdd = 1000;     // Pack Bronze
+    if (creditsToAdd > 0) {
+      await supabaseAdmin.rpc('add_credits', { p_tenant_id: tenant.id, p_amount: creditsToAdd });
+      console.log("[CREDITS] +" + creditsToAdd + " crédits pour", tenant.email, "(paiement " + amt + " XAF)");
+    }
+
     // Auto-créer stores si inexistant
     let existingStore = null;
     { const res = await supabaseAdmin.from("stores").select("id").eq("instance_name", tenant.instance_name).single();

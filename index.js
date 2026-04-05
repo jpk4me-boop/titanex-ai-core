@@ -170,8 +170,31 @@ app.post("/webhook",async(req,res)=>{
       console.log("[LANG]", clientLangCode, clientLang);
 
       // Vérifier mode agent global (tenant)
-      const {data:tenantData}=await supabaseAdmin.from('tenants').select('agent_mode').eq('instance_name',instance).maybeSingle();
+      const {data:tenantData}=await supabaseAdmin.from('tenants').select('agent_mode,statut,date_fin,credits').eq('instance_name',instance).maybeSingle();
       if(tenantData && tenantData.agent_mode==='inactif'){console.log('[SKIP] agent désactivé pour',instance);return;}
+      // ─── Guard essai/expiration/crédits ────────────────────────────────
+      if(tenantData){
+        const isExpired = tenantData.statut==='expiré' || tenantData.statut==='expire' || tenantData.statut==='suspendu' || tenantData.statut==='bloqué' || tenantData.statut==='banni';
+        const isTrialExpired = tenantData.statut==='essai' && tenantData.date_fin && new Date(tenantData.date_fin) < new Date();
+        const noCredits = typeof tenantData.credits==='number' && tenantData.credits <= 0;
+        if(isExpired || isTrialExpired){
+          console.log('[BLOCKED] essai expiré pour',instance,'statut:',tenantData.statut,'date_fin:',tenantData.date_fin);
+          if(isTrialExpired){
+            await supabaseAdmin.from('tenants').update({statut:'expiré'}).eq('instance_name',instance);
+          }
+          await axios.post(process.env.EVOLUTION_API_URL+"/message/sendText/"+instance,{
+            number:jid,text:"⚠️ Ce service est temporairement indisponible. Contactez le marchand."
+          },{headers:{apikey:process.env.EVOLUTION_API_KEY}}).catch(()=>{});
+          return;
+        }
+        if(noCredits){
+          console.log('[BLOCKED] crédits épuisés pour',instance,'credits:',tenantData.credits);
+          await axios.post(process.env.EVOLUTION_API_URL+"/message/sendText/"+instance,{
+            number:jid,text:"⚠️ Service temporairement suspendu. Contactez le marchand."
+          },{headers:{apikey:process.env.EVOLUTION_API_KEY}}).catch(()=>{});
+          return;
+        }
+      }
       // Vérifier mode par contact (conversation individuelle)
       const phoneCleanMode = jid.replace(/@s\.whatsapp\.net$/i,'').replace(/\D/g,'');
       const {data:convMode}=await supabaseAdmin.from('conversations').select('conv_mode').eq('phone',phoneCleanMode).eq('instance',instance).maybeSingle();
@@ -336,6 +359,12 @@ app.post("/webhook",async(req,res)=>{
         number:jid,text:reply
       },{headers:{apikey:process.env.EVOLUTION_API_KEY}});
       console.log("[SENT] OK to",jid);
+      // Décrémenter 1 crédit par réponse agent
+      try {
+        await supabaseAdmin.rpc('decrement_credit', { p_instance: instance });
+      } catch(creditErr) {
+        console.warn("[CREDITS] decrement_credit RPC failed:", creditErr.message);
+      }
       // Envoyer images si produit mentionné (via sendProductImage)
       if(produits&&produits.length>0){
         for(const p of produits){
@@ -668,6 +697,32 @@ async function verifierBilans() {
 
 cron.schedule('* * * * *', verifierBilans);
 console.log('[CRON] Vérification bilans quotidiens activée (chaque minute)');
+
+// ─── CRON: Expiration des comptes essai ──────────────────────────────────────
+async function expirerComptesEssai() {
+  try {
+    const now = new Date().toISOString();
+    const {data: expired, error} = await supabaseAdmin
+      .from('tenants')
+      .select('id,nom,email,instance_name,date_fin')
+      .eq('statut', 'essai')
+      .lt('date_fin', now);
+    if (error) { console.error('[CRON EXPIRE ERR]', error.message); return; }
+    if (!expired || !expired.length) return;
+    const ids = expired.map(t => t.id);
+    await supabaseAdmin.from('tenants').update({statut: 'expiré'}).in('id', ids);
+    console.log('[CRON EXPIRE]', expired.length, 'comptes expirés:', expired.map(t => t.instance_name).join(', '));
+    // Notification admin WhatsApp
+    const liste = expired.map(t => '• ' + t.nom + ' (' + (t.email || t.instance_name) + ') — fin: ' + (t.date_fin || '?').substring(0, 10)).join('\n');
+    notifyAdmin('⏰ ' + expired.length + ' compte(s) essai expiré(s):\n' + liste).catch(() => {});
+  } catch(e) {
+    console.error('[CRON EXPIRE ERR]', e.message);
+  }
+}
+cron.schedule('1 0 * * *', expirerComptesEssai);
+// Aussi exécuter au démarrage pour rattraper les comptes déjà expirés
+setTimeout(expirerComptesEssai, 5000);
+console.log('[CRON] Expiration comptes essai activée (quotidien 00:01 + démarrage)');
 
 // ─── Route test envoi bilans ─────────────────────────────────────────────────
 app.post('/api/admin/send-bilans', async (req, res) => {
