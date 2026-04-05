@@ -169,7 +169,7 @@ router.get('/users', auth, async (req, res) => {
       credits_used: t.credits_used || 0,
       agents: 1,
       plan: t.plan || 'starter',
-      role: t.role === 'admin' ? 'admin' : 'user',
+      role: t.role || 'client',
       statut: t.statut,
       instance_name: t.instance_name,
       date_debut: t.date_debut,
@@ -697,7 +697,7 @@ router.post('/auth/login', async (req, res) => {
   const { email, telephone } = req.body;
   if (!email && !telephone) return res.status(400).json({ error: 'Email ou téléphone requis' });
   try {
-    let query = supabaseAdmin.from('tenants').select('id,nom,email,telephone,instance_name,plan,statut,date_fin,credits,credits_max,credits_used');
+    let query = supabaseAdmin.from('tenants').select('id,nom,email,telephone,instance_name,plan,statut,date_fin,credits,credits_max,credits_used,role');
     if (email) query = query.ilike('email', email.trim());
     else query = query.eq('telephone', telephone.trim());
     const { data, error } = await query.single();

@@ -3462,8 +3462,36 @@ function loadAgentMode() {
       SESSION.credits = d.credits;
       SESSION.credits_max = d.credits_max || 3000;
       SESSION.credits_used = d.credits_used || 0;
+      if (d.role) SESSION.role = d.role;
+      if (d.statut) SESSION.statut = d.statut;
+      if (d.date_fin) SESSION.date_fin = d.date_fin;
       localStorage.setItem('titanex_session', JSON.stringify(SESSION));
       updateCreditsUI(d.credits, d.credits_max || 3000);
+      showTrialBanner();
+      // Inject Command Center if role updated to superadmin
+      if ((SESSION.role === 'superadmin' || SESSION.email === 'lgisonges@gmail.com') && !document.getElementById('superadmin-link')) {
+        var nav = document.querySelector('nav');
+        if (nav) {
+          var lnk = document.createElement('a');
+          lnk.href = '/dashboard/superadmin.html';
+          lnk.id = 'superadmin-link';
+          lnk.style.display = 'flex';
+          lnk.className = 'nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-[#15803D] bg-green-50 hover:bg-green-100 border border-green-200 mt-2';
+          lnk.textContent = '';
+          var ico = document.createElement('span');
+          ico.style.fontSize = '16px';
+          ico.textContent = '\uD83D\uDEE1\uFE0F';
+          var txt2 = document.createElement('span');
+          txt2.textContent = 'Command Center';
+          var badge = document.createElement('span');
+          badge.style.cssText = 'background:#22C55E;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto;';
+          badge.textContent = 'ADMIN';
+          lnk.appendChild(ico);
+          lnk.appendChild(txt2);
+          lnk.appendChild(badge);
+          nav.appendChild(lnk);
+        }
+      }
       var bc = document.getElementById('badge-credits');
       if (bc) bc.textContent = d.credits;
       var hc = document.getElementById('header-credits-count');
@@ -3488,7 +3516,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch(e) { console.warn('Init UI error:', e); }
   // Command Center visible only for admin email
   var _ses = JSON.parse(localStorage.getItem('titanex_session') || 'null');
-  if (_ses && _ses.email === 'lgisonges@gmail.com') {
+  if (_ses && (_ses.email === 'lgisonges@gmail.com' || _ses.role === 'superadmin')) {
     var nav = document.querySelector('nav');
     if (nav) {
       var lnk = document.createElement('a');

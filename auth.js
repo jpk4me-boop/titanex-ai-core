@@ -144,7 +144,9 @@ router.get("/profile", authJWT, async (req, res) => {
       logo_url: s?.logo_url||null, banner_url: s?.banner_url||null,
       plan: t.plan||'starter', statut: t.statut||'essai',
       instance_name: t.instance_name,
-      agent_mode: t.agent_mode || 'actif'
+      agent_mode: t.agent_mode || 'actif',
+      role: t.role || 'client',
+      date_fin: t.date_fin
     });
   } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({error:'Erreur interne'}); }
 });

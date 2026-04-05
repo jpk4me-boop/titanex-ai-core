@@ -702,8 +702,8 @@ function renderUsers(list){
   var tb=document.getElementById('utb');
   if(!list.length){tb.innerHTML='<tr><td colspan="9" class="empty">Aucun utilisateur</td></tr>';return;}
   tb.innerHTML=list.map(function(u){
-    var isA=u.role==='admin';
-    var sc = u.statut==='actif'?['#d1fae5','#065f46'] : u.statut==='essai'?['#fef3c7','#92400e'] : u.statut==='suspendu'?['#fee2e2','#991b1b'] : u.statut==='bloqué'?['#fecaca','#7f1d1d'] : u.statut==='banni'?['#7f1d1d','#fff'] : ['#f1f5f9','#64748b'];
+    var isA=u.role==='admin'||u.role==='superadmin';
+    var sc = u.statut==='actif'?['#d1fae5','#065f46'] : u.statut==='essai'?['#fef3c7','#92400e'] : u.statut==='expiré'?['#fee2e2','#dc2626'] : u.statut==='suspendu'?['#fee2e2','#991b1b'] : u.statut==='bloqué'?['#fecaca','#7f1d1d'] : u.statut==='banni'?['#7f1d1d','#fff'] : ['#f1f5f9','#64748b'];
     var pc = u.plan==='business'?['#f0fdf4','#16a34a'] : u.plan==='pro'?['#dbeafe','#1d4ed8'] : ['#f1f5f9','#475569'];
     var expired = u.date_fin && new Date(u.date_fin) < new Date();
     return '<tr>'+
@@ -714,7 +714,7 @@ function renderUsers(list){
       '<td><span style="background:'+sc[0]+';color:'+sc[1]+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;text-transform:capitalize;">'+(u.statut||'&mdash;')+'</span></td>'+
       '<td style="font-size:12.5px;color:'+(expired?'#ef4444':'#374151')+';font-weight:'+(expired?'700':'400')+'">'+(u.date_fin?fd(u.date_fin):'&mdash;')+'</td>'+
       '<td style="font-size:12.5px;">'+fd(u.created_at)+'</td>'+
-      '<td><span class="badge" style="background:'+(isA?'#dcfce7':'#f1f5f9')+';color:'+(isA?'#15803D':'#64748b')+'">'+(isA?'Admin':'User')+'</span></td>'+
+      '<td><span class="badge" style="background:'+(isA?'#dcfce7':'#f1f5f9')+';color:'+(isA?'#15803D':'#64748b')+';text-transform:capitalize">'+(u.role||'client')+'</span></td>'+
       '<td style="position:relative;">'+
         userActionBtns(u)+
       '</td>'+
