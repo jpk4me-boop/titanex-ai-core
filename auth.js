@@ -311,9 +311,11 @@ router.get("/store", authJWT, async (req, res) => {
     const { data: tenant } = await supabaseAdmin.from("tenants")
       .select("nom,telephone,merchant_name,timezone,preferred_lang,orange_money,mtn_momo")
       .eq("id", req.user.id).single();
-    const { data: store } = await supabaseAdmin.from("stores")
+    let store = null;
+    { const res = await supabaseAdmin.from("stores")
       .select("logo_url,system_prompt,catalog_details,description")
-      .eq("tenant_id", req.user.id).single().catch(() => ({ data: null }));
+      .eq("tenant_id", req.user.id).single();
+      store = res.data; }
     res.json({
       shop_name: tenant?.merchant_name || tenant?.nom || "",
       logo_url: store?.logo_url || null,

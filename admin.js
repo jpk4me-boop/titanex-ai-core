@@ -33,10 +33,16 @@ router.get("/catalogue/:instance", authOrJWT, async (req, res) => {
   res.json(data || []);
 });
 router.post("/catalogue", authOrJWT, async (req, res) => {
-  const { instance_name, nom, description, prix, stock, image_url } = req.body;
+  const { instance_name, nom, description, prix, stock, image_url, categorie, devise, prompt, type_produit, variants } = req.body;
   if (!instance_name || !nom) return res.status(400).json({ error: "instance_name et nom requis" });
   if (!req.isAdmin && req.tenantInstance !== instance_name) return res.status(403).json({ error: "Acces interdit" });
-  const { data, error } = await supabaseAdmin.from("catalogue").insert({ instance_name, nom, description, prix, stock: stock || 100, image_url }).select().single();
+  const row = { instance_name, nom, description, prix, stock: stock || 100, image_url };
+  if (categorie !== undefined) row.categorie = categorie;
+  if (devise !== undefined) row.devise = devise;
+  if (prompt !== undefined) row.prompt = prompt;
+  if (type_produit !== undefined) row.type_produit = type_produit;
+  if (variants !== undefined) row.variantes = variants;
+  const { data, error } = await supabaseAdmin.from("catalogue").insert(row).select().single();
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true, produit: data });
 });
@@ -48,12 +54,14 @@ router.delete("/catalogue/:id", authOrJWT, async (req, res) => {
 
 
 router.post("/ai/description", authOrJWT, async (req, res) => {
-  const { nom, categorie } = req.body;
+  const { nom, categorie, instructions } = req.body;
   if (!nom) return res.status(400).json({ error: "nom requis" });
   try {
+    let prompt = "Ecris une description commerciale courte et percutante (2-3 phrases max) pour ce produit: " + nom + (categorie ? " (categorie: " + categorie + ")" : "") + ". Public cible: acheteurs africains francophones. Sois direct et mets en valeur les benefices. Ne mets pas de guillemets.";
+    if (instructions) prompt += " Instructions supplementaires du vendeur: " + instructions;
     const r = await require("axios").post("https://api.groq.com/openai/v1/chat/completions", {
       model: "llama-3.1-8b-instant",
-      messages: [{ role: "user", content: "Ecris une description commerciale courte et percutante (2-3 phrases max) pour ce produit: " + nom + (categorie ? " (categorie: " + categorie + ")" : "") + ". Public cible: acheteurs africains francophones. Sois direct et mets en valeur les benefices. Ne mets pas de guillemets." }],
+      messages: [{ role: "user", content: prompt }],
       max_tokens: 150
     }, { headers: { Authorization: "Bearer " + process.env.GROQ_API_KEY } });
     res.json({ text: r.data.choices[0].message.content.trim() });
@@ -62,13 +70,18 @@ router.post("/ai/description", authOrJWT, async (req, res) => {
 
 
 router.patch("/catalogue/:id", authOrJWT, async (req, res) => {
-  const { nom, description, prix, stock, image_url } = req.body;
+  const { nom, description, prix, stock, image_url, categorie, devise, prompt, type_produit, variants } = req.body;
   const update = {};
   if(nom !== undefined) update.nom = nom;
   if(description !== undefined) update.description = description;
   if(prix !== undefined) update.prix = prix;
   if(stock !== undefined) update.stock = stock;
   if(image_url !== undefined) update.image_url = image_url;
+  if(categorie !== undefined) update.categorie = categorie;
+  if(devise !== undefined) update.devise = devise;
+  if(prompt !== undefined) update.prompt = prompt;
+  if(type_produit !== undefined) update.type_produit = type_produit;
+  if(variants !== undefined) update.variantes = variants;
   update.updated_at = new Date().toISOString();
   const { data, error } = await supabaseAdmin.from("catalogue").update(update).eq("id", req.params.id).select().single();
   if (error) return res.status(500).json({ error: error.message });
@@ -84,6 +97,35 @@ router.post("/catalogue/:id/dup", authOrJWT, async (req, res) => {
   res.json({ success: true, produit: data });
 });
 
+
+// ─── Categories ─────────────────────────────────────────────────────────────
+router.get("/categories/:instance", authOrJWT, async (req, res) => {
+  if (!req.isAdmin && req.tenantInstance !== req.params.instance) return res.status(403).json({ error: "Acces interdit" });
+  try {
+    // Merge: distinct categories from catalogue + custom categories table
+    const { data: fromCatalogue } = await supabaseAdmin.from("catalogue").select("categorie").eq("instance_name", req.params.instance).not("categorie", "is", null);
+    const catalogueCats = [...new Set((fromCatalogue || []).map(r => r.categorie).filter(Boolean))];
+    const { data: custom } = await supabaseAdmin.from("categories").select("name").eq("instance_name", req.params.instance).order("created_at", { ascending: true });
+    const customCats = (custom || []).map(r => r.name);
+    const all = [...new Set([...catalogueCats, ...customCats])].map(name => ({ name }));
+    res.json(all);
+  } catch(e) {
+    // If categories table doesn't exist yet, just return catalogue categories
+    const { data: fromCatalogue } = await supabaseAdmin.from("catalogue").select("categorie").eq("instance_name", req.params.instance).not("categorie", "is", null);
+    const cats = [...new Set((fromCatalogue || []).map(r => r.categorie).filter(Boolean))].map(name => ({ name }));
+    res.json(cats);
+  }
+});
+router.post("/categories", authOrJWT, async (req, res) => {
+  const { name, instance_name } = req.body;
+  if (!name || !instance_name) return res.status(400).json({ error: "name et instance_name requis" });
+  if (!req.isAdmin && req.tenantInstance !== instance_name) return res.status(403).json({ error: "Acces interdit" });
+  try {
+    const { data, error } = await supabaseAdmin.from("categories").insert({ name, instance_name }).select().single();
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ success: true, category: data });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
 
 router.get("/catalogue/:id/get", authOrJWT, async (req, res) => {
   const { data, error } = await supabaseAdmin.from("catalogue").select("*").eq("id", req.params.id).single();
@@ -402,7 +444,7 @@ router.get('/tenant/:id', auth, async (req, res) => {
 
 // Route QR — proxifie Evolution API
 // Gère 3 cas : instance inexistante (404) → crée ; instance connectée → déconnecte ; retourne QR
-router.get('/qr/:instance', auth, async (req, res) => {
+router.get('/qr/:instance', authOrJWT, async (req, res) => {
   const axios = require('axios');
   const EVO_URL = (process.env.EVOLUTION_API_URL || '').replace(/\/$/, '');
   const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
@@ -459,7 +501,7 @@ router.get('/qr/:instance', auth, async (req, res) => {
   }
 });
 
-router.post('/qr/:instance/logout', auth, async (req, res) => {
+router.post('/qr/:instance/logout', authOrJWT, async (req, res) => {
   try {
     const axios = require('axios');
     const EVO_URL = (process.env.EVOLUTION_API_URL || '').replace(/\/$/, '');
@@ -473,7 +515,7 @@ router.post('/qr/:instance/logout', auth, async (req, res) => {
   }
 });
 
-router.post('/qr/:instance/refresh', auth, async (req, res) => {
+router.post('/qr/:instance/refresh', authOrJWT, async (req, res) => {
   try {
     const axios = require('axios');
     const EVO_URL = (process.env.EVOLUTION_API_URL || '').replace(/\/$/, '');
@@ -491,7 +533,7 @@ router.post('/qr/:instance/refresh', auth, async (req, res) => {
   }
 });
 
-router.get('/qr/:instance/status', auth, async (req, res) => {
+router.get('/qr/:instance/status', authOrJWT, async (req, res) => {
   try {
     const EVO_URL = (process.env.EVOLUTION_API_URL || 'http://localhost:8080').replace(/\/$/, '');
     const EVO_KEY = process.env.EVOLUTION_API_KEY || '';
@@ -594,7 +636,7 @@ router.get('/conversations/:instance', async (req, res) => {
 });
 
 // Envoyer message WhatsApp depuis admin
-router.post('/send-message', auth, async (req, res) => {
+router.post('/send-message', authOrJWT, async (req, res) => {
   try {
     const { instance, number, text } = req.body;
     if (!instance || !number || !text) return res.status(400).json({ error: 'instance, number, text requis' });

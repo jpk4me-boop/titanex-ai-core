@@ -217,13 +217,13 @@ app.post("/webhook",async(req,res)=>{
       let history = [];
       const {data:convRow} = await supabaseAdmin.from("conversations").select("messages").eq("phone",phoneClean).eq("instance",instance).single();
       if (convRow && Array.isArray(convRow.messages) && convRow.messages.length > 0) {
-        // Prendre les 12 derniers messages (6 échanges user+assistant)
-        history = convRow.messages.slice(-12);
+        // Prendre les 6 derniers messages (3 échanges user+assistant)
+        history = convRow.messages.slice(-6);
       } else {
         // Fallback: chercher sans filtre instance (anciennes données)
         const {data:convFallback} = await supabaseAdmin.from("conversations").select("messages").eq("phone",phoneClean).order("updated_at",{ascending:false}).limit(1).single();
         if (convFallback && Array.isArray(convFallback.messages)) {
-          history = convFallback.messages.slice(-12);
+          history = convFallback.messages.slice(-6);
         }
       }
       const nbMessages = history.length;
@@ -296,15 +296,40 @@ app.post("/webhook",async(req,res)=>{
         "\nInternationale: DHL/avion - frais à la charge du client." +
 
         "\n\n=== CATALOGUE DE LA BOUTIQUE ===\n" + catalogueTexte;
+      // Tronquer le system prompt à 3000 caractères max
+      sys = sys.length > 3000 ? sys.substring(0, 3000) + "\n[catalogue tronqué]" : sys;
       // Délai humain 2-4s
       await new Promise(r=>setTimeout(r,Math.floor(Math.random()*2000)+2000));
-      // Appel Groq
-      const groqRes=await axios.post("https://api.groq.com/openai/v1/chat/completions",{
-        model:"llama-3.3-70b-versatile",
-        messages:[{role:"system",content:sys},...history,{role:"user",content:combinedText}],
-        max_tokens:300,temperature:0.7
-      },{headers:{Authorization:"Bearer "+process.env.GROQ_API_KEY}});
-      const reply=groqRes.data.choices[0].message.content.trim();
+      // Appel Groq avec retry
+      let reply;
+      try {
+        const groqRes=await axios.post("https://api.groq.com/openai/v1/chat/completions",{
+          model:"llama-3.3-70b-versatile",
+          messages:[{role:"system",content:sys},...history,{role:"user",content:combinedText}],
+          max_tokens:300,temperature:0.7
+        },{headers:{Authorization:"Bearer "+process.env.GROQ_API_KEY}});
+        reply=groqRes.data.choices[0].message.content.trim();
+      } catch(groqErr) {
+        const status = groqErr.response?.status;
+        if (status === 400 || status === 413) {
+          console.log("[GROQ RETRY] status", status, "- retry avec history vide et sys tronqué, history_len:", history.length, "sys_len:", sys.length, "err_detail:", JSON.stringify(groqErr.response?.data?.error || groqErr.message).substring(0, 200));
+          try {
+            const retrySys = sys.length > 1500 ? sys.substring(0, 1500) + "\n[catalogue tronqué]" : sys;
+            const retryRes = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+              model: "llama-3.3-70b-versatile",
+              messages: [{role:"system",content:retrySys}, {role:"user",content:combinedText}],
+              max_tokens: 300, temperature: 0.7
+            }, {headers:{Authorization:"Bearer "+process.env.GROQ_API_KEY}});
+            reply = retryRes.data.choices[0].message.content.trim();
+          } catch(retryErr) {
+            console.error("[GROQ FATAL]", retryErr.message);
+            reply = "Bonjour ! Je reviens vers vous dans un instant. 🙏";
+          }
+        } else {
+          console.error("[GROQ ERROR]", groqErr.message);
+          reply = "Bonjour ! Je reviens vers vous dans un instant. 🙏";
+        }
+      }
       console.log("[AI REPLY]",reply.substring(0,60));
       // Envoyer la réponse texte
       await axios.post(process.env.EVOLUTION_API_URL+"/message/sendText/"+instance,{

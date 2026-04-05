@@ -157,13 +157,13 @@ input:focus,select:focus,textarea:focus{border-color:#10b981!important;box-shado
 .conn-htab:hover{color:#e4e4e7}
 #conn-chat-msgs{max-height:200px;overflow-y:auto;scrollbar-width:none}
 /* ─── Prompt page tabs ─── */
-.ptab{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;color:#64748b}
-.ptab:hover{color:#1e293b}
-.ptab.active{color:#22c55e!important;border-bottom-color:#22c55e!important;background:#f0fdf4!important}
+.ptab{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;color:#128C57}
+.ptab:hover{color:#0A5C36}
+.ptab.active{color:#0A5C36!important;border-bottom-color:#25D366!important;background:#F0F7F4!important}
 .pp-panel{min-height:100%}
 #ppanel-prompt,#ppanel-connexions,#ppanel-knowledge,#ppanel-products,#ppanel-tools,#ppanel-params{background:transparent}
 .ppdelay-btn{cursor:pointer}
-.ppdelay-btn.active{border-color:rgba(34,197,94,.4)!important;background:rgba(34,197,94,.1)!important;color:#4ade80!important}
+.ppdelay-btn.active{border-color:rgba(37,211,102,.4)!important;background:rgba(37,211,102,.1)!important;color:#25D366!important}
 /* Playground animations */
 @keyframes ppPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.85}}
 @keyframes ppRing{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.4);opacity:0}}
@@ -336,11 +336,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <button onclick="showPage('academy')" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-400 transition-all">
       <i data-lucide="graduation-cap" class="w-[18px] h-[18px]"></i><span class="flex-1 text-left">Academy</span>
     </button>
-    <a href="/dashboard/superadmin.html" id="superadmin-link" style="display:flex;" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-[#15803D] bg-green-50 hover:bg-green-100 border border-green-200 mt-2">
-      <span style="font-size:16px;">&#128737;&#65039;</span>
-      <span data-i18n="misc_command_center">Command Center</span>
-      <span style="background:#22C55E;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto;">ADMIN</span>
-    </a>
+    <!-- Command Center: injected by JS only for admin email -->
   </nav>
 
   <!-- Bottom -->
@@ -1336,8 +1332,11 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 </div>
                 <p id="conn-wa-phone" style="font-size:13px;color:#64748b;margin:4px 0 0;display:none"></p>
               </div>
-              <button id="conn-wa-btn" onclick="connWAAction()" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#fff;background:#25d366;border:none;cursor:pointer;transition:all .2s" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+              <button id="conn-wa-btn" onclick="connWAAction()" style="width:100%;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#fff;background:#25d366;border:none;cursor:pointer;transition:all .2s;margin-bottom:8px" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
                 Connecter
+              </button>
+              <button onclick="connWATest(event)" style="width:100%;padding:8px 16px;border-radius:12px;font-size:13px;font-weight:600;color:#128C57;background:#F0F7F4;border:1px solid rgba(37,211,102,.25);cursor:pointer;transition:all .15s" onmouseover="this.style.background='#e6f5ed'" onmouseout="this.style.background='#F0F7F4'">
+                📡 Tester le réseau
               </button>
             </div>
 
@@ -1410,7 +1409,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             </div>
           </div>
           <div class="px-6 py-4 flex flex-wrap gap-3">
-            <button onclick="connWATest()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#059669;background:#fff;border:1.5px solid #a7f3d0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#ecfdf5'" onmouseout="this.style.background='#fff'">
+            <button onclick="connWATest(event)" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#059669;background:#fff;border:1.5px solid #a7f3d0;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#ecfdf5'" onmouseout="this.style.background='#fff'">
               <i data-lucide="send" class="w-4 h-4 inline mr-1"></i> Tester le réseau
             </button>
             <button onclick="connWARescan()" style="flex:1;min-width:120px;padding:10px 20px;border-radius:12px;font-size:15px;font-weight:700;color:#2563eb;background:#fff;border:1.5px solid #bfdbfe;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#fff'">
@@ -2277,7 +2276,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <!-- Header tabs -->
         <div class="px-3 pt-3 pb-2.5 border-b border-slate-200 flex items-center gap-1.5" style="background:#fff">
           <div style="display:flex;flex:1;align-items:center;gap:8px">
-            <span style="font-size:15px;font-weight:700;color:#0f172a;display:flex;align-items:center;gap:6px">💬 Conversations</span>
+            <span style="font-size:15px;font-weight:700;color:#0A5C36;display:flex;align-items:center;gap:6px">💬 Conversations</span>
           </div>
 
         </div>
@@ -2290,7 +2289,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               oninput="cvSearch()"
               class="w-full rounded-xl pl-9 pr-3 py-2 text-xs outline-none transition-all"
               style="background:#fff;border:1.5px solid #e2e8f0;color:#1e293b;"
-              onfocus="this.style.borderColor='#22C55E';this.style.boxShadow='0 0 0 3px rgba(34,197,94,.1)'"
+              onfocus="this.style.borderColor='#25D366';this.style.boxShadow='0 0 0 3px rgba(37,211,102,.12)'"
               onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
           </div>
         </div>
@@ -2332,9 +2331,9 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         </div>
 
         <!-- Sub-tabs -->
-        <div class="px-3 pb-2 flex items-center gap-1.5 overflow-x-auto" style="scrollbar-width:none;background:#f8fafc;padding-top:6px;padding-bottom:8px;border-bottom:1px solid #f1f5f9">
+        <div class="px-3 pb-2 flex items-center gap-1.5 overflow-x-auto" style="scrollbar-width:none;background:#F0F7F4;padding-top:6px;padding-bottom:8px;border-bottom:1px solid rgba(37,211,102,.15)">
           <button id="cvtab-all" onclick="cvSetTab('all')"
-            class="cvtab whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all" style="background:#22C55E;color:#fff;border:none">
+            class="cvtab whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all" style="background:#25D366;color:#fff;border:none">
             👤 Tous <span id="cvbadge-all" class="ml-0.5 opacity-80">0</span>
           </button>
           <button id="cvtab-auto" onclick="cvSetTab('auto')"
@@ -2481,7 +2480,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
           <!-- Messages area -->
           <div id="cv-messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-2"
-            style="scrollbar-width:thin;scrollbar-color:#e2e8f0 transparent;background:#f8fafc"></div>
+            style="scrollbar-width:thin;scrollbar-color:#e2e8f0 transparent;background:#EFEAE2"></div>
 
           <!-- Manual mode banner -->
           <div id="cv-manual-banner" class="hidden px-4 py-2 flex items-center gap-2 border-t shrink-0"
@@ -2524,7 +2523,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <!-- PAGE: PROMPT (full-screen, outside container)                          -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <div id="page-prompt" class="page-content hidden" style="height:calc(100vh - 64px);overflow:hidden;background:#f8fafc">
+  <div id="page-prompt" class="page-content hidden" style="height:calc(100vh - 64px);overflow:hidden;background:#F0F7F4">
     <div class="flex h-full">
 
       <!-- ╔══════════════════════════════════════════╗ -->
@@ -2535,17 +2534,17 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <!-- ── Agent Header ────────────────────────────────── -->
         <div class="px-5 py-3.5 border-b border-slate-200 shrink-0 flex items-center justify-between gap-3 flex-wrap" style="background:#fff">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center border border-green-100 shrink-0" style="background:linear-gradient(135deg,#14532d,#166534)">
-              <span class="text-sm font-black text-emerald-300" id="pp-agent-initials">AG</span>
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center border shrink-0" style="background:linear-gradient(135deg,#0A5C36,#128C57);border-color:#25D366">
+              <span class="text-sm font-black" style="color:#25D366" id="pp-agent-initials">AG</span>
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h2 class="text-sm font-bold text-slate-900" id="pp-agent-name">Agent</h2>
-                <span class="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-600">
-                  <span class="w-[5px] h-[5px] rounded-full bg-emerald-400 animate-pulse"></span> Assistant IA
+                <h2 class="text-sm font-bold" style="color:#0A5C36" id="pp-agent-name">Agent</h2>
+                <span class="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.25);color:#0A5C36">
+                  <span class="w-[5px] h-[5px] rounded-full animate-pulse" style="background:#25D366"></span> Assistant IA
                 </span>
               </div>
-              <p class="text-[11px] text-slate-500 mt-0.5">Modifiez votre agent et déployez en un clic</p>
+              <p class="text-[11px] mt-0.5" style="color:#128C57">Modifiez votre agent et déployez en un clic</p>
             </div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
@@ -2554,10 +2553,10 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               <span class="w-2 h-2 rounded-full bg-red-400"></span>
               <span id="pp-toggle-label">Inactif</span>
             </button>
-            <button onclick="openCreateAgent()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all" style="background:#fff;color:#22c55e;border:1.5px solid #bbf7d0">
+            <button onclick="openCreateAgent()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all" style="background:#fff;color:#128C57;border:1.5px solid #128C57">
               <i data-lucide="pencil" class="w-3 h-3"></i> Modifier
             </button>
-            <button onclick="deployAgent()" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-all" style="background:#22c55e;color:#fff;border:none;box-shadow:0 4px 14px rgba(34,197,94,.3)">
+            <button onclick="deployAgent()" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-all" style="background:#25D366;color:#fff;border:none;box-shadow:0 4px 14px rgba(37,211,102,.3)" onmouseover="this.style.background='#128C57'" onmouseout="this.style.background='#25D366'">
               <i data-lucide="rocket" class="w-3 h-3"></i> Déployer
             </button>
           </div>
@@ -2604,17 +2603,18 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
             <!-- Model selector -->
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs font-semibold text-slate-500 mb-1.5 block">Modèle d'IA</label>
-                <select id="pp-model" class="w-full rounded-xl px-3 py-2.5 text-sm transition-all" style="background:#fff;border:1.5px solid #e2e8f0;color:#1e293b;outline:none" onfocus="this.style.borderColor='#22C55E';this.style.boxShadow='0 0 0 3px rgba(34,197,94,.1)'" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
-                  <option value="gpt5">⚡ GPT-5 | Best++ | ⚡2</option>
-                  <option value="gpt4o">GPT-4o</option>
-                  <option value="claude-haiku">Claude Haiku</option>
-                  <option value="llama">Llama 3.3</option>
+                <label class="text-xs font-semibold mb-1.5 block" style="color:#128C57">Modèle d'IA</label>
+                <select id="pp-model" class="w-full rounded-xl px-3 py-2.5 text-sm transition-all" style="background:#fff;border:1.5px solid #e2e8f0;color:#1e293b;outline:none" onfocus="this.style.borderColor='#25D366';this.style.boxShadow='0 0 0 3px rgba(37,211,102,.12)'" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+                  <option value="llama-3.3-70b-versatile" selected>🟢 llama-3.3-70b-versatile | Groq · Rapide | ⚡3</option>
+                  <option value="llama3-70b-8192">🟢 llama3-70b-8192 | Groq · Équilibré | ⚡2</option>
+                  <option value="mixtral-8x7b-32768">🟡 mixtral-8x7b-32768 | Groq · Créatif | ⚡2</option>
+                  <option value="claude-haiku-4-5">🔵 claude-haiku-4-5 | Anthropic · Précis | ⚡2</option>
+                  <option value="claude-sonnet-4-5">🔵 claude-sonnet-4-5 | Anthropic · Best++ | ⚡1</option>
                 </select>
               </div>
               <div>
-                <label class="text-xs font-semibold text-slate-500 mb-1.5 block">Style de communication</label>
-                <select id="pp-style" class="w-full rounded-xl px-3 py-2.5 text-sm transition-all" style="background:#fff;border:1.5px solid #e2e8f0;color:#1e293b;outline:none" onfocus="this.style.borderColor='#22C55E';this.style.boxShadow='0 0 0 3px rgba(34,197,94,.1)'" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+                <label class="text-xs font-semibold mb-1.5 block" style="color:#128C57">Style de communication</label>
+                <select id="pp-style" class="w-full rounded-xl px-3 py-2.5 text-sm transition-all" style="background:#fff;border:1.5px solid #e2e8f0;color:#1e293b;outline:none" onfocus="this.style.borderColor='#25D366';this.style.boxShadow='0 0 0 3px rgba(37,211,102,.12)'" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
                   <option value="warm">Chaleureux</option>
                   <option value="pro">Professionnel</option>
                   <option value="direct">Direct</option>
@@ -2633,7 +2633,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 </span>
               </div>
               <div class="h-[4px] rounded-full overflow-hidden" style="background:#e2e8f0">
-                <div id="pp-char-bar" class="h-full rounded-full transition-all duration-300" style="width:0%;background:linear-gradient(90deg,#22c55e,#15803d)"></div>
+                <div id="pp-char-bar" class="h-full rounded-full transition-all duration-300" style="width:0%;background:linear-gradient(90deg,#25D366,#0A5C36)"></div>
               </div>
             </div>
 
@@ -2642,14 +2642,14 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
               <textarea id="pp-prompt-ta" rows="18" oninput="updateCharCount()"
                 class="w-full rounded-xl px-4 py-3.5 text-sm font-mono leading-relaxed resize-y transition-all focus:outline-none"
                 style="background:#fff;color:#1e293b;border:1.5px solid #e2e8f0;min-height:320px;resize:vertical"
-                onfocus="this.style.borderColor='#22C55E';this.style.boxShadow='0 0 0 3px rgba(34,197,94,.1)'"
+                onfocus="this.style.borderColor='#25D366';this.style.boxShadow='0 0 0 3px rgba(37,211,102,.12)'"
                 onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'"
                 placeholder="Décris le comportement, le ton, et les connaissances de ton agent IA..."></textarea>
             </div>
 
             <!-- Save sticky button -->
             <div class="sticky bottom-4 flex justify-end">
-              <button onclick="deployAgent()" class="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all" style="background:#22c55e;color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.3)">
+              <button onclick="deployAgent()" class="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all" style="background:#25D366;color:#fff;box-shadow:0 4px 14px rgba(37,211,102,.3)" onmouseover="this.style.background='#128C57'" onmouseout="this.style.background='#25D366'">
                 <i data-lucide="save" class="w-4 h-4"></i> Enregistrer
               </button>
             </div>
@@ -2680,11 +2680,11 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
                 <div><p class="text-xs font-semibold text-slate-800">Telegram</p><p class="text-[10px] text-slate-400">Bientôt</p></div>
               </div>
               <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 flex items-center gap-3 opacity-50">
-                <div class="w-8 h-8 rounded-lg bg-pink-500/15 flex items-center justify-center shrink-0"><i data-lucide="instagram" class="w-4 h-4 text-pink-400"></i></div>
+                <div class="w-8 h-8 rounded-lg bg-pink-500/15 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-pink-400"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></div>
                 <div><p class="text-xs font-semibold text-slate-800">Instagram</p><p class="text-[10px] text-slate-400">Bientôt</p></div>
               </div>
               <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 flex items-center gap-3 opacity-50">
-                <div class="w-8 h-8 rounded-lg bg-blue-400/15 flex items-center justify-center shrink-0"><i data-lucide="facebook" class="w-4 h-4 text-blue-400"></i></div>
+                <div class="w-8 h-8 rounded-lg bg-blue-400/15 flex items-center justify-center shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-blue-400"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div>
                 <div><p class="text-xs font-semibold text-slate-800">Messenger</p><p class="text-[10px] text-slate-400">Bientôt</p></div>
               </div>
               <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 flex items-center gap-3 opacity-50">
@@ -2712,17 +2712,17 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <!-- ── PRODUCTS PANEL ────────────────────────────── -->
           <div id="ppanel-products" class="pp-panel hidden p-5">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-sm font-bold text-white">Produits accessibles à l'agent</h3>
-              <span class="text-xs text-zinc-500" id="pp-products-count">0 produits</span>
+              <h3 class="text-sm font-bold" style="color:#0A5C36">Produits accessibles à l'agent</h3>
+              <span class="text-xs font-semibold" style="color:#128C57;background:#F0F7F4;padding:2px 10px;border-radius:20px" id="pp-products-count">0 produits</span>
             </div>
             <div id="pp-products-list" class="space-y-2">
-              <div class="text-center py-8 text-zinc-600 text-sm">Chargement...</div>
+              <div class="text-center py-8 text-sm" style="color:#128C57">Chargement...</div>
             </div>
           </div><!-- /ppanel-products -->
 
           <!-- ── TOOLS PANEL ────────────────────────────────── -->
           <div id="ppanel-tools" class="pp-panel hidden p-5 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900 mb-4">Outils de l'agent</h3>
+            <h3 class="text-sm font-bold mb-4" style="color:#0A5C36">Outils de l'agent</h3>
             <div id="pp-tools-list" class="space-y-2">
               <!-- Generated by JS -->
             </div>
@@ -2776,13 +2776,21 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
       <!-- ╔══════════════════════════════════════╗ -->
       <!-- ║  RIGHT COLUMN — Playground (40%)    ║ -->
       <!-- ╚══════════════════════════════════════╝ -->
-      <div class="flex flex-col" style="width:40%;min-width:0;background:#f8fafc;overflow:hidden;border-left:1px solid #e2e8f0">
+      <div class="flex flex-col" style="width:40%;min-width:0;background:#F0F7F4;overflow:hidden;border-left:1px solid rgba(37,211,102,.2)">
 
         <!-- Playground header tabs -->
         <div class="px-4 py-2.5 border-b border-slate-200 flex items-center justify-between shrink-0" style="background:#fff">
           <div class="flex items-center gap-1">
-            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all" style="background:#f0fdf4;color:#22c55e;border:1px solid #bbf7d0">Playground</button>
-            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all" style="background:#fff;color:#374151;border:1px solid #e2e8f0">Devise Dynamique</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all" style="background:#F0F7F4;color:#0A5C36;border:1px solid rgba(37,211,102,.3)">Playground</button>
+            <div style="position:relative;display:inline-block">
+              <button onclick="toggleDeviseDropdown()" id="devise-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5" style="background:#fff;color:#0A5C36;border:1px solid rgba(37,211,102,.3)">Devise <span id="devise-badge" style="background:#25D366;color:#fff;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:700">FCFA</span></button>
+              <div id="devise-dropdown" style="display:none;position:absolute;top:100%;left:0;margin-top:4px;background:#fff;border:1.5px solid rgba(37,211,102,.3);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:50;min-width:150px;overflow:hidden">
+                <div onclick="setDevise('FCFA')" style="padding:8px 14px;font-size:13px;font-weight:600;color:#0A5C36;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#F0F7F4'" onmouseout="this.style.background='#fff'">🇨🇲 FCFA (XAF)</div>
+                <div onclick="setDevise('EUR')" style="padding:8px 14px;font-size:13px;font-weight:600;color:#0A5C36;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#F0F7F4'" onmouseout="this.style.background='#fff'">🇪🇺 EUR (€)</div>
+                <div onclick="setDevise('USD')" style="padding:8px 14px;font-size:13px;font-weight:600;color:#0A5C36;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#F0F7F4'" onmouseout="this.style.background='#fff'">🇺🇸 USD ($)</div>
+                <div onclick="setDevise('GBP')" style="padding:8px 14px;font-size:13px;font-weight:600;color:#0A5C36;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#F0F7F4'" onmouseout="this.style.background='#fff'">🇬🇧 GBP (£)</div>
+              </div>
+            </div>
           </div>
           <button class="w-7 h-7 rounded-lg flex items-center justify-center transition-all" style="background:#f1f5f9;border:1px solid #e2e8f0" title="Historique">
             <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-500"></i>
@@ -2791,11 +2799,11 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
 
         <!-- Agent sub-header -->
         <div class="px-4 py-2 border-b border-slate-200 flex items-center gap-2.5 shrink-0" style="background:#fff">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:linear-gradient(135deg,#14532d,#166534)">
-            <span class="text-xs font-black text-emerald-300" id="pp-pg-initials">AG</span>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:linear-gradient(135deg,#0A5C36,#128C57)">
+            <span class="text-xs font-black" style="color:#25D366" id="pp-pg-initials">AG</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold text-slate-900 truncate" id="pp-pg-name">Agent</p>
+            <p class="text-xs font-semibold truncate" style="color:#0A5C36" id="pp-pg-name">Agent</p>
             <p class="text-[10px] text-emerald-500 flex items-center gap-1">
               <span class="w-[5px] h-[5px] rounded-full bg-emerald-400 animate-pulse inline-block"></span> En ligne
             </p>
@@ -3465,9 +3473,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('greeting-name').textContent = SESSION.nom || SESSION.email?.split('@')[0] || 'utilisateur';
     document.getElementById('user-avatar').textContent = (SESSION.nom || SESSION.email || '?')[0].toUpperCase();
   } catch(e) { console.warn('Init UI error:', e); }
-  // Command Center toujours visible
-  var lnk = document.getElementById('superadmin-link');
-  if (lnk) lnk.style.display = 'flex';
+  // Command Center visible only for admin email
+  var _ses = JSON.parse(localStorage.getItem('titanex_session') || 'null');
+  if (_ses && _ses.email === 'lgisonges@gmail.com') {
+    var nav = document.querySelector('nav');
+    if (nav) {
+      var lnk = document.createElement('a');
+      lnk.href = '/dashboard/superadmin.html';
+      lnk.id = 'superadmin-link';
+      lnk.style.display = 'flex';
+      lnk.className = 'nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-[#15803D] bg-green-50 hover:bg-green-100 border border-green-200 mt-2';
+      var ico = document.createElement('span');
+      ico.style.fontSize = '16px';
+      ico.textContent = '\uD83D\uDEE1\uFE0F';
+      var txt = document.createElement('span');
+      txt.setAttribute('data-i18n', 'misc_command_center');
+      txt.textContent = 'Command Center';
+      var badge = document.createElement('span');
+      badge.style.cssText = 'background:#22C55E;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto;';
+      badge.textContent = 'ADMIN';
+      lnk.appendChild(ico);
+      lnk.appendChild(txt);
+      lnk.appendChild(badge);
+      nav.appendChild(lnk);
+    }
+  }
   loadDashboard();
   loadAgentMode();
   // Check onboarding
@@ -4012,7 +4042,7 @@ function cvRenderList() {
     el.dataset.phone = g.phone;
     el.dataset.contactId = g.phone;
     el.dataset.contactName = escapeHtml(g.name||'+'+g.phone);
-    el.style.cssText = 'padding:12px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .15s;position:relative;' + (isSelected ? 'background:#f0fdf4;border-left:3px solid #22C55E' : 'background:#fff;border-left:3px solid transparent');
+    el.style.cssText = 'padding:12px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .15s;position:relative;' + (isSelected ? 'background:#F0F7F4;border-left:3px solid #25D366' : 'background:#fff;border-left:3px solid transparent');
     el.onmouseenter = function() { if (this.dataset.phone !== (_cvSelectedPhone||'')) this.style.background = '#f8fafc'; };
     el.onmouseleave = function() { if (this.dataset.phone !== (_cvSelectedPhone||'')) this.style.background = isSelected ? '#f0fdf4' : '#fff'; };
     const isBlocked = cvIsBlocked(g.phone);
@@ -4033,7 +4063,7 @@ function cvRenderList() {
             <button onclick="event.stopPropagation();cvSetContactMode('${escapeHtml(g.phone)}','manual',this)" class="cv-mode-btn" data-mode="manual" style="font-size:11px;padding:3px 9px;border-radius:20px;cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s;${modeManuel?'background:#fef9c3;color:#854d0e;border:1.5px solid #fde68a':'background:#fff;color:#64748b;border:1.5px solid #e2e8f0'}">👤 Humain</button>
             <button onclick="event.stopPropagation();cvSetContactMode('${escapeHtml(g.phone)}','blocked',this)" class="cv-mode-btn" data-mode="blocked" style="font-size:11px;padding:3px 9px;border-radius:20px;cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s;${modeBloque?'background:#fee2e2;color:#dc2626;border:1.5px solid #fecaca':'background:#fff;color:#64748b;border:1.5px solid #e2e8f0'}">🚫 Bloquer</button>
             <button onclick="event.stopPropagation();downloadConvByPhone('${escapeHtml(g.phone)}','${escapeHtml(g.name||g.phone)}')" style="margin-left:auto;font-size:11px;padding:3px 8px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer;font-family:inherit;background:#fff;color:#15803D;transition:all .15s;" title="Télécharger">⬇</button>
-            ${incomingCount>0?`<span style="width:16px;height:16px;border-radius:50%;background:#22C55E;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">${Math.min(incomingCount,99)}</span>`:''}
+            ${incomingCount>0?`<span style="width:16px;height:16px;border-radius:50%;background:#25D366;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">${Math.min(incomingCount,99)}</span>`:''}
           </div>
         </div>
       </div>`;
@@ -4047,8 +4077,8 @@ async function cvOpenConversation(phone) {
   _cvSelectedPhone = phone;
   document.querySelectorAll('.cv-contact-item').forEach(el => {
     if (el.dataset.phone === phone) {
-      el.style.background = '#f0fdf4';
-      el.style.borderLeft = '3px solid #22C55E';
+      el.style.background = '#F0F7F4';
+      el.style.borderLeft = '3px solid #25D366';
     } else {
       el.style.background = '#fff';
       el.style.borderLeft = '3px solid transparent';
@@ -4136,23 +4166,12 @@ function cvRenderMessages(messages, updatedAt) {
   }
   for (const msg of expanded) {
     const row = document.createElement('div');
-    row.className = `flex items-end gap-2 ${msg.isOut?'justify-end':'justify-start'}`;
+    row.style.cssText = 'display:flex;margin-bottom:4px;' + (msg.isOut ? 'justify-content:flex-end' : 'justify-content:flex-start');
+    const ts = msg.at ? '<span style="font-size:11px;color:#667781;margin-left:8px;white-space:nowrap;align-self:flex-end">' + cvFmtTime(msg.at) + (msg.isOut ? ' <span style="color:#53BDEB;font-size:12px">✓✓</span>' : '') + '</span>' : '';
     if (msg.isOut) {
-      row.innerHTML = `<div class="flex flex-col items-end max-w-[72%]">
-        <div class="rounded-2xl rounded-br-sm px-4 py-2.5 text-sm text-white" style="background:#16a34a">
-          <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(String(msg.text))}</p>
-        </div>
-        <span class="text-[9px] mt-0.5 flex items-center gap-1" style="color:#94a3b8">
-          <i data-lucide="bot" class="w-2.5 h-2.5" style="color:#16a34a"></i> IA
-        </span>
-      </div>`;
+      row.innerHTML = '<div style="max-width:72%;background:#D9FDD3;color:#111B21;padding:8px 12px;border-radius:18px 0px 18px 18px;box-shadow:0 1px 2px rgba(0,0,0,.08);font-family:-apple-system,sans-serif;font-size:14px;line-height:1.5"><p style="margin:0;white-space:pre-wrap">' + escapeHtml(String(msg.text)) + '</p><div style="display:flex;justify-content:flex-end;align-items:center;margin-top:2px">' + ts + '</div></div>';
     } else {
-      row.innerHTML = `<div class="flex flex-col items-start max-w-[72%]">
-        <div class="rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm" style="background:#fff;color:#1e293b;border:1px solid #e2e8f0">
-          <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(String(msg.text))}</p>
-        </div>
-        <span class="text-[9px] mt-0.5" style="color:#94a3b8">Client</span>
-      </div>`;
+      row.innerHTML = '<div style="max-width:72%;background:#FFFFFF;color:#111B21;padding:8px 12px;border-radius:0px 18px 18px 18px;box-shadow:0 1px 2px rgba(0,0,0,.08);font-family:-apple-system,sans-serif;font-size:14px;line-height:1.5"><p style="margin:0;white-space:pre-wrap">' + escapeHtml(String(msg.text)) + '</p><div style="display:flex;justify-content:flex-end;align-items:center;margin-top:2px">' + ts + '</div></div>';
     }
     container.appendChild(row);
   }
@@ -4172,20 +4191,14 @@ async function cvSendReply() {
   const container = document.getElementById('cv-messages');
   if (container) {
     const row = document.createElement('div');
-    row.className = 'flex justify-end';
-    row.innerHTML = `<div class="flex flex-col items-end max-w-[72%]">
-      <div class="rounded-2xl rounded-br-sm px-4 py-2.5 text-sm text-white" style="background:#16a34a">
-        <p class="leading-relaxed">${escapeHtml(text)}</p>
-      </div>
-      <span class="text-[9px] text-neutral-700 mt-0.5">${cvFmtTime(new Date().toISOString())}</span>
-    </div>`;
+    row.style.cssText = 'display:flex;justify-content:flex-end;margin-bottom:4px';
+    row.innerHTML = '<div style="max-width:72%;background:#D9FDD3;color:#111B21;padding:8px 12px;border-radius:18px 0px 18px 18px;box-shadow:0 1px 2px rgba(0,0,0,.08);font-family:-apple-system,sans-serif;font-size:14px;line-height:1.5"><p style="margin:0;white-space:pre-wrap">' + escapeHtml(text) + '</p><div style="display:flex;justify-content:flex-end;align-items:center;margin-top:2px"><span style="font-size:11px;color:#667781">' + cvFmtTime(new Date().toISOString()) + ' <span style="color:#53BDEB;font-size:12px">✓✓</span></span></div></div>';
     container.appendChild(row);
     container.scrollTop = container.scrollHeight;
   }
   try {
-    await fetch('/admin/send-message', {
+    await api('/admin/send-message', {
       method: 'POST',
-      headers: {'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
       body: JSON.stringify({instance: INSTANCE, number: _cvSelectedPhone, text})
     });
     showToast(t('msg_sent'));
@@ -5908,7 +5921,7 @@ var LBL='font-size:13px;font-weight:600;color:#334155;margin-bottom:8px;display:
 
 function openProductWizard(){
   prodStep=1;prodType='payant';prodUnlimited=false;prodImages=[];
-  prodData={nom:'',description:'',instructions:'',prix:0,minPrix:0,devise:'XAF',stock:100,leadStatus:'nouveau',image_url:null};
+  prodData={nom:'',description:'',instructions:"Si quelqu'un est intéressé par ce produit ou article, parle lui de ses qualités et de ses avantages. Propose toujours à la fin le mode de paiement s'il veut confirmer l'achat. Reste enthousiaste et convaincant.",prix:0,minPrix:0,devise:'XAF',stock:100,leadStatus:'nouveau',image_url:null};
   var m=document.getElementById('add-product-modal');
   m.classList.remove('hidden');m.style.display='flex';
   renderProdStep(1);
@@ -5953,10 +5966,10 @@ function renderProdStep(n){
     h+='<div style="margin-bottom:16px"><label style="'+LBL+'"><i data-lucide="align-justify" class="w-3.5 h-3.5" style="color:#64748b"></i> Nom du produit ou du service</label><input type="text" id="pw-name" value="'+escapeHtml(prodData.nom)+'" placeholder="Ex: Nike Air Max 42" style="'+INP+'" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'"></div>';
     h+='<div style="margin-bottom:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><label style="'+LBL+';margin-bottom:0"><i data-lucide="file-text" class="w-3.5 h-3.5" style="color:#64748b"></i> Description du produit ou du service</label><button onclick="wizGenerateAIDesc()" id="ai-gen-btn" style="display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;border:none;background:#fef3c7;color:#b45309;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.background=\'#fde68a\'" onmouseout="this.style.background=\'#fef3c7\'">✨ Generer par IA</button></div><textarea id="pw-desc" rows="4" placeholder="Description detaillee du produit ou du service..." style="'+INP+';resize:vertical" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'">'+escapeHtml(prodData.description)+'</textarea></div>';
     h+='<div style="margin-bottom:16px"><label style="'+LBL+'"><i data-lucide="bot" class="w-3.5 h-3.5" style="color:#64748b"></i> Instructions pour l\'IA</label><textarea id="pw-instr" rows="3" placeholder="Si quelqu\'un est interesse par ce produit, parle lui de ses qualites et ses avantages..." style="'+INP+';resize:vertical" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'">'+escapeHtml(prodData.instructions)+'</textarea></div>';
-    h+='<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;cursor:pointer" onclick="wizToggleSection(\'cat-section\')"><i data-lucide="chevron-right" id="cat-chevron" class="w-4 h-4" style="color:#64748b;transition:transform .2s;transform:rotate(90deg)"></i><span style="font-size:14px;font-weight:700;color:#334155">Categorie</span></div><div id="cat-section" style="display:flex;gap:8px"><select id="pw-category" style="flex:1;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;background:#fff;font-size:15px;color:#0f172a;outline:none;cursor:pointer;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'"><option value="Autre">Autre</option><option value="Mode">Mode</option><option value="Chaussures">Chaussures</option><option value="Électronique">Electronique</option><option value="Alimentation">Alimentation</option><option value="Cosmétiques">Cosmetiques</option><option value="Services">Services</option><option value="Beauté">Beaute</option></select><button onclick="wizAddCategory()" style="padding:12px 16px;border-radius:12px;border:2px solid #0f172a;background:#0f172a;color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit" onmouseover="this.style.background=\'#1e293b\'" onmouseout="this.style.background=\'#0f172a\'">Nouvelle categorie</button></div></div>';
+    h+='<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;cursor:pointer" onclick="wizToggleSection(\'cat-section\')"><i data-lucide="chevron-right" id="cat-chevron" class="w-4 h-4" style="color:#64748b;transition:transform .2s;transform:rotate(90deg)"></i><span style="font-size:14px;font-weight:700;color:#334155">Categorie</span></div><div id="cat-section"><div style="display:flex;gap:8px;margin-bottom:8px"><select id="pw-category" style="flex:1;padding:12px 16px;border-radius:12px;border:2px solid #e2e8f0;background:#fff;font-size:15px;color:#0f172a;outline:none;cursor:pointer;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'"><option value="Autre">Chargement...</option></select><button onclick="wizShowNewCatInput()" style="padding:12px 16px;border-radius:12px;border:2px solid #0f172a;background:#0f172a;color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit" onmouseover="this.style.background=\'#1e293b\'" onmouseout="this.style.background=\'#0f172a\'">+ Nouvelle</button></div><div id="wiz-new-cat-row" style="display:none;gap:8px;align-items:center"><input type="text" id="wiz-new-cat-name" placeholder="Nom de la categorie" style="flex:1;'+INP+'" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'"><button onclick="wizCreateCategory()" style="padding:12px 16px;border-radius:12px;border:none;background:#10b981;color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit">Creer</button><button onclick="document.getElementById(\'wiz-new-cat-row\').style.display=\'none\'" style="padding:12px 10px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-size:16px;cursor:pointer;font-family:inherit">×</button></div></div></div>';
     h+='<div style="margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;cursor:pointer" onclick="wizToggleSection(\'variant-section\')"><i data-lucide="chevron-right" id="variant-chevron" class="w-4 h-4" style="color:#64748b;transition:transform .2s;transform:rotate(90deg)"></i><span style="font-size:14px;font-weight:700;color:#334155">Variante</span></div><div id="variant-section"><div id="pw-variants-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">';
     if(prodData.variants&&prodData.variants.length>0){prodData.variants.forEach(function(v,i){h+='<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0"><span style="font-size:13px;font-weight:600;color:#334155">'+escapeHtml(v.type)+':</span><span style="font-size:13px;color:#64748b;flex:1">'+escapeHtml(v.values)+'</span><button onclick="wizRemoveVariant('+i+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;padding:0">×</button></div>';});}
-    h+='</div><button onclick="wizAddVariant()" style="width:100%;padding:12px 16px;border-radius:12px;border:2px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#10b981\';this.style.color=\'#059669\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.color=\'#64748b\'">Nouvelle variante</button></div></div>';
+    h+='</div><div id="wiz-var-add-row" style="display:none;gap:8px;align-items:center;margin-bottom:8px"><input type="text" id="wiz-var-type" placeholder="Type (ex: Taille, Couleur)" style="flex:1;'+INP+'" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'"><input type="text" id="wiz-var-values" placeholder="Valeurs (ex: S, M, L, XL)" style="flex:1;'+INP+'" onfocus="this.style.borderColor=\'#34d399\'" onblur="this.style.borderColor=\'#e2e8f0\'"><button onclick="wizConfirmVariant()" style="padding:12px 16px;border-radius:12px;border:none;background:#10b981;color:#fff;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit">Ajouter</button><button onclick="document.getElementById(\'wiz-var-add-row\').style.display=\'none\'" style="padding:12px 10px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-size:16px;cursor:pointer;font-family:inherit">×</button></div><button onclick="wizShowVariantInput()" style="width:100%;padding:12px 16px;border-radius:12px;border:2px dashed #cbd5e1;background:#f8fafc;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit" onmouseover="this.style.borderColor=\'#10b981\';this.style.color=\'#059669\'" onmouseout="this.style.borderColor=\'#cbd5e1\';this.style.color=\'#64748b\'">+ Nouvelle variante</button></div></div>';
     footer.innerHTML='<button onclick="prevProdStep()" style="padding:12px 28px;border-radius:14px;border:none;background:#0f172a;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Precedent</button><button onclick="nextProdStep()" style="padding:12px 28px;border-radius:14px;border:2px solid #cbd5e1;background:#fff;color:#0f172a;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.borderColor=\'#10b981\'" onmouseout="this.style.borderColor=\'#cbd5e1\'">Suivant →</button>';
   } else if(n===3){
     if(prodType==='gratuit'){
@@ -6012,6 +6025,7 @@ function renderProdStep(n){
   }
   body.innerHTML=h;
   lucide.createIcons();
+  if(n===2)wizLoadCategories();
 }
 
 function setProdType(t){prodType=t;renderProdStep(1);}
@@ -6121,20 +6135,39 @@ function wizToggleSection(id){
   var ch=document.getElementById(chId);
   if(ch)ch.style.transform=visible?'rotate(0deg)':'rotate(90deg)';
 }
-function wizAddCategory(){
-  var cat=prompt('Nom de la nouvelle categorie :');
-  if(!cat||!cat.trim())return;
+var _defaultCats=["Autre","Mode","Chaussures","Electronique","Alimentation","Cosmetiques","Services","Beaute","Bijoux et Montres","Soins et Hygiene","Parfums","Formations","Produits Digitaux","PDF et Documents"];
+async function wizLoadCategories(){
   var sel=document.getElementById('pw-category');if(!sel)return;
-  var opt=document.createElement('option');opt.value=cat.trim();opt.textContent=cat.trim();opt.selected=true;
-  sel.appendChild(opt);showToast('Categorie ajoutee ✅');
+  var curVal=prodData.category||'Autre';
+  try{
+    var cats=await api('/admin/categories/'+INSTANCE);
+    var all=_defaultCats.slice();
+    if(Array.isArray(cats))cats.forEach(function(c){var n=c.name||c;if(all.indexOf(n)===-1)all.push(n);});
+    sel.textContent='';
+    all.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;if(c===curVal)o.selected=true;sel.appendChild(o);});
+  }catch(e){
+    sel.textContent='';
+    _defaultCats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;if(c===curVal)o.selected=true;sel.appendChild(o);});
+  }
 }
-function wizAddVariant(){
-  var type=prompt('Type de variante (ex: Taille, Couleur) :');
-  if(!type||!type.trim())return;
-  var values=prompt('Valeurs separees par virgules (ex: S, M, L, XL) :');
-  if(!values||!values.trim())return;
+function wizShowNewCatInput(){var row=document.getElementById('wiz-new-cat-row');if(row){row.style.display='flex';var inp=document.getElementById('wiz-new-cat-name');if(inp)inp.focus();}}
+async function wizCreateCategory(){
+  var inp=document.getElementById('wiz-new-cat-name');if(!inp||!inp.value.trim())return showToast('Entrez un nom','error');
+  var name=inp.value.trim();
+  try{
+    await api('/admin/categories',{method:'POST',body:JSON.stringify({name:name,instance_name:INSTANCE})});
+    showToast('Categorie creee ✅');
+    inp.value='';document.getElementById('wiz-new-cat-row').style.display='none';
+    prodData.category=name;
+    await wizLoadCategories();
+  }catch(e){showToast('Erreur: '+e.message,'error');}
+}
+function wizShowVariantInput(){var row=document.getElementById('wiz-var-add-row');if(row){row.style.display='flex';var inp=document.getElementById('wiz-var-type');if(inp)inp.focus();}}
+function wizConfirmVariant(){
+  var t=document.getElementById('wiz-var-type'),v=document.getElementById('wiz-var-values');
+  if(!t||!t.value.trim()||!v||!v.value.trim())return showToast('Remplissez type et valeurs','error');
   if(!prodData.variants)prodData.variants=[];
-  prodData.variants.push({type:type.trim(),values:values.trim()});
+  prodData.variants.push({type:t.value.trim(),values:v.value.trim()});
   saveProdData();renderProdStep(2);
 }
 function wizRemoveVariant(i){
@@ -6148,10 +6181,11 @@ async function wizGenerateAIDesc(){
   var btn=document.getElementById('ai-gen-btn');
   if(btn){btn.textContent='⏳ Generation...';btn.style.pointerEvents='none';}
   try{
-    var r=await fetch('/admin/ai/description',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:nameEl.value.trim(),instance_name:SESSION?.instance_name||INSTANCE})});
-    var d=await r.json();
+    var instrEl=document.getElementById('pw-instr');
+    var catEl=document.getElementById('pw-category');
+    var d=await api('/admin/ai/description',{method:'POST',body:JSON.stringify({nom:nameEl.value.trim(),categorie:catEl?catEl.value:'',instructions:instrEl?instrEl.value.trim():'',instance_name:SESSION?.instance_name||INSTANCE})});
     var desc=document.getElementById('pw-desc');
-    if(desc)desc.value=d.description||d||'';
+    if(desc)desc.value=d.text||d.description||d||'';
     showToast('Description generee ✨');
   }catch(e){showToast('Erreur IA: '+e.message,'error');}
   if(btn){btn.textContent='✨ Generer par IA';btn.style.pointerEvents='auto';}
@@ -6180,16 +6214,19 @@ async function submitProduct(){
     instance_name:instance,
     nom:prodData.nom.trim(),
     description:prodData.description||'',
+    prompt:prodData.instructions||'',
     prix:prodType==='gratuit'?0:(parseFloat(prodData.prix)||0),
     stock:prodUnlimited?999999:(parseInt(prodData.stock)||100),
-    image_url:prodImages.length>0?prodImages[0]:(prodData.image_url||null)
+    image_url:prodImages.length>0?prodImages[0]:(prodData.image_url||null),
+    categorie:prodData.category||'Autre',
+    devise:prodData.devise||'XAF',
+    type_produit:prodType==='gratuit'?'gratuit':'payant',
+    variantes:prodData.variants&&prodData.variants.length>0?prodData.variants:null
   };
   try{
     var url=prodData.id?'/admin/catalogue/'+prodData.id:'/admin/catalogue';
     var method=prodData.id?'PATCH':'POST';
-    var r=await fetch(url,{method:method,headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    var result=await r.json();
-    if(!r.ok||result.error)throw new Error(result.error||'Erreur serveur '+r.status);
+    var result=await api(url,{method:method,body:JSON.stringify(payload)});
     btnSuccess(btn, prodData.id ? 'Modifié' : 'Ajouté');
     showToast(prodData.id?'Produit mis a jour ✅':'Produit ajoute ✅');
     setTimeout(function(){closeProductWizard();_rendered.catalogue=false;loadCatalogue();},600);
@@ -6450,16 +6487,19 @@ async function initiatePurchase() {
   const btn = document.getElementById('cr-pay-btn');
   if (btn) { btn.textContent = 'Paiement en cours…'; btn.disabled = true; }
   try {
+    var tok = SESSION.token || SESSION.access_token || '';
+    var hdrs = { 'Content-Type': 'application/json' };
+    if (tok) hdrs['Authorization'] = 'Bearer ' + tok;
     const res = await fetch('/payment/initiate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: hdrs,
       body: JSON.stringify({
-        telephone: '+237' + phone.replace(/^0+/, ''),
-        montant: _crActivePack.amount,
+        phone: '237' + phone.replace(/^0+/, ''),
+        amount: _crActivePack.amount,
         plan: 'credits',
-        tenant_id: SESSION.id || '',
+        tenant_id: SESSION.id || SESSION.tenant_id || '',
         points: _crActivePack.points,
-        operateur: _crSelectedOp
+        operator: _crSelectedOp
       })
     });
     const data = await res.json();
@@ -6542,7 +6582,9 @@ function generateWAQR(){
   if(qrStatus)qrStatus.textContent='Génération du QR Code...';
   if(qrTimer)qrTimer.textContent='120s';
   stopQRPolling();
-  fetch('/admin/qr/'+instance)
+  var tok=SESSION?.token||SESSION?.access_token||'';
+  var qrHdrs=tok?{'Authorization':'Bearer '+tok}:{};
+  fetch('/admin/qr/'+instance,{headers:qrHdrs})
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.base64){
@@ -6565,7 +6607,8 @@ function fetchQRCode(instance, attempt) {
   var qrLoad = document.getElementById('qr-loading');
   var qrStatus = document.getElementById('qr-status');
 
-  fetch('/admin/qr/' + instance)
+  var tok=SESSION?.token||SESSION?.access_token||'';
+  fetch('/admin/qr/' + instance, {headers:tok?{'Authorization':'Bearer '+tok}:{}})
     .then(function(r) { return r.json(); })
     .then(function(data) {
       // Cas 1 : QR disponible (base64 PNG en priorité, sinon code texte)
@@ -6585,7 +6628,7 @@ function fetchQRCode(instance, attempt) {
         if(attempt < 3) {
           if(qrStatus) qrStatus.textContent = 'Préparation du QR Code... (' + (attempt+1) + '/3)';
           // Déconnecte l'instance pour forcer un nouveau QR
-          fetch('/admin/qr/' + instance + '/refresh', {method:'POST'})
+          fetch('/admin/qr/' + instance + '/refresh', {method:'POST',headers:tok?{'Authorization':'Bearer '+tok}:{}})
             .catch(function(){});
           setTimeout(function() { fetchQRCode(instance, attempt + 1); }, 3000);
         } else {
@@ -6675,7 +6718,10 @@ async function loadConnectionStatus() {
   const INSTANCE = SESSION.instance_name || '';
   if (!INSTANCE) return;
   try {
-    const res = await fetch('/admin/qr/' + INSTANCE + '/status');
+    const tok = SESSION?.token || SESSION?.access_token || '';
+    const res = await fetch('/admin/qr/' + INSTANCE + '/status', {
+      headers: tok ? { 'Authorization': 'Bearer ' + tok } : {}
+    });
     const data = await res.json();
     if (data.status === 'open' || data.state === 'open' || data.connected === true) {
       connShowConnected(data);
@@ -6713,6 +6759,20 @@ function connShowConnected(data) {
   // Load stats
   connLoadStats();
   lucide.createIcons();
+  // Sync agent mode → actif
+  var curMode = localStorage.getItem('titanex_agent_mode');
+  if (curMode !== 'actif') {
+    syncAgentModeUI('actif');
+    localStorage.setItem('titanex_agent_mode', 'actif');
+    var tok3 = sess.token || sess.access_token || '';
+    if (tok3) {
+      fetch('/api/tenant/agent-mode', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok3 },
+        body: JSON.stringify({ agent_mode: 'actif' })
+      }).catch(function(){});
+    }
+  }
 }
 
 function connShowDisconnected() {
@@ -6721,6 +6781,18 @@ function connShowDisconnected() {
   const detail = document.getElementById('conn-wa-detail');
   if (detail) detail.classList.add('hidden');
   lucide.createIcons();
+  // Sync agent mode → inactif
+  syncAgentModeUI('inactif');
+  localStorage.setItem('titanex_agent_mode', 'inactif');
+  var sess2 = JSON.parse(localStorage.getItem('titanex_session') || '{}');
+  var tok4 = sess2.token || sess2.access_token || '';
+  if (tok4) {
+    fetch('/api/tenant/agent-mode', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok4 },
+      body: JSON.stringify({ agent_mode: 'inactif' })
+    }).catch(function(){});
+  }
 }
 
 async function connLoadStats() {
@@ -6834,7 +6906,8 @@ async function connWADisconnect() {
   const SESSION = JSON.parse(localStorage.getItem('titanex_session') || '{}');
   const INSTANCE = SESSION.instance_name || '';
   try {
-    await fetch('/admin/qr/' + INSTANCE + '/logout', { method: 'POST' });
+    var tok = SESSION?.token || SESSION?.access_token || '';
+    await fetch('/admin/qr/' + INSTANCE + '/logout', { method: 'POST', headers: tok ? {'Authorization':'Bearer '+tok} : {} });
   } catch(e) {}
   if (_connPollTimer) clearInterval(_connPollTimer);
   if (_connQRTimer) clearInterval(_connQRTimer);
@@ -6863,12 +6936,7 @@ async function connWADisconnect() {
 }
 
 function connWARescan() {
-  const inst = (JSON.parse(localStorage.getItem('titanex_session')||'{}')).instance_name || INSTANCE || '';
-  if (inst) {
-    window.open('/dashboard/qr-connect.html?instance=' + encodeURIComponent(inst), 'titanex_qr', 'width=420,height=560,scrollbars=no,resizable=no');
-  } else {
-    generateWAQR();
-  }
+  generateWAQR();
 }
 
 // Assistant Chat
@@ -6887,7 +6955,7 @@ function connSuggest(text) {
   if (input) { input.value = text; connSendMsg(); }
 }
 
-function connSendMsg() {
+async function connSendMsg() {
   const input = document.getElementById('conn-chat-input');
   const msgs = document.getElementById('conn-chat-msgs');
   if (!input || !msgs) return;
@@ -6897,23 +6965,25 @@ function connSendMsg() {
   msgs.classList.remove('hidden');
   // User bubble
   const userBubble = document.createElement('div');
-  userBubble.className = 'flex justify-end';
-  userBubble.innerHTML = `<div class="max-w-xs px-3 py-2 rounded-2xl rounded-br-sm text-xs text-white" style="background:#22c55e">${escHtml(text)}</div>`;
+  userBubble.style.cssText = 'display:flex;justify-content:flex-end;margin-bottom:6px';
+  userBubble.innerHTML = '<div style="max-width:280px;padding:8px 12px;border-radius:18px 0 18px 18px;font-size:13px;color:#111B21;background:#D9FDD3">' + escHtml(text) + '</div>';
   msgs.appendChild(userBubble);
-  // Bot response
-  const lower = text.toLowerCase();
-  let response = CONN_RESPONSES['default'];
-  for (const [key, val] of Object.entries(CONN_RESPONSES)) {
-    if (key !== 'default' && lower.includes(key)) { response = val; break; }
+  msgs.scrollTop = msgs.scrollHeight;
+  // Try real AI, fallback to local
+  var response = '';
+  try {
+    var d = await api('/admin/chat', {method:'POST', body:JSON.stringify({instance:INSTANCE, message:text, system_prompt:''})});
+    response = d.reply || d.text || d.message || '';
+  } catch(e) {}
+  if (!response) {
+    var lower = text.toLowerCase();
+    response = CONN_RESPONSES['default'];
+    for (var key in CONN_RESPONSES) { if (key !== 'default' && lower.indexOf(key) !== -1) { response = CONN_RESPONSES[key]; break; } }
   }
-  setTimeout(() => {
-    const botBubble = document.createElement('div');
-    botBubble.className = 'flex justify-start';
-    botBubble.innerHTML = `<div class="flex items-start gap-2"><div class="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style="background:#1a1a1a;border:1px solid #333"><i data-lucide="bot" class="w-3.5 h-3.5 text-emerald-400"></i></div><div class="max-w-xs px-3 py-2 rounded-2xl rounded-bl-sm text-xs text-zinc-200" style="background:#1a1a1a;border:1px solid #2a2a2a">${escHtml(response)}</div></div>`;
-    msgs.appendChild(botBubble);
-    msgs.scrollTop = msgs.scrollHeight;
-    lucide.createIcons();
-  }, 600);
+  var botBubble = document.createElement('div');
+  botBubble.style.cssText = 'display:flex;justify-content:flex-start;margin-bottom:6px';
+  botBubble.innerHTML = '<div style="display:flex;align-items:flex-start;gap:8px"><div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#0A5C36,#128C57);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:12px">🤖</span></div><div style="max-width:280px;padding:8px 12px;border-radius:0 18px 18px 18px;font-size:13px;color:#0A5C36;background:#F0F7F4;border:1px solid rgba(37,211,102,.2)">' + escHtml(response) + '</div></div>';
+  msgs.appendChild(botBubble);
   msgs.scrollTop = msgs.scrollHeight;
 }
 
@@ -6943,28 +7013,25 @@ function connWAAction() {
 }
 
 // ─── WhatsApp Test Message ────────────────────────────────────────────────────
-async function connWATest() {
-  const sess = JSON.parse(localStorage.getItem('titanex_session') || '{}');
-  let phone = sess.telephone || sess.phone || '';
-  const inst = sess.instance_name || INSTANCE || '';
-  if (!phone) {
-    phone = prompt('Entrez votre numéro WhatsApp (ex: 237652249455) :');
-    if (!phone) return;
-  }
-  const cleanPhone = phone.replace(/\D/g, '');
-  if (cleanPhone.length < 9) { showToast('Numéro invalide', 'error'); return; }
-  const testBtn = event?.target?.closest('button');
+async function connWATest(ev) {
+  var sess = JSON.parse(localStorage.getItem('titanex_session') || '{}');
+  var inst = sess.instance_name || INSTANCE || '';
+  var tok = sess.token || sess.access_token || '';
+  var testBtn = ev ? (ev.target.closest ? ev.target.closest('button') : ev.target) : null;
   if (testBtn) { testBtn.disabled = true; testBtn.style.opacity = '0.5'; }
   try {
-    const res = await fetch('/admin/send-message', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
-      body: JSON.stringify({ instance: inst, number: cleanPhone, text: '✅ Test Titanex AI — Votre agent WhatsApp est opérationnel !' })
+    var t0 = Date.now();
+    var res = await fetch('/admin/qr/' + inst + '/status', {
+      headers: tok ? {'Authorization':'Bearer '+tok} : {}
     });
-    const data = await res.json();
-    if (res.ok && data.success) showToast('✅ Message test envoyé à +' + cleanPhone);
-    else showToast('Erreur: ' + (data.error || 'Envoi échoué'), 'error');
-  } catch(e) { showToast('Erreur réseau: ' + e.message, 'error'); }
+    var latency = Date.now() - t0;
+    var data = await res.json();
+    if (data.connected) {
+      showToast('✅ Connecté — latence ' + latency + 'ms');
+    } else {
+      showToast('❌ Non connecté — vérifiez WhatsApp', 'error');
+    }
+  } catch(e) { showToast('❌ Erreur réseau: ' + e.message, 'error'); }
   if (testBtn) { testBtn.disabled = false; testBtn.style.opacity = '1'; }
 }
 
@@ -7395,8 +7462,11 @@ function initPromptPage() {
   ['pp-agent-name','pp-pg-name'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = name; });
   ['pp-agent-initials','pp-pg-initials'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = init; });
 
-  // Toggle button
-  updatePPToggle(agent?.status || false);
+  // Toggle button — sync from real agent_mode
+  const cachedMode = localStorage.getItem('titanex_agent_mode');
+  const isActive = cachedMode ? cachedMode === 'actif' : (agent?.status || false);
+  if (agent) agent.status = isActive;
+  updatePPToggle(isActive);
 
   // Prompt textarea
   const stored = JSON.parse(localStorage.getItem('titanex_settings_' + INSTANCE) || '{}');
@@ -7408,12 +7478,12 @@ function initPromptPage() {
   // WhatsApp status
   const waStatus = document.getElementById('pp-wa-status');
   if (waStatus) {
-    fetch('/admin/stores', { headers:{'x-admin-key': ADMIN_KEY} })
-      .then(r => r.ok ? r.json() : null)
-      .then(d => {
-        const store = Array.isArray(d) ? d.find(s => s.instance_name === INSTANCE) : null;
-        waStatus.textContent = store?.connected ? '🟢 Connecté' : '🔴 Non connecté';
-      }).catch(() => { waStatus.textContent = '— Statut inconnu'; });
+    const tok = SESSION?.token || SESSION?.access_token || '';
+    fetch('/admin/qr/' + INSTANCE + '/status', {
+      headers: tok ? { 'Authorization': 'Bearer ' + tok } : {}
+    }).then(r => r.json()).then(d => {
+      waStatus.textContent = d.connected ? '🟢 Connecté' : '🔴 Non connecté';
+    }).catch(() => { waStatus.textContent = '🔴 Non connecté'; });
   }
 
   // Tools
@@ -7443,6 +7513,18 @@ function togglePromptAgent() {
   agent.status = !agent.status;
   updatePPToggle(agent.status);
   saveAgentsLocal();
+  // Sync global agent mode
+  const newMode = agent.status ? 'actif' : 'inactif';
+  syncAgentModeUI(newMode);
+  localStorage.setItem('titanex_agent_mode', newMode);
+  const tok2 = SESSION?.token || SESSION?.access_token || '';
+  if (tok2) {
+    fetch('/api/tenant/agent-mode', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok2 },
+      body: JSON.stringify({ agent_mode: newMode })
+    }).catch(() => {});
+  }
   showToast(agent.status ? 'Agent activé !' : 'Agent désactivé');
 }
 
@@ -7512,17 +7594,33 @@ function deployAgent() {
 
   // API save
   const tid = SESSION?.id || SESSION?.tenant_id;
+  const tokDeploy = SESSION?.token || SESSION?.access_token || '';
+  const deployHdrs = {'Content-Type':'application/json'};
+  if (tokDeploy) deployHdrs['Authorization'] = 'Bearer ' + tokDeploy;
+  if (ADMIN_KEY) deployHdrs['x-admin-key'] = ADMIN_KEY;
   if (tid) {
     fetch('/admin/tenant/' + tid, {
-      method:'PUT', headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
+      method:'PUT', headers: deployHdrs,
       body: JSON.stringify({ system_prompt: prompt, status: true })
     }).catch(() => {});
   }
   // Also try /admin/stores (legacy)
   fetch('/admin/stores', {
-    method:'POST', headers:{'Content-Type':'application/json','x-admin-key': ADMIN_KEY},
+    method:'POST', headers: deployHdrs,
     body: JSON.stringify({ instance_name: INSTANCE, system_prompt: prompt })
   }).catch(() => {});
+
+  // Sync global agent mode
+  const tok1 = SESSION?.token || SESSION?.access_token || '';
+  if (tok1) {
+    fetch('/api/tenant/agent-mode', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok1 },
+      body: JSON.stringify({ agent_mode: 'actif' })
+    }).catch(() => {});
+  }
+  syncAgentModeUI('actif');
+  localStorage.setItem('titanex_agent_mode', 'actif');
 
   showToast('Agent déployé avec succès ! 🚀');
 }
@@ -7532,38 +7630,50 @@ async function loadPPProducts() {
   const count = document.getElementById('pp-products-count');
   if (!list) return;
   try {
-    const res  = await fetch('/admin/catalogue/' + INSTANCE, { headers:{'x-admin-key': ADMIN_KEY} });
-    if (!res.ok) throw new Error();
-    const data = await res.json();
+    const data = await api('/admin/catalogue/' + INSTANCE);
     const products = Array.isArray(data) ? data : (data.products || []);
     if (count) count.textContent = products.length + ' produits';
-    list.innerHTML = '';
+    list.textContent = '';
     if (!products.length) {
-      list.innerHTML = '<p class="text-center py-8 text-zinc-600 text-sm">Aucun produit dans le catalogue</p>';
+      var emp = document.createElement('p');
+      emp.className = 'text-center py-8 text-sm';
+      emp.style.color = '#128C57';
+      emp.textContent = 'Aucun produit dans le catalogue';
+      list.appendChild(emp);
       return;
     }
     const stored = JSON.parse(localStorage.getItem('titanex_pp_products_' + INSTANCE) || '{}');
     products.forEach(p => {
       const enabled = stored[p.id] !== false;
+      const nom = p.nom || p.name || '—';
+      const prix = p.prix || p.price || 0;
+      const devise = p.devise || 'XAF';
       const row = document.createElement('div');
-      row.className = 'flex items-center justify-between py-2.5 px-3 rounded-xl border border-neutral-800 bg-neutral-900';
-      row.innerHTML = `
-        <div class="flex items-center gap-2.5 min-w-0 flex-1">
-          ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" class="w-8 h-8 rounded-lg object-cover shrink-0">` : '<div class="w-8 h-8 rounded-lg bg-zinc-800 shrink-0 flex items-center justify-center"><i data-lucide="package" class="w-3.5 h-3.5 text-zinc-600"></i></div>'}
-          <div class="min-w-0">
-            <p class="text-xs font-semibold text-white truncate">${escapeHtml(p.name || '—')}</p>
-            <p class="text-[10px] text-zinc-500">${p.price ? p.price + ' XAF' : '—'}</p>
-          </div>
-        </div>
-        <button role="switch" aria-checked="${enabled}" onclick="togglePPProduct('${p.id}',this)"
-          class="relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors ml-2 ${enabled ? 'bg-emerald-500' : 'bg-zinc-600'}">
-          <span class="inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${enabled ? 'translate-x-4' : 'translate-x-0'}"></span>
-        </button>`;
+      row.className = 'flex items-center justify-between py-2.5 px-3 rounded-xl border';
+      row.style.cssText = 'background:#F0F7F4;border-color:rgba(37,211,102,.2)';
+      var imgHtml = p.image_url
+        ? '<img src="' + escapeHtml(p.image_url) + '" class="w-8 h-8 rounded-lg object-cover shrink-0">'
+        : '<div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" style="background:rgba(37,211,102,.1)"><i data-lucide="package" class="w-3.5 h-3.5" style="color:#128C57"></i></div>';
+      row.innerHTML = '<div class="flex items-center gap-2.5 min-w-0 flex-1">'
+        + imgHtml
+        + '<div class="min-w-0">'
+        + '<p class="text-xs font-semibold truncate" style="color:#0A5C36">' + escapeHtml(nom) + '</p>'
+        + '<p class="text-[10px]" style="color:#128C57">' + (prix > 0 ? prix.toLocaleString() + ' ' + devise : 'Gratuit') + '</p>'
+        + '</div></div>'
+        + '<button role="switch" aria-checked="' + enabled + '" onclick="togglePPProduct(\'' + p.id + '\',this)"'
+        + ' class="relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors ml-2" style="background:' + (enabled ? '#25D366' : '#cbd5e1') + '">'
+        + '<span class="inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ' + (enabled ? 'translate-x-4' : 'translate-x-0') + '"></span>'
+        + '</button>';
       list.appendChild(row);
     });
     try { lucide.createIcons(); } catch(e) {}
   } catch(e) {
-    list.innerHTML = '<p class="text-center py-8 text-zinc-600 text-sm">Impossible de charger le catalogue</p>';
+    var err = document.createElement('p');
+    err.className = 'text-center py-8 text-sm';
+    err.style.color = '#128C57';
+    err.textContent = 'Impossible de charger le catalogue';
+    list.textContent = '';
+    list.appendChild(err);
   }
 }
 
@@ -7571,7 +7681,8 @@ function togglePPProduct(id, btn) {
   const cur  = btn.getAttribute('aria-checked') === 'true';
   const next = !cur;
   btn.setAttribute('aria-checked', next);
-  btn.className = `relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors ml-2 ${next ? 'bg-emerald-500' : 'bg-zinc-600'}`;
+  btn.className = 'relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors ml-2';
+  btn.style.background = next ? '#25D366' : '#cbd5e1';
   btn.querySelector('span').className = `inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${next ? 'translate-x-4' : 'translate-x-0'}`;
   const stored = JSON.parse(localStorage.getItem('titanex_pp_products_' + INSTANCE) || '{}');
   stored[id] = next;
@@ -7586,14 +7697,15 @@ function buildPPTools() {
   PP_TOOLS_DEF.forEach(tool => {
     const enabled = stored[tool.id] !== undefined ? stored[tool.id] : tool.def;
     const row = document.createElement('div');
-    row.className = 'flex items-center justify-between py-3 px-4 rounded-xl border border-neutral-800 bg-neutral-900';
+    row.className = 'flex items-center justify-between py-3 px-4 rounded-xl border';
+    row.style.cssText = 'background:#F0F7F4;border-color:rgba(37,211,102,.2)';
     row.innerHTML = `
       <div class="flex items-center gap-2.5">
-        <i data-lucide="${tool.icon}" class="w-4 h-4 ${enabled ? 'text-emerald-400' : 'text-zinc-600'}"></i>
-        <span class="text-sm font-medium ${enabled ? 'text-white' : 'text-zinc-500'}">${tool.label}</span>
+        <i data-lucide="${tool.icon}" class="w-4 h-4" style="color:${enabled ? '#128C57' : '#94a3b8'}"></i>
+        <span class="text-sm font-medium" style="color:${enabled ? '#0A5C36' : '#94a3b8'}">${tool.label}</span>
       </div>
       <button role="switch" aria-checked="${enabled}" id="pptool-${tool.id}" onclick="toggleTool('${tool.id}',this)"
-        class="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors ${enabled ? 'bg-emerald-500' : 'bg-zinc-600'}">
+        class="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors" style="background:${enabled ? '#25D366' : '#cbd5e1'}">
         <span class="inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform ${enabled ? 'translate-x-5' : 'translate-x-0'}"></span>
       </button>`;
     list.appendChild(row);
@@ -7605,12 +7717,37 @@ function toggleTool(id, btn) {
   const cur  = btn.getAttribute('aria-checked') === 'true';
   const next = !cur;
   btn.setAttribute('aria-checked', next);
-  btn.className = `relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors ${next ? 'bg-emerald-500' : 'bg-zinc-600'}`;
+  btn.className = 'relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors';
+  btn.style.background = next ? '#25D366' : '#cbd5e1';
   btn.querySelector('span').className = `inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform ${next ? 'translate-x-5' : 'translate-x-0'}`;
+  // Update row text/icon colors
+  var row = btn.closest('.flex.items-center.justify-between');
+  if (row) {
+    var icon = row.querySelector('[data-lucide]'); if (icon) icon.style.color = next ? '#128C57' : '#94a3b8';
+    var label = row.querySelector('span.text-sm'); if (label) label.style.color = next ? '#0A5C36' : '#94a3b8';
+  }
   const stored = JSON.parse(localStorage.getItem('titanex_pp_tools_' + INSTANCE) || '{}');
   stored[id] = next;
   localStorage.setItem('titanex_pp_tools_' + INSTANCE, JSON.stringify(stored));
 }
+
+// ─── Devise Dynamique ───────────────────────────────────────────────────────
+function toggleDeviseDropdown(){
+  var dd=document.getElementById('devise-dropdown');
+  if(dd)dd.style.display=dd.style.display==='none'?'block':'none';
+}
+function setDevise(d){
+  localStorage.setItem('titanex_devise',d);
+  var badge=document.getElementById('devise-badge');
+  if(badge)badge.textContent=d;
+  var dd=document.getElementById('devise-dropdown');
+  if(dd)dd.style.display='none';
+  showToast('Devise: '+d+' ✅');
+}
+// Init devise badge on load
+(function(){var d=localStorage.getItem('titanex_devise')||'FCFA';var b=document.getElementById('devise-badge');if(b)b.textContent=d;})();
+// Close dropdown on outside click
+document.addEventListener('click',function(e){var dd=document.getElementById('devise-dropdown');var btn=document.getElementById('devise-btn');if(dd&&btn&&!btn.contains(e.target)&&!dd.contains(e.target))dd.style.display='none';});
 
 function setPPDelay(d) {
   _ppDelay = d;

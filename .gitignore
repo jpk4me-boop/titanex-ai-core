@@ -9,3 +9,4 @@ cron.log
 rewrite*.py
 migrate*.js
 debug_*.js
+.gstack/

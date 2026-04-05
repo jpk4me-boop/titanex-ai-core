@@ -17,9 +17,23 @@ const EVO_URL = process.env.EVOLUTION_API_URL.replace(/\/$/, "");
 const EVO_KEY = process.env.EVOLUTION_API_KEY;
 const ADMIN_PHONE = process.env.ADMIN_PHONE;
 const ADMIN_KEY = process.env.ADMIN_SECRET_KEY;
+const JWT_SECRET = process.env.JWT_SECRET;
+const jwt = require("jsonwebtoken");
 const adminAuth = (req, res, next) => {
   if (req.headers["x-admin-key"] !== ADMIN_KEY) return res.status(401).json({ error: "Non autorise" });
   next();
+};
+const authOrJWT = (req, res, next) => {
+  if (req.headers["x-admin-key"] === ADMIN_KEY) { req.isAdmin = true; return next(); }
+  const token = (req.headers.authorization || '').replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: "Non autorise" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.tenantInstance = decoded.instance_name;
+    req.tenantId = decoded.id || decoded.tenant_id;
+    req.isAdmin = false;
+    next();
+  } catch(e) { return res.status(401).json({ error: "Token invalide ou expire" }); }
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -96,7 +110,7 @@ async function desactiverInstance(instance_name) {
 // ── Routes ───────────────────────────────────────────────────────────────────
 
 // Initier un paiement
-router.post("/initiate", adminAuth, async (req, res) => {
+router.post("/initiate", authOrJWT, async (req, res) => {
   const { tenant_id, phone } = req.body;
   if (!tenant_id || !phone)
     return res.status(400).json({ error: "tenant_id et phone requis" });
@@ -117,7 +131,7 @@ router.post("/initiate", adminAuth, async (req, res) => {
         from: phone,
         description: "Abonnement Titanex AI - " + tenant.nom,
         external_reference: tenant_id,
-        redirect_url: "http://" + process.env.SERVER_IP + ":3001/dashboard/"
+        redirect_url: "https://titanexai.com/dashboard/"
       },
       { headers: { Authorization: "Token " + token } }
     );
@@ -141,16 +155,11 @@ router.post("/initiate", adminAuth, async (req, res) => {
 const CAMPAY_ALLOWED_IPS = (process.env.CAMPAY_WEBHOOK_IPS || '').split(',').filter(Boolean);
 
 function verifyCampayWebhook(req, res, next) {
-  // IP check (if configured)
-  if (CAMPAY_ALLOWED_IPS.length > 0) {
-    const clientIP = req.ip || req.connection.remoteAddress || '';
-    const forwardedFor = (req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-    const ip = forwardedFor || clientIP;
-    if (!CAMPAY_ALLOWED_IPS.some(allowed => ip.includes(allowed))) {
-      console.warn('[WEBHOOK] Blocked IP:', ip);
-      return res.sendStatus(403);
-    }
-  }
+  // IP check — log-only mode (ne bloque plus pour éviter de rater des callbacks légitimes)
+  const clientIP = req.ip || req.connection.remoteAddress || '';
+  const forwardedFor = (req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  const ip = forwardedFor || clientIP;
+  console.log('[WEBHOOK] IP:', ip);
   // Required field validation
   const { status, external_reference } = req.body;
   if (!status || !external_reference) {
@@ -203,7 +212,9 @@ router.post("/webhook", verifyCampayWebhook, async (req, res) => {
     }
 
     // Auto-créer stores si inexistant
-    const { data: existingStore } = await supabaseAdmin.from("stores").select("id").eq("instance_name", tenant.instance_name).single().catch(() => ({ data: null }));
+    let existingStore = null;
+    { const res = await supabaseAdmin.from("stores").select("id").eq("instance_name", tenant.instance_name).single();
+      existingStore = res.data; }
     if (!existingStore && tenant.instance_name) {
       await supabaseAdmin.from("stores").insert({
         instance_name: tenant.instance_name,
