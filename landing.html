@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Titanex AI — Automatisez vos ventes WhatsApp</title>
+<script>/* suppress tailwind cdn warning */console.warn=new Proxy(console.warn,{apply(t,c,a){if(typeof a[0]==='string'&&a[0].includes('cdn.tailwindcss.com'))return;t.apply(c,a)}})</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{colors:{brand:'#22c55e','brand-dark':'#16a34a'},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,6 +108,23 @@ body.dark-mode #mobile-menu a,body.dark-mode #mobile-menu button{color:#94a3b8!i
 body.dark-mode #mobile-menu a:hover,body.dark-mode #mobile-menu button:hover{background:#1e293b!important;color:#fff!important}
 body.dark-mode #mobile-menu-btn{border-color:#334155!important}
 body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
+
+/* ─── Scroll reveal ─── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* ─── Sticky mobile CTA ─── */
+#sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:90;padding:12px 16px;background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;backdrop-filter:blur(8px);transform:translateY(100%);transition:transform .3s ease;display:none}
+#sticky-cta.show{transform:translateY(0)}
+body.dark-mode #sticky-cta{background:rgba(3,7,18,.97);border-top-color:#1e293b}
+/* ─── Mobile mini chat ─── */
+.mobile-chat-preview{display:none;margin-top:24px}
+@media(max-width:640px){
+  .mobile-chat-preview{display:flex;flex-direction:column;gap:8px}
+  #sticky-cta{display:block}
+}
+/* ─── Testimonial grid ─── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:768px){.testi-grid{grid-template-columns:1fr}}
 
 /* ─── Responsive ─── */
 @media(max-width:640px){
@@ -248,6 +266,20 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
           <i data-lucide="message-circle" class="w-5 h-5"></i> <span data-i18n="hero_contact">Nous contacter</span>
         </button>
       </div>
+      <!-- Mobile mini chat preview -->
+      <div class="mobile-chat-preview">
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div style="width:28px;height:28px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:#fff">T</div>
+          <div style="background:#fff;border-radius:0 14px 14px 14px;padding:10px 14px;font-size:13px;color:#1e293b;max-width:80%;box-shadow:0 1px 3px rgba(0,0,0,.08)">Bonjour ! Bienvenue chez notre boutique. Que recherchez-vous aujourd'hui ? 😊</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;justify-content:flex-end">
+          <div style="background:#dcf8c6;border-radius:14px 0 14px 14px;padding:10px 14px;font-size:13px;color:#1e293b;max-width:80%;box-shadow:0 1px 3px rgba(0,0,0,.08)">Je cherche un iPhone 15</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div style="width:28px;height:28px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:#fff">T</div>
+          <div style="background:#fff;border-radius:0 14px 14px 14px;padding:10px 14px;font-size:13px;color:#1e293b;max-width:80%;box-shadow:0 1px 3px rgba(0,0,0,.08)">Excellent choix ! *iPhone 15 Pro* disponible a 450 000 FCFA. Envoi par MoMo ? 📱💰</div>
+        </div>
+      </div>
     </div>
 
     <!-- RIGHT COLUMN — WhatsApp Chat (vente avec images) -->
@@ -355,7 +387,7 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- FEATURES -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<section id="features" class="sec-alt py-24 border-sec" style="border-top:1px solid;border-bottom:1px solid">
+<section id="features" class="sec-alt py-24 border-sec reveal" style="border-top:1px solid;border-bottom:1px solid">
   <div class="max-w-5xl mx-auto px-6">
     <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
       <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span data-i18n="feat_badge">Fonctionnalites</span>
@@ -407,9 +439,59 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- TESTIMONIALS -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<section class="sec-white py-24 reveal">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+      <i data-lucide="heart" class="w-3.5 h-3.5"></i> Temoignages
+    </div>
+    <h2 class="text-4xl font-bold mb-16 tracking-tight">Ce que disent <span class="text-brand">nos clients</span></h2>
+    <div class="testi-grid">
+      <!-- Stephane -->
+      <div class="card-dark border rounded-2xl p-8 text-left hover:-translate-y-1 transition-all">
+        <div style="color:#f59e0b;font-size:16px;margin-bottom:12px">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+        <p class="text-sm text-muted leading-relaxed italic mb-6">"Mon agent repond a mes clients meme la nuit. J'ai augmente mes ventes de 40% en 2 mois. C'est un game-changer pour mon business."</p>
+        <div class="flex items-center gap-3">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">SK</div>
+          <div>
+            <div class="font-bold text-sm">Stephane K.</div>
+            <div class="text-xs text-faint">Vendeur de telephones, Douala</div>
+          </div>
+        </div>
+      </div>
+      <!-- Aminata -->
+      <div class="card-dark border rounded-2xl p-8 text-left hover:-translate-y-1 transition-all">
+        <div style="color:#f59e0b;font-size:16px;margin-bottom:12px">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+        <p class="text-sm text-muted leading-relaxed italic mb-6">"Mes clients adorent avoir des reponses instantanees. Plus besoin d'etre collee a mon telephone. L'IA gere tout !"</p>
+        <div class="flex items-center gap-3">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">AD</div>
+          <div>
+            <div class="font-bold text-sm">Aminata D.</div>
+            <div class="text-xs text-faint">Boutique mode, Abidjan</div>
+          </div>
+        </div>
+      </div>
+      <!-- Jean-Paul -->
+      <div class="card-dark border rounded-2xl p-8 text-left hover:-translate-y-1 transition-all">
+        <div style="color:#f59e0b;font-size:16px;margin-bottom:12px">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+        <p class="text-sm text-muted leading-relaxed italic mb-6">"L'IA connait tout mon catalogue et propose les bons produits. Mes clients sont impressionnes par la rapidite."</p>
+        <div class="flex items-center gap-3">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">JM</div>
+          <div>
+            <div class="font-bold text-sm">Jean-Paul M.</div>
+            <div class="text-xs text-faint">Import-Export, Yaounde</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- PRICING -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<section id="tarifs" class="sec-white py-24">
+<section id="tarifs" class="sec-white py-24 reveal">
   <div class="max-w-5xl mx-auto px-6 text-center">
     <div class="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-brand font-bold uppercase tracking-wider" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
       <i data-lucide="tag" class="w-3.5 h-3.5"></i> <span data-i18n="price_badge">Tarification</span>
@@ -578,6 +660,13 @@ body.dark-mode #mobile-menu-btn span{background:#94a3b8!important}
     <span class="text-xs text-faint" data-i18n="footer_made">Made with ❤️ for Africa 🌍</span>
   </div>
 </footer>
+
+<!-- Sticky mobile CTA -->
+<div id="sticky-cta">
+  <a href="/dashboard/login.html" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 20px;border-radius:14px;background:#25D366;color:#fff;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.3)">
+    <span>Essai gratuit 7 jours</span> <span style="font-size:18px">&#8594;</span>
+  </a>
+</div>
 
 <!-- WhatsApp Float -->
 <button onclick="location.href='https://wa.me/237672482763?text=TITANEX'" class="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-50" style="background:#25D366;box-shadow:0 4px 20px rgba(37,211,102,.4)">
@@ -935,6 +1024,32 @@ function scrollSec(id){
   var btn=document.getElementById('mobile-menu-btn');
   if(btn)btn.classList.remove('open');
 }
+
+// ─── Scroll reveal (IntersectionObserver) ────────────────────────
+var revealObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target);}
+  });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(function(el){revealObs.observe(el);});
+
+// ─── Sticky mobile CTA ──────────────────────────────────────────
+(function(){
+  var sticky=document.getElementById('sticky-cta');
+  if(!sticky)return;
+  var shown=false;
+  var pricingSec=document.getElementById('tarifs');
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY;
+    if(y>400&&!shown){shown=true;sticky.classList.add('show');}
+    else if(y<=400&&shown){shown=false;sticky.classList.remove('show');}
+    if(pricingSec){
+      var rect=pricingSec.getBoundingClientRect();
+      if(rect.top<window.innerHeight&&rect.bottom>0){sticky.classList.remove('show');}
+      else if(y>400){sticky.classList.add('show');}
+    }
+  },{passive:true});
+})();
 
 // ─── Init ───────────────────────────────────────────────────────────
 window.addEventListener('load',function(){

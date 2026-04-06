@@ -201,16 +201,22 @@ app.post("/webhook",async(req,res)=>{
       if(convMode && convMode.conv_mode==='manuel'){console.log('[SKIP] mode manuel pour',phoneCleanMode,'sur',instance);return;}
       // Cooldown 15s
       const lastReply=cooldowns.get(coolKey)||0;
-      if(Date.now()-lastReply<1000){console.log("[SKIP] cooldown",coolKey);return;}
+      if(Date.now()-lastReply<15000){console.log("[SKIP] cooldown",coolKey);return;}
       // Charger le store
       const {data:store}=await supabaseAdmin.from("stores").select("catalog_details,system_prompt").eq("instance_name",instance).single();
       console.log("[STORE]",instance,"err:",!store?"NULL":"OK");
       if(!store)return;
-      // Charger le catalogue
+      // Charger le catalogue (condensé: nom + prix + stock pour rester dans la limite du prompt)
       const {data:produits}=await supabaseAdmin.from("catalogue").select("nom,description,prix,stock,image_url").eq("instance_name",instance);
       let catalogueTexte="";
       if(produits&&produits.length>0){
-        catalogueTexte=produits.map(p=>"- "+p.nom+": "+(p.description||"")+" | Prix: "+(p.prix?p.prix+" FCFA":"a demander")+" | Stock: "+(p.stock>0?"disponible":"epuise")+(p.image_url?" | 📸 Image disponible":"")).join("\n");
+        catalogueTexte=produits.map(p=>"- "+p.nom+" | Prix: "+(p.prix?p.prix+" FCFA":"a demander")+" | "+(p.stock>0?"disponible":"epuise")+(p.image_url?" | 📸":"")).join("\n");
+        // Descriptions condensées (max 200 chars) pour que TOUS les produits rentrent dans la limite du prompt
+        const catalogueDetail=produits.map(p=>{
+          const desc=(p.description||"Pas de description").replace(/\s+/g," ").substring(0,200);
+          return "- "+p.nom+": "+desc+" | Prix: "+(p.prix?p.prix+" FCFA":"a demander");
+        }).join("\n");
+        catalogueTexte+="\n\nDÉTAILS PRODUITS (utilise quand le client demande plus d'infos):\n"+catalogueDetail;
       } else {
         catalogueTexte=store.catalog_details||"Catalogue en cours de configuration.";
       }
@@ -267,6 +273,14 @@ app.post("/webhook",async(req,res)=>{
         "\n➡️ [Call-to-action professionnel dans la langue du client]" +
         "\nCite le NOM EXACT du produit (en français original) pour que l'image s'envoie automatiquement." +
 
+        "\n\n=== RÈGLE PRIX ABSOLUE ===" +
+        "\nLes SEULS prix valides sont ceux listés dans le CATALOGUE ci-dessous. N'INVENTE JAMAIS un prix." +
+        "\nSi un prix dans l'historique de conversation contredit le catalogue, le CATALOGUE a toujours raison." +
+        "\nNe confonds JAMAIS deux produits différents. Vérifie le NOM EXACT avant de donner un prix." +
+        "\nExemple: 'Bague de Mami Wata' et 'Bague de richesse (Major)' sont DEUX produits DIFFÉRENTS avec des prix DIFFÉRENTS." +
+        "\nNe présente QUE les produits qui existent dans le CATALOGUE ci-dessous. N'invente JAMAIS un produit, une potion, une amulette ou un talisman qui n'est pas listé." +
+        "\nSi le client demande un produit absent du catalogue, réponds : 'Je n'ai pas ce produit dans ma boutique, mais voici ce que je propose : [liste les produits du catalogue].'" +
+
         "\n\n=== CONTEXTE TEMPOREL ===" +
         "\nNous sommes le "+jourSemaine+" "+dateComplete+", il est "+heureFormatee+" (heure de Douala/Cameroun)." +
         "\nMoment de la journée: "+momentJournee+". Salutation correcte: "+salutationCorrecte+"." +
@@ -319,8 +333,8 @@ app.post("/webhook",async(req,res)=>{
         "\nInternationale: DHL/avion - frais à la charge du client." +
 
         "\n\n=== CATALOGUE DE LA BOUTIQUE ===\n" + catalogueTexte;
-      // Tronquer le system prompt à 3000 caractères max
-      sys = sys.length > 3000 ? sys.substring(0, 3000) + "\n[catalogue tronqué]" : sys;
+      // Tronquer le system prompt à 8000 caractères max (Llama 3.3 70B supporte 128k tokens)
+      const sysFinal = sys.length > 8000 ? sys.substring(0, 8000) + "\n[catalogue tronqué]" : sys;
       // Délai humain 2-4s
       await new Promise(r=>setTimeout(r,Math.floor(Math.random()*2000)+2000));
       // Appel Groq avec retry
@@ -328,7 +342,7 @@ app.post("/webhook",async(req,res)=>{
       try {
         const groqRes=await axios.post("https://api.groq.com/openai/v1/chat/completions",{
           model:"llama-3.3-70b-versatile",
-          messages:[{role:"system",content:sys},...history,{role:"user",content:combinedText}],
+          messages:[{role:"system",content:sysFinal},...history,{role:"user",content:combinedText}],
           max_tokens:300,temperature:0.7
         },{headers:{Authorization:"Bearer "+process.env.GROQ_API_KEY}});
         reply=groqRes.data.choices[0].message.content.trim();
@@ -337,7 +351,7 @@ app.post("/webhook",async(req,res)=>{
         if (status === 400 || status === 413) {
           console.log("[GROQ RETRY] status", status, "- retry avec history vide et sys tronqué, history_len:", history.length, "sys_len:", sys.length, "err_detail:", JSON.stringify(groqErr.response?.data?.error || groqErr.message).substring(0, 200));
           try {
-            const retrySys = sys.length > 1500 ? sys.substring(0, 1500) + "\n[catalogue tronqué]" : sys;
+            const retrySys = sys.length > 4000 ? sys.substring(0, 4000) + "\n[catalogue tronqué]" : sys;
             const retryRes = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
               model: "llama-3.3-70b-versatile",
               messages: [{role:"system",content:retrySys}, {role:"user",content:combinedText}],
@@ -745,6 +759,154 @@ app.post('/api/admin/send-bilans', async (req, res) => {
   } catch(e) {
     console.error('[ERROR]', e.message);
     res.status(500).json({error: 'Erreur interne'});
+  }
+});
+
+// ─── Facebook Messenger Webhook ──────────────────────────────────────────────
+const FB_VERIFY_TOKEN = process.env.FACEBOOK_VERIFY_TOKEN || 'titanex-fb-2026';
+
+// GET — Meta webhook verification
+app.get('/webhook/facebook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  if (mode === 'subscribe' && token === FB_VERIFY_TOKEN) {
+    console.log('[FB WEBHOOK] Verification OK');
+    return res.status(200).send(challenge);
+  }
+  console.log('[FB WEBHOOK] Verification FAILED — token mismatch');
+  res.sendStatus(403);
+});
+
+// POST — Receive messages from Facebook Messenger
+app.post('/webhook/facebook', async (req, res) => {
+  res.sendStatus(200);
+  try {
+    const body = req.body;
+    if (body.object !== 'page') return;
+    for (const entry of (body.entry || [])) {
+      for (const event of (entry.messaging || [])) {
+        const senderId = event.sender?.id;
+        const message = event.message;
+        if (!senderId || !message || !message.text || message.is_echo) continue;
+        const txt = message.text;
+        console.log('[FB MSG] from:', senderId, 'text:', txt.substring(0, 50));
+
+        // Find tenant by facebook page token config
+        const {data: fbConfig} = await supabaseAdmin.from('channel_configs')
+          .select('instance_name,config')
+          .eq('channel', 'facebook')
+          .maybeSingle();
+        if (!fbConfig) { console.log('[FB] No facebook config found'); continue; }
+        const instance = fbConfig.instance_name;
+        const pageToken = fbConfig.config?.page_token || process.env.FACEBOOK_PAGE_TOKEN || '';
+        if (!pageToken) { console.log('[FB] No page token configured'); continue; }
+
+        // Check tenant status (same guard as WhatsApp)
+        const {data: tenantData} = await supabaseAdmin.from('tenants')
+          .select('agent_mode,statut,date_fin,credits')
+          .eq('instance_name', instance).maybeSingle();
+        if (!tenantData) continue;
+        if (tenantData.agent_mode === 'inactif') continue;
+        const isBlocked = tenantData.statut === 'expiré' || tenantData.statut === 'suspendu' ||
+          (tenantData.statut === 'essai' && tenantData.date_fin && new Date(tenantData.date_fin) < new Date());
+        if (isBlocked) {
+          await axios.post('https://graph.facebook.com/v18.0/me/messages', {
+            recipient: {id: senderId},
+            message: {text: '⚠️ Ce service est temporairement indisponible. Contactez le marchand.'}
+          }, {params: {access_token: pageToken}}).catch(() => {});
+          continue;
+        }
+        if (typeof tenantData.credits === 'number' && tenantData.credits <= 0) {
+          await axios.post('https://graph.facebook.com/v18.0/me/messages', {
+            recipient: {id: senderId},
+            message: {text: '⚠️ Service temporairement suspendu. Contactez le marchand.'}
+          }, {params: {access_token: pageToken}}).catch(() => {});
+          continue;
+        }
+
+        // Load store + catalogue
+        const {data: store} = await supabaseAdmin.from('stores')
+          .select('catalog_details,system_prompt').eq('instance_name', instance).single();
+        if (!store) continue;
+        const {data: produits} = await supabaseAdmin.from('catalogue')
+          .select('nom,description,prix,stock,image_url').eq('instance_name', instance);
+        const catalogueTexte = (produits || []).map(p =>
+          '• ' + p.nom + (p.prix ? ' — ' + p.prix + ' FCFA' : '') + ' | ' + (p.stock > 0 ? 'disponible' : 'épuisé')
+        ).join('\n') + '\n\nDÉTAILS:\n' + (produits || []).map(p =>
+          '• ' + p.nom + ': ' + (p.description || 'Pas de description')
+        ).join('\n');
+
+        // Load conversation history
+        const {data: convData} = await supabaseAdmin.from('conversations')
+          .select('messages').eq('phone', 'fb_' + senderId).eq('instance', instance).maybeSingle();
+        const history = (convData?.messages || []).slice(-10);
+        const messagesForAI = history.map(m => ({role: m.role, content: m.content}));
+        messagesForAI.push({role: 'user', content: txt});
+
+        // AI response via Groq
+        const systemPrompt = (store.system_prompt || 'Tu es un assistant commercial.') +
+          '\n\nCATALOGUE:\n' + (catalogueTexte || 'Aucun produit.');
+        let reply = '';
+        try {
+          const aiRes = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+            model: 'llama-3.3-70b-versatile',
+            messages: [{role: 'system', content: systemPrompt}, ...messagesForAI],
+            max_tokens: 800, temperature: 0.7
+          }, {headers: {Authorization: 'Bearer ' + process.env.GROQ_API_KEY}});
+          reply = aiRes.data.choices[0].message.content.trim();
+        } catch(aiErr) {
+          console.error('[FB AI ERROR]', aiErr.message);
+          reply = 'Bonjour ! Je reviens vers vous dans un instant. 🙏';
+        }
+
+        // Send reply via Facebook
+        await axios.post('https://graph.facebook.com/v18.0/me/messages', {
+          recipient: {id: senderId},
+          message: {text: reply}
+        }, {params: {access_token: pageToken}});
+        console.log('[FB SENT] OK to', senderId);
+
+        // Decrement credit
+        await supabaseAdmin.rpc('decrement_credit', {p_instance: instance}).catch(() => {});
+
+        // Save conversation
+        const newMsgs = [...(convData?.messages || []),
+          {role: 'user', content: txt, channel: 'facebook', timestamp: new Date().toISOString()},
+          {role: 'assistant', content: reply, channel: 'facebook', timestamp: new Date().toISOString()}
+        ];
+        if (convData) {
+          await supabaseAdmin.from('conversations').update({messages: newMsgs, updated_at: new Date().toISOString()})
+            .eq('phone', 'fb_' + senderId).eq('instance', instance);
+        } else {
+          await supabaseAdmin.from('conversations').insert({
+            phone: 'fb_' + senderId, instance, messages: newMsgs,
+            contact_name: 'Facebook User', channel: 'facebook'
+          });
+        }
+      }
+    }
+  } catch(e) {
+    console.error('[FB WEBHOOK ERROR]', e.message);
+  }
+});
+
+// ─── Facebook config save endpoint ───────────────────────────────────────────
+app.post('/api/facebook/config', authJWT, async (req, res) => {
+  try {
+    const {page_token, instance} = req.body;
+    if (!page_token) return res.status(400).json({error: 'page_token requis'});
+    const inst = instance || req.user.instance_name;
+    // Upsert into channel_configs
+    const {error} = await supabaseAdmin.from('channel_configs').upsert({
+      instance_name: inst, channel: 'facebook',
+      config: {page_token}, updated_at: new Date().toISOString()
+    }, {onConflict: 'instance_name,channel'});
+    if (error) throw new Error(error.message);
+    res.json({success: true});
+  } catch(e) {
+    console.error('[FB CONFIG ERROR]', e.message);
+    res.status(500).json({error: e.message});
   }
 });
 

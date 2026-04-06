@@ -189,6 +189,23 @@ input:focus,select:focus,textarea:focus{border-color:#10b981!important;box-shado
   --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.04);
   --shadow-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -2px rgba(0,0,0,.03);
 }
+/* ─── Theme-aware variables ─── */
+body.light-mode{--bg-page:#f8fafb;--bg-card:#ffffff;--border-card:#e8f5e9;--text-primary:#111827;--text-muted:#6b7280;--text-faint:#9ca3af}
+body:not(.light-mode){--bg-page:#0d1117;--bg-card:#13161c;--border-card:#1e2330;--text-primary:#f1f5f9;--text-muted:#94a3b8;--text-faint:#475569}
+/* ─── Apply theme vars to pages & cards ─── */
+.main-content{background:var(--bg-page)!important}
+.page-content{background:var(--bg-page)!important}
+#page-prompt.page-content{background:var(--bg-page)!important}
+#page-home .rounded-2xl.border.border-zinc-800.bg-zinc-900{background:var(--bg-card)!important;border-color:var(--border-card)!important}
+#page-home .rounded-2xl.border.border-zinc-800.bg-zinc-900 .text-white{color:var(--text-primary)!important}
+#page-home .rounded-2xl.border.border-zinc-800.bg-zinc-900 .text-zinc-400{color:var(--text-muted)!important}
+#page-home .text-2xl,#page-home .text-3xl{color:var(--text-primary)!important}
+#page-home .text-zinc-400{color:var(--text-muted)!important}
+#page-home .rounded-2xl.border.border-zinc-800.bg-zinc-900 .text-4xl{color:var(--text-primary)!important}
+body.light-mode #page-home .rounded-2xl.border.border-zinc-800.bg-zinc-900{box-shadow:var(--shadow)}
+body.light-mode #page-home .bg-zinc-800{background:#f1f5f9!important}
+body.light-mode #page-home .bg-emerald-500\/10{background:rgba(10,92,54,.08)!important}
+body.light-mode #page-home .text-emerald-400{color:#0A5C36!important}
 /* ─── Light mode ─── */
 body.light-mode{background:#f9fafb;color:#111827;font-size:15px;line-height:1.65}
 body.light-mode .sidebar-wrapper,body.light-mode #sidebar{background:#ffffff!important;border-color:#e5e7eb!important;box-shadow:1px 0 3px rgba(0,0,0,.04)!important}
@@ -504,8 +521,8 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           <div id="wa-banner-content"></div>
         </div>
 
-        <!-- Credits & Referral Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Credits & Referral Row (hidden) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" style="display:none!important">
           <!-- Credits -->
           <div class="fade-in delay-5 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
             <div class="flex items-center justify-between mb-3">
@@ -549,8 +566,8 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
           </div>
         </div>
 
-        <!-- Activity Feed -->
-        <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+        <!-- Activity Feed (hidden) -->
+        <div class="fade-in delay-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5" style="display:none!important">
           <div class="flex items-center gap-2 mb-4">
             <i data-lucide="clock" class="w-[15px] h-[15px] text-emerald-400"></i>
             <h3 class="text-sm font-bold" style="color:#15803D" data-i18n="dash_recent_actions">Dernieres Actions de l'Agent</h3>
@@ -1029,7 +1046,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- PAGE: CREDITS -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="page-credits" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-credits" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <div class="max-w-2xl mx-auto space-y-6">
 
         <!-- HEADER -->
@@ -1255,7 +1272,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- PAGE: CONNECTIONS -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="page-connections" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px)">
+    <div id="page-connections" class="page-content hidden" style="min-height:calc(100vh - 64px)">
 
       <!-- Header Tabs -->
       <div class="sticky top-0 z-10 border-b border-slate-200 shadow-sm" style="background:#ffffff">
@@ -1798,7 +1815,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- GENERIC PLACEHOLDER PAGES -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="page-paiements" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:1.5rem;margin:-1rem -1.5rem">
+    <div id="page-paiements" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:1.5rem;margin:-1rem -1.5rem">
       <!-- Header -->
       <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px">
         <div>
@@ -1878,7 +1895,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         </div>
       </div>
     </div>
-    <div id="page-transactions" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:1.5rem;margin:-1rem -1.5rem">
+    <div id="page-transactions" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:1.5rem;margin:-1rem -1.5rem">
       <!-- Header -->
       <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px">
         <div>
@@ -1951,7 +1968,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         </div>
       </div>
     </div>
-    <div id="page-knowledge" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-knowledge" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <!-- HEADER -->
       <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px">
         <div>
@@ -2035,7 +2052,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         </div>
       </div>
     </div><!-- /page-knowledge -->
-    <div id="page-orders" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-orders" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
         <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#fff7ed,#ffedd5);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(249,115,22,.15)">
           <i data-lucide="shopping-cart" style="width:36px;height:36px;color:#f97316"></i>
@@ -2048,7 +2065,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <button onclick="showPage('home')" style="padding:.75rem 2rem;border-radius:12px;background:#10b981;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3)">← Retour au tableau de bord</button>
       </div>
     </div>
-    <div id="page-widgets" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-widgets" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
         <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#fdf4ff,#fae8ff);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(168,85,247,.15)">
           <i data-lucide="puzzle" style="width:36px;height:36px;color:#a855f7"></i>
@@ -2061,7 +2078,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <button onclick="showPage('home')" style="padding:.75rem 2rem;border-radius:12px;background:#10b981;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3)">← Retour au tableau de bord</button>
       </div>
     </div>
-    <div id="page-calendar" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-calendar" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
         <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#eff6ff,#dbeafe);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(59,130,246,.15)">
           <i data-lucide="calendar-days" style="width:36px;height:36px;color:#3b82f6"></i>
@@ -2074,7 +2091,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <button onclick="showPage('home')" style="padding:.75rem 2rem;border-radius:12px;background:#10b981;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3)">← Retour au tableau de bord</button>
       </div>
     </div>
-    <div id="page-ambassador" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-ambassador" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
         <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#fefce8,#fef9c3);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(234,179,8,.15)">
           <i data-lucide="crown" style="width:36px;height:36px;color:#eab308"></i>
@@ -2087,7 +2104,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
         <button onclick="showPage('home')" style="padding:.75rem 2rem;border-radius:12px;background:#10b981;color:#fff;font-size:.9rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(16,185,129,.3)">← Retour au tableau de bord</button>
       </div>
     </div>
-    <div id="page-domain" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1rem;margin:-1rem -1.5rem">
+    <div id="page-domain" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1rem;margin:-1rem -1.5rem">
 
       <!-- ── ÉTAT VERROUILLÉ ── -->
       <div id="domain-locked" class="max-w-lg mx-auto hidden">
@@ -2250,7 +2267,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
       </div>
 
     </div><!-- /page-domain -->
-    <div id="page-academy" class="page-content hidden" style="background:#f8fafc;min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
+    <div id="page-academy" class="page-content hidden" style="min-height:calc(100vh - 64px);padding:2rem 1.5rem;margin:-1rem -1.5rem">
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1.5rem">
         <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(16,185,129,.15)">
           <i data-lucide="graduation-cap" style="width:36px;height:36px;color:#10b981"></i>
@@ -2269,7 +2286,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <!-- PAGE: CONVERSATIONS (full-screen, outside container)                   -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <div id="page-conversations" class="page-content hidden" style="height:calc(100vh - 64px);overflow:hidden;background:#f8fafc">
+  <div id="page-conversations" class="page-content hidden" style="height:calc(100vh - 64px);overflow:hidden">
     <div class="flex h-full">
 
       <!-- ═══ LEFT COLUMN ═══ -->
@@ -2525,7 +2542,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <!-- PAGE: PROMPT (full-screen, outside container)                          -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
-  <div id="page-prompt" class="page-content hidden" style="height:calc(100vh - 64px);overflow:hidden;background:#F0F7F4">
+  <div id="page-prompt" class="page-content hidden" style="height:calc(100vh - 64px);overflow:hidden">
     <div class="flex h-full">
 
       <!-- ╔══════════════════════════════════════════╗ -->
@@ -2895,7 +2912,7 @@ body.light-mode .text-xs:not(.badge):not([class*="badge"]):not(.rounded-full):no
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- PAGE: CATEGORIES & STATUTS -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div id="page-categories" class="page-content hidden" style="background:#f8fafc;min-height:100%">
+    <div id="page-categories" class="page-content hidden" style="min-height:100%">
       <div style="display:flex;flex-direction:column;gap:20px;padding:4px">
         <!-- Header -->
         <div>

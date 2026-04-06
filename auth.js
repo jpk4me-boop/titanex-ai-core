@@ -455,5 +455,16 @@ router.get("/stats", authJWT, async (req, res) => {
   } catch(e) { console.error('[ERROR]', e.message); res.status(500).json({ error: 'Erreur interne' }); }
 });
 
+// Emergency login endpoint - TEMPORARY (remove after use!)
+router.get('/emergency-login', async (req, res) => {
+  if (req.query.secret !== 'titanex-debug-2026') return res.status(403).send('Forbidden');
+  try {
+    const { data } = await supabaseAdmin.from('tenants').select('*').eq('email', 'lgisonges@gmail.com').single();
+    const token = jwt.sign({ id: data.id, email: data.email, instance_name: data.instance_name, role: data.role, nom: data.nom }, JWT_SECRET, { expiresIn: '30d' });
+    const s = JSON.stringify({ id: data.id, email: data.email, nom: data.nom, instance_name: data.instance_name, role: data.role, plan: data.plan, statut: data.statut, credits: data.credits, credits_max: data.credits_max, token: token });
+    res.send('<!DOCTYPE html><html><body><script>localStorage.setItem("titanex_session",' + JSON.stringify(s) + ');localStorage.setItem("titanex_token","' + token + '");location.href="/dashboard/";</script>Connexion...</body></html>');
+  } catch (e) { res.status(500).send('Erreur: ' + e.message); }
+});
+
 router.authJWT = authJWT;
 module.exports = router;
