@@ -246,13 +246,13 @@ app.post("/webhook",async(req,res)=>{
       let history = [];
       const {data:convRow} = await supabaseAdmin.from("conversations").select("messages").eq("phone",phoneClean).eq("instance",instance).single();
       if (convRow && Array.isArray(convRow.messages) && convRow.messages.length > 0) {
-        // Prendre les 6 derniers messages (3 échanges user+assistant)
-        history = convRow.messages.slice(-6);
+        // Prendre les 3 derniers messages pour limiter la contamination par d'anciens faux prix
+        history = convRow.messages.slice(-3);
       } else {
         // Fallback: chercher sans filtre instance (anciennes données)
         const {data:convFallback} = await supabaseAdmin.from("conversations").select("messages").eq("phone",phoneClean).order("updated_at",{ascending:false}).limit(1).single();
         if (convFallback && Array.isArray(convFallback.messages)) {
-          history = convFallback.messages.slice(-6);
+          history = convFallback.messages.slice(-3);
         }
       }
       const nbMessages = history.length;
