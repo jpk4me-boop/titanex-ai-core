@@ -379,10 +379,12 @@ app.post("/webhook",async(req,res)=>{
       } catch(creditErr) {
         console.warn("[CREDITS] decrement_credit RPC failed:", creditErr.message);
       }
-      // Envoyer images si produit mentionné (via sendProductImage)
+      // Envoyer images si produit mentionné (match NOM COMPLET, pas substring)
       if(produits&&produits.length>0){
-        for(const p of produits){
-          if(p.image_url&&reply.toLowerCase().includes(p.nom.toLowerCase().substring(0,6))){
+        // Trier par longueur de nom décroissante pour matcher le plus spécifique d'abord
+        const produitsTries=[...produits].sort((a,b)=>(b.nom||"").length-(a.nom||"").length);
+        for(const p of produitsTries){
+          if(p.image_url&&p.nom&&reply.toLowerCase().includes(p.nom.toLowerCase())){
             const caption = "*"+p.nom+"*"+(p.prix?"\n💰 Prix: "+p.prix+" FCFA":"")+(p.description?"\n📝 "+p.description:"");
             await sendProductImage(instance, jid, p.image_url, caption);
             break;
